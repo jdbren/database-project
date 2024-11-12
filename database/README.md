@@ -1,4 +1,5 @@
 # Quick Start
+<<<<<<< HEAD
 The following commands must be run from the repository's root directory.
 To initialize the database: `mysql -u root -p < ./database/initialize.sql`
 To insert default data: `python ./database/insertDefault.py`
@@ -31,3 +32,23 @@ To insert default data: `python ./database/insertDefault.py`
 
 ## Triggers
 All AFTER triggers sync historical and active tables, whereas BEFORE triggers validate that new StartDate cannot conflict with existing records. Each of `EmployeePositions`, `EmployeeDepartments`, and `EmployeeRoles` have both triggers. `Projects` have a special BEFORE trigger, which enforces correct usage of the appropriate update procedures.
+=======
+
+To setup the database, start `mysql` as root and run
+```mysql
+SOURCE ./database/setupDatabase.sql
+```
+
+This scripts creates the `GenericCompany` database with an `Administrator` user. You can continue as root or, better yet, run as `Administrator`. To create tables and insert sample data, run
+```mysql
+USE GenericCompany;
+SOURCE ./database/setupSchema.sql
+SOURCE ./database/insertData.sql
+```
+
+## Scripts
+- `setupDatabase.sql`: Creates `GenericCompany` with `Administrator` user, granting all privileges to `Administrator`.
+- `resetDatabase.sql`: Drops the database and the user before sourcing `setupDatabase.sql`.
+- `setupSchema.sql`: Creates all tables.
+- `insertData.sql`: Populates tables with sample data.
+>>>>>>> dc89b43 (add set up)

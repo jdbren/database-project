@@ -74,9 +74,18 @@ CREATE TABLE IF NOT EXISTS States (
   )
 );
 CREATE TABLE IF NOT EXISTS Degrees (
+<<<<<<< HEAD
   Name CHAR(12) NOT NULL,
   CONSTRAINT DegreesPK
     PRIMARY KEY (Name)
+=======
+  Name CHAR(8) NOT NULL,
+  CONSTRAINT DegreesPK
+    PRIMARY KEY (Name),
+  CONSTRAINT DegreesCK_ValidName CHECK (
+    Name REGEXP '^[a-zA-Z'' ]$'
+  )
+>>>>>>> 6135905 (add set up)
 );
 
 -- Employee Records --
@@ -114,14 +123,22 @@ CREATE TABLE IF NOT EXISTS Staff (
     ON UPDATE CASCADE,
   CONSTRAINT StaffCK_ValidZIP CHECK (
     ZIPCode REGEXP '^[0-9]{5}(-[0-9]{4})?$'
+<<<<<<< HEAD
   ),  
+=======
+  ),
+>>>>>>> 6135905 (add set up)
   CONSTRAINT StaffFK_HighestDegree
     FOREIGN KEY (HighestDegree)
     REFERENCES Degrees (Name)
     ON DELETE SET NULL
     ON UPDATE CASCADE,
   CONSTRAINT StaffCK_ValidYears CHECK (
+<<<<<<< HEAD
     ExternalYearsWorked >= 0
+=======
+    ExternalYearsWorked > 0
+>>>>>>> 6135905 (add set up)
   )
 );
 
