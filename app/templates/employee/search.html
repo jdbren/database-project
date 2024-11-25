@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Search</title>
+  <style>
+    #advanced-fields {
+      display: none;
+    }
+    .toggle-buttons {
+      margin-bottom: 20px;
+    }
+  </style>
+  <script>
+    // Function to toggle between basic and advanced search
+    function showSearchForm(formType) {
+      const advancedFieldset = document.getElementById('advanced-fields');
+
+      if (formType === 'basic') {
+        advancedFieldset.style.display = 'none';
+        advancedFieldset.disabled = true;
+      } else {
+        advancedFieldset.style.display = 'block';
+        advancedFieldset.disabled = false;
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <h1>Search Employee Database</h1>
+
+  <div class="toggle-buttons">
+    <button onclick="showSearchForm('basic')">Basic Search</button>
+    <button onclick="showSearchForm('advanced')">Advanced Search</button>
+  </div>
+
+  <!-- Basic Search Form -->
+  <form id="basic-search" action="/employee/search" method="GET">
+    <fieldset>
+      <legend>Basic Search Criteria</legend>
+
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name"><br><br>
+
+      <label for="employee_number">Employee Number:</label>
+      <input type="text" id="employee_number" name="employee_number"><br><br>
+
+      <label for="ssn">Social Security Number:</label>
+      <input type="text" id="ssn" name="ssn"><br><br>
+
+      <label for="phone">Phone Number:</label>
+      <input type="tel" id="phone" name="phone"><br><br>
+    </fieldset>
+    <!-- Advanced Search Form -->
+    <fieldset id="advanced-fields" disabled="true">
+      <legend>Advanced Search Criteria</legend>
+
+      <label for="degree">Highest Academic Degree:</label>
+      <input type="text" id="degree" name="degree"><br><br>
+
+      <label for="experience">Years of Work Experience:</label>
+      <input type="number" id="experience" name="experience" min="0"><br><br>
+
+      <label for="hiring_position">Hiring Position:</label>
+      <select id="hiring_position" name="hiring_position">
+        <option value="">-- Select --</option>
+        <option value="research_scientist">Research Scientist</option>
+        <option value="applied_scientist">Applied Scientist</option>
+        <option value="engineer_programmer">Engineer/Programmer</option>
+        <option value="senior_programmer">Senior Programmer</option>
+        <option value="director">Director</option>
+      </select><br><br>
+
+      <label for="hiring_salary_min">Starting Salary (Min):</label>
+      <input type="number" id="hiring_salary_min" name="hiring_salary_min" min="0"><br><br>
+
+      <label for="hiring_salary_max">Starting Salary (Max):</label>
+      <input type="number" id="hiring_salary_max" name="hiring_salary_max" min="0"><br><br>
+
+      <label for="current_position">Current Position:</label>
+      <input type="text" id="current_position" name="current_position"><br><br>
+
+      <label for="current_salary_min">Current Salary (Min):</label>
+      <input type="number" id="current_salary_min" name="current_salary_min" min="0"><br><br>
+
+      <label for="current_salary_max">Current Salary (Max):</label>
+      <input type="number" id="current_salary_max" name="current_salary_max" min="0"><br><br>
+
+      <label for="address">Address:</label>
+      <input type="text" id="address" name="address"><br><br>
+
+      <label for="dob">Date of Birth:</label>
+      <input type="date" id="dob" name="dob"><br><br>
+    </fieldset>
+    <button type="submit">Search</button>
+  </form>
+</body>
+
+</html>
