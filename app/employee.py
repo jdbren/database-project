@@ -1,7 +1,7 @@
 import functools
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, redirect, render_template, request, session, url_for
 )
 
 from app.db import get_db, close_db
@@ -20,38 +20,43 @@ def insert():
         try:
             # Retrieve form data
             ssn = request.form['ssn']
-            employee_number = request.form['employee_number']
-            name = request.form['name']
+            fname = request.form['first_name']
+            lname = request.form['last_name']
+            gender = request.form['gender']
             dob = request.form['dob']
             address = request.form['address']
+            city = request.form['city']
+            state = request.form['state']
+            zip = request.form['zip']
             phone = request.form['phone']
             degree = request.form['degree']
             experience = request.form['experience']
-            hiring_position = request.form['hiring_position']
-            hiring_salary = request.form['hiring_salary']
-            current_position = request.form['current_position']
-            current_salary = request.form['current_salary']
+            # position = request.form['position']
+            # salary = request.form['salary']
+
+            print(ssn, fname, dob, phone, degree, experience)
 
             # Insert data into the database
             db = get_db()
             cursor = db.cursor()
             cursor.execute('''
-                INSERT INTO employees (
-                    ssn, employee_number, name, dob, address, phone,
-                    degree, experience, hiring_position, hiring_salary,
-                    current_position, current_salary
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO Staff (
+                    SocialSecurity, FirstName, LastName, Gender, BirthDate,
+                    StreetAddress, City, State, ZIPCode, PhoneNumber,
+                    ExternalYearsWorked
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (
-                ssn, employee_number, name, dob, address, phone,
-                degree, experience, hiring_position, hiring_salary,
-                current_position, current_salary
+                ssn, fname, lname, gender, dob, address, city, state, zip,
+                phone, experience
             ))
+            cursor.close()
             db.commit()
             close_db()
 
-            return "Submitted!", 201
+            return redirect('/employee', 201)
 
         except Exception as e:
+            print(e)
             return "Error", 500
 
     return render_template('employee/insert.html')
@@ -60,8 +65,19 @@ def insert():
 
 @bp.route('/search', methods=('GET',))
 def search():
-    return render_template('employee/search.html')
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute('SELECT * FROM Staff')
+    employees = cursor.fetchall()
+    cursor.close()
+
+    print(employees)
+
+    close_db()
+
+    return render_template('employee/search.html', employees=employees)
 
 @bp.route('/<int:id>', methods=('GET', 'PUT', 'DELETE'))
 def update(id):
-    return ""
+    return render_template('employee/update.html')

@@ -12,20 +12,37 @@
   <form action="/employee/insert" method="POST">
     <fieldset>
       <legend>Personal Information</legend>
+
+      <label for="first_name">First Name:</label>
+      <input type="text" id="first_name" name="first_name" required><br><br>
+
+      <label for="last_name">Last Name:</label>
+      <input type="text" id="last_name" name="last_name" required><br><br>
+
+      <label for="gender">Gender:</label>
+      <select id="gender" name="gender" required>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select><br><br>
+
       <label for="ssn">Social Security Number:</label>
       <input type="text" id="ssn" name="ssn" required><br><br>
-
-      <label for="employee_number">Employee Number:</label>
-      <input type="text" id="employee_number" name="employee_number" required><br><br>
-
-      <label for="name">Full Name:</label>
-      <input type="text" id="name" name="name" required><br><br>
 
       <label for="dob">Date of Birth:</label>
       <input type="date" id="dob" name="dob" required><br><br>
 
       <label for="address">Primary Address:</label>
       <input type="text" id="address" name="address" required><br><br>
+
+      <label for="city">City:</label>
+      <input type="text" id="city" name="city" required><br><br>
+
+      <label for="state">State:</label>
+      <input type="text" id="state" name="state" required><br><br>
+
+      <label for="zip">Zip Code:</label>
+      <input type="number" id="zip" name="zip" required><br><br>
 
       <label for="phone">Phone Number:</label>
       <input type="tel" id="phone" name="phone" required><br><br>
@@ -34,13 +51,13 @@
     <fieldset>
       <legend>Professional Information</legend>
       <label for="degree">Highest Academic Degree:</label>
-      <input type="text" id="degree" name="degree" required><br><br>
+      <input type="text" id="degree" name="degree"><br><br>
 
       <label for="experience">Years of Work Experience:</label>
       <input type="number" id="experience" name="experience" min="0" required><br><br>
 
-      <label for="hiring_position">Hiring Position:</label>
-      <select id="hiring_position" name="hiring_position" required>
+      <label for="position">Position:</label>
+      <select id="position" name="position" required>
         <option value="research_scientist">Research Scientist</option>
         <option value="applied_scientist">Applied Scientist</option>
         <option value="engineer_programmer">Engineer/Programmer</option>
@@ -48,14 +65,8 @@
         <option value="director">Director</option>
       </select><br><br>
 
-      <label for="hiring_salary">Starting Salary:</label>
-      <input type="number" id="hiring_salary" name="hiring_salary" min="0" required><br><br>
-
-      <label for="current_position">Current Position:</label>
-      <input type="text" id="current_position" name="current_position" required><br><br>
-
-      <label for="current_salary">Current Salary:</label>
-      <input type="number" id="current_salary" name="current_salary" min="0" required><br><br>
+      <label for="salary">Salary:</label>
+      <input type="number" id="salary" name="salary" min="0" required><br><br>
     </fieldset>
 
     <button type="submit">Submit</button>
