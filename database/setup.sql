@@ -63,9 +63,7 @@ CREATE TABLE IF NOT EXISTS States (
 );
 CREATE TABLE IF NOT EXISTS Degrees (
   Name CHAR(16) NOT NULL,
-  PRIMARY KEY (Name),
-  CONSTRAINT DegreesCK_ValidName
-    CHECK ( Name REGEXP '^['' a-zA-Z]+$' )
+  PRIMARY KEY (Name)
 );
 
 -- SCHEMA: Employee Records --
@@ -321,16 +319,43 @@ GRANT ALL PRIVILEGES ON GenericCompany.*
   TO 'GenericAdministrator'@'localhost';
 GRANT SELECT ON GenericCompany.*
   TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE ON GenericCompany.Employees
+GRANT INSERT, UPDATE, DELETE
+  ON GenericCompany.Positions
   TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE ON GenericCompany.EmployeePositions
+GRANT INSERT, UPDATE, DELETE
+  ON GenericCompany.Benefits
   TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE ON GenericCompany.EmployeeDepartments
+GRANT INSERT, UPDATE, DELETE
+  ON GenericCompany.ProjectStatus
   TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE ON GenericCompany.EmployeeBenefits
+GRANT INSERT, UPDATE, DELETE
+  ON GenericCompany.ProjectRoles
   TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE ON GenericCompany.Projects
+GRANT INSERT, UPDATE
+  ON GenericCompany.Employees
   TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE ON GenericCompany.EmployeeRoles
+GRANT INSERT, UPDATE, DELETE
+  ON GenericCompany.EmployeePositions
+  TO 'GenericApplication'@'localhost';
+GRANT UPDATE(StartDate, EndDate)
+  ON GenericCompany.EmployeePositionsHistory
+  TO 'GenericApplication'@'localhost';
+GRANT INSERT, UPDATE, DELETE
+  ON GenericCompany.EmployeeDepartments
+  TO 'GenericApplication'@'localhost';
+GRANT UPDATE(StartDate, EndDate)
+  ON GenericCompany.EmployeeDepartmentsHistory
+  TO 'GenericApplication'@'localhost';
+GRANT INSERT, UPDATE, DELETE
+  ON GenericCompany.EmployeeBenefits
+  TO 'GenericApplication'@'localhost';
+GRANT INSERT, UPDATE
+  ON GenericCompany.Projects
+  TO 'GenericApplication'@'localhost';
+GRANT INSERT, UPDATE, DELETE
+  ON GenericCompany.EmployeeRoles
+  TO 'GenericApplication'@'localhost';
+GRANT INSERT, UPDATE, DELETE
+  ON GenericCompany.EmployeeRolesHistory
   TO 'GenericApplication'@'localhost';
 FLUSH PRIVILEGES;
