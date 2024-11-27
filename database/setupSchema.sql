@@ -74,12 +74,9 @@ CREATE TABLE IF NOT EXISTS States (
   )
 );
 CREATE TABLE IF NOT EXISTS Degrees (
-  Name CHAR(8) NOT NULL,
+  Name CHAR(12) NOT NULL,
   CONSTRAINT DegreesPK
-    PRIMARY KEY (Name),
-  CONSTRAINT DegreesCK_ValidName CHECK (
-    Name REGEXP '^[a-zA-Z'' ]$'
-  )
+    PRIMARY KEY (Name)
 );
 
 -- Employee Records --

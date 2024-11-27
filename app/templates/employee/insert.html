@@ -5,6 +5,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Employee Data Form</title>
+  <script>
+    function setRequiredHealthInsurance() {
+      let employment_type = document.getElementById('employment_type');
+      if (employment_type.value === 'Full-Time')
+        document.getElementById('health_insurance').required = true;
+      else
+        document.getElementById('health_insurance').required = false;
+    }
+  </script>
 </head>
 
 <body>
@@ -46,27 +55,60 @@
 
       <label for="phone">Phone Number:</label>
       <input type="tel" id="phone" name="phone" required><br><br>
-    </fieldset>
 
-    <fieldset>
-      <legend>Professional Information</legend>
       <label for="degree">Highest Academic Degree:</label>
-      <input type="text" id="degree" name="degree"><br><br>
+      <select id="degree" name="degree">
+        <option value="">-- Select --</option>
+        <option value="Diploma">High School</option>
+        <option value="Associate">Associate's Degree</option>
+        <option value="Bachelor">Bachelor's Degree</option>
+        <option value="Master">Master's Degree</option>
+        <option value="Doctoral">Doctorate</option>
+      </select><br><br>
 
       <label for="experience">Years of Work Experience:</label>
       <input type="number" id="experience" name="experience" min="0" required><br><br>
 
+    </fieldset>
+
+    <fieldset>
+      <legend>Job Information</legend>
+
+      <label for="external_hire">External Hire:</label>
+      <select id="external_hire" name="external_hire" required>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select><br><br>
+
       <label for="position">Position:</label>
       <select id="position" name="position" required>
-        <option value="research_scientist">Research Scientist</option>
-        <option value="applied_scientist">Applied Scientist</option>
-        <option value="engineer_programmer">Engineer/Programmer</option>
-        <option value="senior_programmer">Senior Programmer</option>
-        <option value="director">Director</option>
+        {% for position in positions %}
+        <option value="{{ position.Name }}">{{ position.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      <label for="employment_type">Employment Type:</label>
+      <select id="employment_type" name="employment_type" required onchange="setRequiredHealthInsurance()">
+        <option value="Full-Time">Full-Time</option>
+        <option value="Part-Time">Part-Time</option>
+        <option value="Seasonal">Seasonal</option>
+        <option value="Contractor">Contract</option>
+        <option value="Intern">Internship</option>
       </select><br><br>
 
       <label for="salary">Salary:</label>
       <input type="number" id="salary" name="salary" min="0" required><br><br>
+
+      <label for="department">Department:</label>
+      <select id="department" name="department" required>
+        {% for department in departments %}
+        <option value="{{ department.Name }}">{{ department.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      <label for="health_insurance">Health Insurance:</label>
+      <input type="text" id="health_insurance" name="health_insurance" required><br><br>
+
     </fieldset>
 
     <button type="submit">Submit</button>

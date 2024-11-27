@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template
 
-def create_app(test_config=None):
+def create_app():
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
@@ -14,7 +14,7 @@ def create_app(test_config=None):
     )
 
     from . import db
-    db.init_app(app)
+    db.init_db(app)
 
     from . import employee
     app.register_blueprint(employee.bp)
