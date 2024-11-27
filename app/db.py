@@ -20,5 +20,32 @@ def close_db(e=None):
     if db is not None:
         db.close()
 
-def init_app(app):
+def execute_and_commit(query: str, args=None):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(query, args)
+    cursor.close()
+    db.commit()
+    close_db()
+    return
+
+def execute_and_fetchone(query: str, cursor_type, args=None):
+    db = get_db()
+    cursor = db.cursor(cursor_type)
+    cursor.execute(query, args)
+    result = cursor.fetchone()
+    cursor.close()
+    close_db()
+    return result
+
+def execute_and_fetchall(query: str, cursor_type, args=None):
+    db = get_db()
+    cursor = db.cursor(cursor_type)
+    cursor.execute(query, args)
+    result = cursor.fetchall()
+    cursor.close()
+    close_db()
+    return result
+
+def init_db(app):
     app.teardown_appcontext(close_db)

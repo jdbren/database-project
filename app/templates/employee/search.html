@@ -17,7 +17,6 @@
     // Function to toggle between basic and advanced search
     function showSearchForm(formType) {
       const advancedFieldset = document.getElementById('advanced-fields');
-
       if (formType === 'basic') {
         advancedFieldset.style.display = 'none';
         advancedFieldset.disabled = true;
@@ -116,6 +115,7 @@
         <th>Experience</th>
         <th>Position</th>
         <th>Salary</th>
+        <th>Update</th>
       </tr>
     </thead>
     <tbody>
@@ -124,6 +124,7 @@
         {% for d in employee %}
         <td>{{ d }}</td>
         {% endfor %}
+        <td><a href="/employee/{{ employee[0] }}/edit">Update</a></td>
       </tr>
       {% endfor %}
     </tbody>
