@@ -58,7 +58,7 @@
 
       <label for="degree">Highest Academic Degree:</label>
       <select id="degree" name="degree">
-        <option value="">-- Select --</option>
+        <option selected value="">-- Select --</option>
         <option value="Diploma">High School</option>
         <option value="Associate">Associate's Degree</option>
         <option value="Bachelor">Bachelor's Degree</option>
@@ -99,8 +99,8 @@
       <label for="salary">Salary:</label>
       <input type="number" id="salary" name="salary" min="0" required><br><br>
 
-      <label for="department">Department:</label>
-      <select id="department" name="department" required>
+      <label for="department">Departments:</label>
+      <select id="department" name="department" required multiple>
         {% for department in departments %}
         <option value="{{ department.Name }}">{{ department.Name }}</option>
         {% endfor %}
@@ -109,6 +109,14 @@
       <label for="health_insurance">Health Insurance:</label>
       <input type="text" id="health_insurance" name="health_insurance" required><br><br>
 
+    </fieldset>
+
+    <fieldset>
+      <legend>Benefits Selection</legend>
+      {% for benefit in benefits %}
+      <input type="checkbox" id="{{ benefit.Name }}" name="benefits" value="{{ benefit.Name }}">
+      <label for="{{ benefit.Name }}">{{ benefit.Name }}</label><br>
+      {% endfor %}
     </fieldset>
 
     <button type="submit">Submit</button>

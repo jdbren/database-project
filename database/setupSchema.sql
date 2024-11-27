@@ -114,14 +114,14 @@ CREATE TABLE IF NOT EXISTS Staff (
     ON UPDATE CASCADE,
   CONSTRAINT StaffCK_ValidZIP CHECK (
     ZIPCode REGEXP '^[0-9]{5}(-[0-9]{4})?$'
-  ),
+  ),  
   CONSTRAINT StaffFK_HighestDegree
     FOREIGN KEY (HighestDegree)
     REFERENCES Degrees (Name)
     ON DELETE SET NULL
     ON UPDATE CASCADE,
   CONSTRAINT StaffCK_ValidYears CHECK (
-    ExternalYearsWorked > 0
+    ExternalYearsWorked >= 0
   )
 );
 
