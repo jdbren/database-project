@@ -16,6 +16,8 @@ def index():
 ## TODO: Add more than one department and health insurance
 @bp.route('/insert', methods=['GET', 'POST'])
 def insert():
+    benefitsList = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
+
     if request.method == 'POST':
         try:
             # Retrieve form data
@@ -29,14 +31,17 @@ def insert():
             state = request.form['state']
             zip = request.form['zip']
             phone = request.form['phone']
-            degree = request.form['degree']
+            degree = None
+            if request.form['degree']:
+                degree = request.form['degree']
             experience = request.form['experience']
             position = request.form['position']
             employment_type = request.form['employment_type']
-            department = request.form['department']
+            selected_departments = request.form.getlist('departments')
             salary = request.form['salary']
-            # health_insurance = None
+            health_insurance = None
             external_hire = request.form['external_hire']
+            selected_benefits = request.form.getlist('benefits')
 
             db = get_db()
             cursor = db.cursor()
@@ -61,11 +66,19 @@ def insert():
                 ) VALUES (%s, CURDATE(), %s, %s, %s, %s)
             ''', (id, position, employment_type, salary, external_hire))
 
-            cursor.execute('''
-                INSERT INTO DepartmentsHistory (
-                    ID, Department, StartDate
-                ) VALUES (%s, %s, CURDATE())
-            ''', (id, department))
+            for department in selected_departments:
+                cursor.execute('''
+                    INSERT INTO DepartmentsHistory (
+                        ID, Department, StartDate
+                    ) VALUES (%s, %s, CURDATE())
+                ''', (id, department))
+
+            for benefit in selected_benefits:
+                cursor.execute('''
+                    INSERT INTO StaffBenefits (
+                        ID, Benefit, StartDate
+                    ) VALUES (%s, %s, CURDATE())
+                ''', (id, benefit))
 
             cursor.close()
 
@@ -81,7 +94,11 @@ def insert():
 
     positionsList = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
     departmentsList = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
-    return render_template('employee/insert.html', positions=positionsList, departments=departmentsList)
+    return render_template('employee/insert.html',
+        positions=positionsList,
+        departments=departmentsList,
+        benefits=benefitsList
+    )
 
 
 
