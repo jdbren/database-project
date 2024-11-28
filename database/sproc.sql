@@ -203,7 +203,7 @@ FOR EACH ROW
         SET MESSAGE_TEXT = 'Closing project requires CloseProject().';
       ELSEIF isClosed > 1 AND NEW.Status != 'Closed' THEN
         SIGNAL SQLSTATE '45000' -- User-defined error.
-        SET MESSAGE_TEXT = 'Re-opening project requires ReopenProject().';
+        SET MESSAGE_TEXT = 'Re-opening project requires ReviveProject().';
       ELSEIF OLD.Leader != NEW.Leader THEN
         SIGNAL SQLSTATE '45000' -- User-defined error.
         SET MESSAGE_TEXT = 'Leader update requires ChangeProjectLeader().';
@@ -215,12 +215,25 @@ CREATE PROCEDURE CloseProject(
   IN Project INT, IN CloseDate DATE
 )
 BEGIN
+  DECLARE isEmpty INT DEFAULT NULL;
+  DECLARE employee INT;
+  DECLARE roleCursor CURSOR FOR
+    SELECT EmployeeID FROM EmployeeRoles
+    WHERE ProjectID = Project;
+  DECLARE CONTINUE HANDLER FOR
+    NOT FOUND SET isEmpty = 1;
+
   START TRANSACTION;
   SET @disableProjectTrigger = 1;
 
-  UPDATE EmployeeRolesHistory
-  SET EndDate = CloseDate
-  WHERE ProjectID = Project;
+  OPEN roleCursor;
+  retireAll: LOOP
+    FETCH roleCursor INTO employee;
+    IF isEmpty THEN LEAVE retireAll; END IF;
+    CALL RetireFromRole(employee, CloseDate);
+  END LOOP;
+  CLOSE roleCursor;
+
   UPDATE Projects
   SET Status = 'Closed'
   WHERE ID = Project;
@@ -228,9 +241,9 @@ BEGIN
   SET @disableProjectTrigger = NULL;
   COMMIT;
 END $$
-DROP PROCEDURE IF EXISTS ReopenProject $$
-CREATE PROCEDURE ReopenProject(
-  IN Project INT, IN ReopenDate DATE,
+DROP PROCEDURE IF EXISTS ReviveProject $$
+CREATE PROCEDURE ReviveProject(
+  IN Project INT, IN ReviveDate DATE,
   IN TeamLeader INT
 )
 BEGIN
@@ -247,7 +260,7 @@ BEGIN
   END IF;
   INSERT INTO EmployeeRolesHistory
   VALUES ( TeamLeader, Project,
-    ReopenDate, NULL, 'Leader'
+    ReviveDate, NULL, 'Leader'
   );
 
   SET @disableProjectTrigger = NULL;

@@ -108,7 +108,7 @@ GRANT EXECUTE
   ON PROCEDURE GenericCompany.CloseProject
   TO 'GenericApplication'@'localhost';
 GRANT EXECUTE
-  ON PROCEDURE GenericCompany.ReopenProject
+  ON PROCEDURE GenericCompany.ReviveProject
   TO 'GenericApplication'@'localhost';
 GRANT EXECUTE
   ON PROCEDURE GenericCompany.ChangeProjectLeader
