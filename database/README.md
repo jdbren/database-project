@@ -1,14 +1,12 @@
 # Quick Start
 
-To start the database, run (assuming password-protected root):
-```bash
-mysql -u root -p < ./database/setup.sql
-```
+The following command must be run from the repository's root directory.
 
-To insert sample data, run: `python ./database/insertBase.py` from the repository's root directory.
+To start the database, run: `mysql -u root -p < ./database/initialize.sql`
+
+To insert default data, run: `python ./database/insertDefault.py`.
 
 ## Scripts
-- `insertBase.py`: Populates tables with sample data from `data`.
+- `initialize.sql`: Creates `GenericCompany` with `GenericAdministrator` and `GenericApplication` users, granting all privileges to `GenericAdministrator` and limited privileges to `GenericApplication`. Sources `schema.sql` and `sproc.sql`.
+- `insertDefault.py`: Populates tables with sample data from `default`.
 - `insertSimulate.py`: Populates tables with random simulated data.
-- `setup.sql`: Creates `GenericCompany` with `GenericAdministrator` and `GenericApplication` users, granting all privileges to `GenericAdministrator` and limited privileges to `GenericApplication`.
-- `wipe.sql`: Drops the database and users.

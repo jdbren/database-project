@@ -1,20 +1,16 @@
--- Creates the database.
-CREATE DATABASE IF NOT EXISTS GenericCompany;
-USE GenericCompany;
-
 -- SCHEMA: Enumerated Types --
   -- Employment --
 CREATE TABLE IF NOT EXISTS Departments (
   Name CHAR(36) NOT NULL,
   PRIMARY KEY (Name),
   CONSTRAINT DepartmentsCK_ValidName
-    CHECK ( NAME REGEXP '^[-&/ a-zA-Z]+$' )
+    CHECK ( Name REGEXP '^[-&/ a-zA-Z]+$' )
 );
 CREATE TABLE IF NOT EXISTS EmploymentTypes (
   Name CHAR(16) NOT NULL,
   PRIMARY KEY (Name),
   CONSTRAINT EmploymentTypesCK_ValidName
-    CHECK ( NAME REGEXP '^[- a-zA-Z]+$' )
+    CHECK ( Name REGEXP '^[-&/ a-zA-Z]+$' )
 );
 CREATE TABLE IF NOT EXISTS Positions (
   Name CHAR(36) NOT NULL,
@@ -22,38 +18,46 @@ CREATE TABLE IF NOT EXISTS Positions (
   MaximumSalary INT NOT NULL,
   PRIMARY KEY (Name),
   CONSTRAINT PositionsCK_ValidName
-    CHECK ( NAME REGEXP '^[-&/ a-zA-Z0-9]+$' ),
+    CHECK ( Name REGEXP '^[-&/ a-zA-Z0-9]+$' ),
   CONSTRAINT PositionsCK_ValidSalaryRange
-    CHECK ( -- Enforce minimum wage...?
-      MinimumSalary > 0 AND
+    CHECK ( MinimumSalary > 0 AND
       MinimumSalary <= MaximumSalary
   )
+);
+CREATE TABLE IF NOT EXISTS HealthInsurance (
+  Name CHAR(36) NOT NULL,
+  PRIMARY KEY (Name),
+  CONSTRAINT HealthInsuranceCK_ValidName
+    CHECK ( Name REGEXP '^[-&/ a-zA-Z0-9]+$' )
 );
 CREATE TABLE IF NOT EXISTS Benefits (
   Name CHAR(24) NOT NULL,
   PRIMARY KEY (Name),
   CONSTRAINT BenefitsCK_ValidName
-    CHECK ( NAME REGEXP '^[-&/ a-zA-Z]+$' )
+    CHECK ( Name REGEXP '^[-&/ a-zA-Z0-9]+$' )
+    -- Excludes all types of Health Insurances.
 );
   -- Project Management --
 CREATE TABLE IF NOT EXISTS ProjectStatus (
   Name CHAR(16) NOT NULL,
   PRIMARY KEY (Name),
   CONSTRAINT ProjectStatusCK_ValidName
-    CHECK ( Name REGEXP '^[- a-zA-Z]+$' )
+    CHECK ( Name REGEXP '^[-&/ a-zA-Z0-9]+$' )
 );
 CREATE TABLE IF NOT EXISTS ProjectRoles (
   Name CHAR(36) NOT NULL,
   PRIMARY KEY (Name),
   CONSTRAINT ProjectRolesCK_ValidName
-    CHECK ( Name REGEXP '^[-&/ a-zA-Z0-9]+$' )
+    CHECK ( Name != 'Leader' AND
+      Name REGEXP '^[-&/ a-zA-Z0-9]+$'
+  ) -- 'Leader' is reserved!
 );
   -- Demographics --
 CREATE TABLE IF NOT EXISTS Genders (
   Name CHAR(8) NOT NULL,
   PRIMARY KEY (Name),
   CONSTRAINT GendersCK_ValidName
-    CHECK ( Name REGEXP '^[- a-zA-Z]+$' )
+    CHECK ( Name REGEXP '^[-&/ a-zA-Z]+$' )
 );
 CREATE TABLE IF NOT EXISTS States (
   Name CHAR(2) NOT NULL,
@@ -63,7 +67,9 @@ CREATE TABLE IF NOT EXISTS States (
 );
 CREATE TABLE IF NOT EXISTS Degrees (
   Name CHAR(16) NOT NULL,
-  PRIMARY KEY (Name)
+  PRIMARY KEY (Name),
+  CONSTRAINT DegreesCK_ValidName
+    CHECK ( Name REGEXP '^[.'' a-zA-Z]+$' )
 );
 
 -- SCHEMA: Employee Records --
@@ -74,7 +80,7 @@ CREATE TABLE IF NOT EXISTS Employees (
   Gender CHAR(8) NOT NULL,
   BirthDate DATE NOT NULL,
   SocialSecurity CHAR(11) NOT NULL,
-  PhoneNumber CHAR(10) NOT NULL,
+  PhoneNumber CHAR(12) NOT NULL,
   StreetAddress VARCHAR(255) NOT NULL,
   City VARCHAR(64) NOT NULL,
   State CHAR(2) NOT NULL,
@@ -92,9 +98,9 @@ CREATE TABLE IF NOT EXISTS Employees (
   CONSTRAINT EmployeesCK_SocialSecurityFormat
     CHECK ( SocialSecurity REGEXP '^[0-9]{3}-[0-9]{2}-[0-9]{4}$' ),
   CONSTRAINT EmployeesCK_ValidPhoneNumber
-    CHECK ( PhoneNumber REGEXP '^[0-9]{10}$' ),
+    CHECK ( PhoneNumber REGEXP '^[0-9]{3} [0-9]{3}-[0-9]{4}$' ),
   CONSTRAINT EmployeesCK_ValidAddress
-    CHECK (
+    CHECK ( -- Or have one field for the entire address.
       StreetAddress REGEXP '^[-&/(),.'' a-zA-Z0-9]+$' AND
       City REGEXP '^[-,.'' a-zA-Z0-9]+$' AND
       ZIPCode REGEXP '^[0-9]{5}(-[0-9]{4})?$'
@@ -113,11 +119,6 @@ CREATE TABLE IF NOT EXISTS Employees (
     CHECK ( ExternalYearsWorked >= 0 )
 );
 
--- TODO:
----- Log warning when Salary is out-of-range.
----- Log warning when DateRange overlaps with each other.
----- Trigger update to History with each insert/update.
----- Require specifying EndDate with each delete.
 CREATE TABLE IF NOT EXISTS EmployeePositions (
   ID INT NOT NULL,
   StartDate DATE NOT NULL,
@@ -125,8 +126,9 @@ CREATE TABLE IF NOT EXISTS EmployeePositions (
   EmploymentType CHAR(16) NOT NULL,
   Salary INT NOT NULL,
   IsExternalHire TINYINT NOT NULL,
-  HealthCoverageStartDate DATE NULL,
-  HealthCoverageEndDate DATE NULL,
+  HealthInsurance CHAR(36) NULL,
+  HealthStartDate DATE NULL,
+  HealthEndDate DATE NULL,
   PRIMARY KEY (ID),
   CONSTRAINT EmployeePositionsFK_ID
     FOREIGN KEY (ID)
@@ -143,18 +145,16 @@ CREATE TABLE IF NOT EXISTS EmployeePositions (
     REFERENCES EmploymentTypes (Name),
     -- ON DELETE RESTRICT --
     -- ON UPDATE RESTRICT --
+  CONSTRAINT EmployeePositionsFK_HealthInsurance
+    FOREIGN KEY (HealthInsurance)
+    REFERENCES HealthInsurance (Name)
+    -- ON DELETE RESTRICT --
+    ON UPDATE CASCADE,
   CONSTRAINT EmployeePositionsCK_ValidSalary
     CHECK ( Salary >= 0 ),
-  CONSTRAINT EmployeePositionsCK_RequiredHealthCoverage
-    CHECK (
-      EmploymentType != 'Full-Time' OR
-      HealthCoverageStartDate IS NOT NULL
-  ),
-  CONSTRAINT EmployeePositionsCK_ValidHealthCoverageDateRange
-    CHECK (
-      HealthCoverageStartDate IS NULL OR
-      HealthCoverageEndDate IS NULL OR
-      HealthCoverageEndDate >= HealthCoverageStartDate
+  CONSTRAINT EmployeePositionsCK_ValidHealthDateRange
+    CHECK ( HealthStartDate IS NULL OR HealthEndDate IS NULL OR
+      HealthEndDate >= HealthStartDate
   )
 );
 CREATE TABLE IF NOT EXISTS EmployeePositionsHistory (
@@ -165,8 +165,9 @@ CREATE TABLE IF NOT EXISTS EmployeePositionsHistory (
   EmploymentType CHAR(16) NOT NULL,
   Salary INT NOT NULL,
   IsExternalHire TINYINT NOT NULL,
-  HealthCoverageStartDate DATE NULL,
-  HealthCoverageEndDate DATE NULL,
+  HealthInsurance CHAR(36) NULL,
+  HealthStartDate DATE NULL,
+  HealthEndDate DATE NULL,
   PRIMARY KEY (ID, StartDate),
   CONSTRAINT EmployeePositionsHistoryFK_ID
     FOREIGN KEY (ID)
@@ -174,16 +175,15 @@ CREATE TABLE IF NOT EXISTS EmployeePositionsHistory (
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT EmployeePositionsHistoryCK_ValidDateRange
-    CHECK (
-      EndDate IS NULL OR
-      EndDate >= StartDate
+    CHECK ( EndDate IS NULL OR EndDate >= StartDate ),
+  CONSTRAINT EmployeePositionsHistoryCK_ValidSalary
+    CHECK ( Salary >= 0 ),
+  CONSTRAINT EmployeePositionsHistoryCK_ValidHealthDateRange
+    CHECK ( HealthStartDate IS NULL OR HealthEndDate IS NULL OR
+      HealthEndDate >= HealthStartDate
   )
 );
 
--- TODO:
----- Log warning when DateRange overlaps with each other.
----- Trigger update to History with each insert/update.
----- Require specifying EndDate with each delete.
 CREATE TABLE IF NOT EXISTS EmployeeDepartments (
   ID INT NOT NULL,
   Department CHAR(36) NOT NULL,
@@ -212,10 +212,7 @@ CREATE TABLE IF NOT EXISTS EmployeeDepartmentsHistory (
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT EmployeeDepartmentsHistoryCK_ValidDateRange
-    CHECK (
-      EndDate IS NULL OR
-      EndDate >= StartDate
-  )
+    CHECK ( EndDate IS NULL OR EndDate >= StartDate )
 );
 
 CREATE TABLE IF NOT EXISTS EmployeeBenefits (
@@ -235,10 +232,7 @@ CREATE TABLE IF NOT EXISTS EmployeeBenefits (
     -- ON DELETE RESTRICT --
     ON UPDATE CASCADE,
   CONSTRAINT EmployeeBenefitsCK_ValidDateRange
-    CHECK (
-      EndDate IS NULL OR
-      EndDate >= StartDate
-  )
+    CHECK ( EndDate IS NULL OR EndDate >= StartDate )
 );
 
 -- SCHEMA: Project Records --
@@ -266,10 +260,6 @@ CREATE TABLE IF NOT EXISTS Projects (
     ON UPDATE CASCADE
 );
 
--- TODO:
----- Log warning when DateRange overlaps with each other.
----- Trigger update to History with each insert/update.
----- Require specifying EndDate with each delete.
 CREATE TABLE IF NOT EXISTS EmployeeRoles (
   EmployeeID INT NOT NULL,
   ProjectID INT NOT NULL,
@@ -279,12 +269,12 @@ CREATE TABLE IF NOT EXISTS EmployeeRoles (
   CONSTRAINT EmployeeRolesFK_EmployeeID
     FOREIGN KEY (EmployeeID)
     REFERENCES Employees (ID)
-    -- ON DELETE RESTRICT --
+    ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT EmployeeRolesFK_ProjectID
     FOREIGN KEY (ProjectID)
     REFERENCES Projects (ID)
-    -- ON DELETE RESTRICT --
+    ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT EmployeeRolesFK_Role
     FOREIGN KEY (Role)
@@ -302,7 +292,7 @@ CREATE TABLE IF NOT EXISTS EmployeeRolesHistory (
   CONSTRAINT EmployeeRolesHistoryFK_EmployeeID
     FOREIGN KEY (EmployeeID)
     REFERENCES Employees (ID)
-    -- ON DELETE RESTRICT --
+    ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT EmployeeRolesHistoryFK_ProjectID
     FOREIGN KEY (ProjectID)
@@ -310,52 +300,3 @@ CREATE TABLE IF NOT EXISTS EmployeeRolesHistory (
     -- ON DELETE RESTRICT --
     ON UPDATE CASCADE
 );
-
--- Creates new users for this database only.
-CREATE USER IF NOT EXISTS 'GenericAdministrator'@'localhost';
-CREATE USER IF NOT EXISTS 'GenericApplication'@'localhost';
--- Grants necessary privileges.
-GRANT ALL PRIVILEGES ON GenericCompany.*
-  TO 'GenericAdministrator'@'localhost';
-GRANT SELECT ON GenericCompany.*
-  TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE
-  ON GenericCompany.Positions
-  TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE
-  ON GenericCompany.Benefits
-  TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE
-  ON GenericCompany.ProjectStatus
-  TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE
-  ON GenericCompany.ProjectRoles
-  TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE
-  ON GenericCompany.Employees
-  TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE
-  ON GenericCompany.EmployeePositions
-  TO 'GenericApplication'@'localhost';
-GRANT UPDATE(StartDate, EndDate)
-  ON GenericCompany.EmployeePositionsHistory
-  TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE
-  ON GenericCompany.EmployeeDepartments
-  TO 'GenericApplication'@'localhost';
-GRANT UPDATE(StartDate, EndDate)
-  ON GenericCompany.EmployeeDepartmentsHistory
-  TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE
-  ON GenericCompany.EmployeeBenefits
-  TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE
-  ON GenericCompany.Projects
-  TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE
-  ON GenericCompany.EmployeeRoles
-  TO 'GenericApplication'@'localhost';
-GRANT INSERT, UPDATE, DELETE
-  ON GenericCompany.EmployeeRolesHistory
-  TO 'GenericApplication'@'localhost';
-FLUSH PRIVILEGES;

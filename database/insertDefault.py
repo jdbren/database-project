@@ -32,11 +32,11 @@ if __name__ == '__main__':
         sys.exit(1) # Disables command-line arguments.
 
     pattern = re.compile(r'CREATE TABLE')
-    with open(databaseRoot + '/setup.sql', 'r') as definitionFile:
+    with open(databaseRoot + '/schema.sql', 'r') as definitionFile:
         for line in definitionFile: # Scans each line for schema.
             if pattern.search(line): # Found schema definition.
                 schemaName = line.split()[5]
-                filePath = f'{databaseRoot}/data/{schemaName}.csv'
+                filePath = f'{databaseRoot}/default/{schemaName}.csv'
                 try: # Inserts into database if file exists.
                     with open(filePath,'r') as dataFile:
                         print(f'Inserting from {schemaName}.csv.')
