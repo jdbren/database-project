@@ -10,7 +10,6 @@ def get_db():
             current_app.config['MYSQL_PASSWORD'],
             current_app.config['MYSQL_DB']
         )
-        g.db.row_factory = MySQLdb.cursors.DictCursor
 
     return g.db
 
