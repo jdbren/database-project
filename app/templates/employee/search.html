@@ -25,16 +25,17 @@
       }
     }
   </script>
+  <script>src="{{ url_for('static', filename='script.js') }}"</script>
 </head>
 
 <body>
   <h1>Search Employee Database</h1>
 
   <!-- Basic Search Form -->
-  <form id="basic-search" action="/employee/search" method="GET">
+  <form action="/employee/search" method="GET">
     <div class="toggle-buttons">
-      <button onclick="showSearchForm('basic')">Basic Search</button>
-      <button onclick="showSearchForm('advanced')">Advanced Search</button>
+      <button type="button" onclick="showSearchForm('basic')">Basic Search</button>
+      <button type="button" onclick="showSearchForm('advanced')">Advanced Search</button>
       <button type="submit">Search</button>
     </div>
 
