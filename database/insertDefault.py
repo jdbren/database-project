@@ -2,6 +2,7 @@ import sys, re, csv
 import MySQLdb
 
 databaseRoot='./database'
+dataRoot=databaseRoot+'/default'
 
 db = MySQLdb.connect(
     host='localhost',
@@ -28,7 +29,7 @@ def insertFromCSV(schema, dataFile):
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        print('Usage: python compileCSV.py')
+        print('Usage: python insertDefault.py')
         sys.exit(1) # Disables command-line arguments.
 
     pattern = re.compile(r'CREATE TABLE')
@@ -36,7 +37,7 @@ if __name__ == '__main__':
         for line in definitionFile: # Scans each line for schema.
             if pattern.search(line): # Found schema definition.
                 schemaName = line.split()[5]
-                filePath = f'{databaseRoot}/default/{schemaName}.csv'
+                filePath = f'{dataRoot}/{schemaName}.csv'
                 try: # Inserts into database if file exists.
                     with open(filePath,'r') as dataFile:
                         print(f'Inserting from {schemaName}.csv.')

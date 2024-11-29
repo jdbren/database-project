@@ -10,6 +10,10 @@ To insert default data: `python ./database/insertDefault.py`
 - `insertDefault.py`: Populates database with default enumerations from `default`.
 - `insertSimulate.py`: Populates database with random simulated data.
 
+## Credits
+- Name data from [Mockaroo](https://mockaroo.com).
+- Address data from [Real, Random Address Date](https://github.com/EthanRBrown/rrad).
+
 # Reference
 *Consult `schema.sql` for available tables and attributes.*
 
