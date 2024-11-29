@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +29,6 @@
 
 <body>
   <h1>Search Employee Database</h1>
-
   <div class="toggle-buttons">
     <button onclick="showSearchForm('basic')">Basic Search</button>
     <button onclick="showSearchForm('advanced')">Advanced Search</button>
@@ -41,52 +39,56 @@
     <fieldset>
       <legend>Basic Search Criteria</legend>
 
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name"><br><br>
+      <label for="first_name">First Name:</label>
+      <input type="text" id="first_name" name="first_name"><br><br>
+
+      <label for="last_name">Last Name:</label>
+      <input type="text" id="last_name" name="last_name"><br><br>
 
       <label for="employee_number">Employee Number:</label>
       <input type="text" id="employee_number" name="employee_number"><br><br>
 
       <label for="ssn">Social Security Number:</label>
-      <input type="text" id="ssn" name="ssn"><br><br>
-
+      <input type="text" id="ssn" name="ssn" maxlength="11" oninput="formatSSN()"><br><br>
       <label for="phone">Phone Number:</label>
-      <input type="tel" id="phone" name="phone"><br><br>
+      <input type="tel" id="phone" name="phone" maxlength="10"><br><br>
     </fieldset>
     <!-- Advanced Search Form -->
     <fieldset id="advanced-fields" disabled="true">
       <legend>Advanced Search Criteria</legend>
+      <label for="gender">Gender:</label>
+      <select id="gender" name="gender">
+        <option value>-- Select --</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select><br><br>
 
       <label for="degree">Highest Academic Degree:</label>
-      <input type="text" id="degree" name="degree"><br><br>
+      <select id="degree" name="degree">
+        <option value>-- Select --</option>
+        <option value="Diploma">High School</option>
+        <option value="Associate">Associate's Degree</option>
+        <option value="Bachelor">Bachelor's Degree</option>
+        <option value="Master">Master's Degree</option>
+        <option value="Doctoral">Doctorate</option>
+      </select><br><br>
 
       <label for="experience">Years of Work Experience:</label>
       <input type="number" id="experience" name="experience" min="0"><br><br>
 
-      <label for="hiring_position">Hiring Position:</label>
-      <select id="hiring_position" name="hiring_position">
-        <option value="">-- Select --</option>
-        <option value="research_scientist">Research Scientist</option>
-        <option value="applied_scientist">Applied Scientist</option>
-        <option value="engineer_programmer">Engineer/Programmer</option>
-        <option value="senior_programmer">Senior Programmer</option>
-        <option value="director">Director</option>
+      <label for="position">Position:</label>
+      <select id="position" name="position">
+        <option value>-- Select --</option>
+        {% for position in positions %}
+        <option value="{{ position.Name }}">{{ position.Name }}</option>
+        {% endfor %}
       </select><br><br>
 
-      <label for="hiring_salary_min">Starting Salary (Min):</label>
-      <input type="number" id="hiring_salary_min" name="hiring_salary_min" min="0"><br><br>
-
-      <label for="hiring_salary_max">Starting Salary (Max):</label>
-      <input type="number" id="hiring_salary_max" name="hiring_salary_max" min="0"><br><br>
-
-      <label for="current_position">Current Position:</label>
-      <input type="text" id="current_position" name="current_position"><br><br>
-
-      <label for="current_salary_min">Current Salary (Min):</label>
-      <input type="number" id="current_salary_min" name="current_salary_min" min="0"><br><br>
-
-      <label for="current_salary_max">Current Salary (Max):</label>
-      <input type="number" id="current_salary_max" name="current_salary_max" min="0"><br><br>
+      <label for="salary_min">Starting Salary (Min):</label>
+      <input type="number" id="salary_min" name="salary_min" min="0"><br><br>
+      <label for="salary_max">Starting Salary (Max):</label>
+      <input type="number" id="salary_max" name="salary_max" min="0"><br><br>
 
       <label for="address">Address:</label>
       <input type="text" id="address" name="address"><br><br>
@@ -100,11 +102,11 @@
   <table border="1">
     <thead>
       <tr>
-        <th>Employee Number</th>
-        <th>First Name</th>
-        <th>Last Name</th>
+        <th>ID</th>
+        <th>First</th>
+        <th>Last</th>
         <th>Gender</th>
-        <th>Date of Birth</th>
+        <th>DOB</th>
         <th>SSN</th>
         <th>Phone</th>
         <th>Address</th>
@@ -113,9 +115,10 @@
         <th>ZIP Code</th>
         <th>Degree</th>
         <th>Experience</th>
-        <th>Position</th>
+        <th>Departments</th>
+        <th>Title</th>
         <th>Salary</th>
-        <th>Update</th>
+        <th>Links</th>
       </tr>
     </thead>
     <tbody>
