@@ -29,13 +29,15 @@
 
 <body>
   <h1>Search Employee Database</h1>
-  <div class="toggle-buttons">
-    <button onclick="showSearchForm('basic')">Basic Search</button>
-    <button onclick="showSearchForm('advanced')">Advanced Search</button>
-  </div>
 
   <!-- Basic Search Form -->
   <form id="basic-search" action="/employee/search" method="GET">
+    <div class="toggle-buttons">
+      <button onclick="showSearchForm('basic')">Basic Search</button>
+      <button onclick="showSearchForm('advanced')">Advanced Search</button>
+      <button type="submit">Search</button>
+    </div>
+
     <fieldset>
       <legend>Basic Search Criteria</legend>
 
@@ -50,12 +52,14 @@
 
       <label for="ssn">Social Security Number:</label>
       <input type="text" id="ssn" name="ssn" maxlength="11" oninput="formatSSN()"><br><br>
+
       <label for="phone">Phone Number:</label>
       <input type="tel" id="phone" name="phone" maxlength="10"><br><br>
     </fieldset>
     <!-- Advanced Search Form -->
     <fieldset id="advanced-fields" disabled="true">
       <legend>Advanced Search Criteria</legend>
+
       <label for="gender">Gender:</label>
       <select id="gender" name="gender">
         <option value>-- Select --</option>
@@ -90,29 +94,48 @@
       <label for="salary_max">Starting Salary (Max):</label>
       <input type="number" id="salary_max" name="salary_max" min="0"><br><br>
 
+      <label for="employment_type">Employment Type:</label>
+      <select id="employment_type" name="employment_type">
+        <option value="">-- Select --</option>
+        <option value="Full-Time">Full-Time</option>
+        <option value="Part-Time">Part-Time</option>
+        <option value="Contractor">Contractor</option>
+        <option value="Intern">Intern</option>
+      </select><br><br>
+
+      <label for="departments">Departments:</label>
+      <select id="departments" name="departments" multiple>
+        {% for department in departments %}
+        <option value="{{ department.Name }}">{{ department.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+
       <label for="address">Address:</label>
       <input type="text" id="address" name="address"><br><br>
 
-      <label for="dob">Date of Birth:</label>
-      <input type="date" id="dob" name="dob"><br><br>
+      <label for="city">City:</label>
+      <input type="text" id="city" name="city"><br><br>
+
+      <label for="state">State:</label>
+      <input type="text" id="state" name="state" maxlength="2"><br><br>
+
+      <label for="zip">Zip Code:</label>
+      <input type="number" id="zip" name="zip"><br><br>
+
     </fieldset>
-    <button type="submit">Search</button>
+    <button type="submit"
+      style="margin-top: 1rem; margin-bottom: 1rem;"
+    >Search</button>
   </form>
 
   <table border="1">
     <thead>
       <tr>
         <th>ID</th>
+        <th>SSN</th>
         <th>First</th>
         <th>Last</th>
         <th>Gender</th>
-        <th>DOB</th>
-        <th>SSN</th>
-        <th>Phone</th>
-        <th>Address</th>
-        <th>City</th>
-        <th>State</th>
-        <th>ZIP Code</th>
         <th>Degree</th>
         <th>Experience</th>
         <th>Departments</th>
@@ -124,10 +147,20 @@
     <tbody>
       {% for employee in employees %}
       <tr>
-        {% for d in employee %}
-        <td>{{ d }}</td>
-        {% endfor %}
-        <td><a href="/employee/{{ employee[0] }}/edit">Update</a></td>
+        <td>{{ employee.ID }}</td>
+        <td>{{ employee.SocialSecurity }}</td>
+        <td>{{ employee.FirstName }}</td>
+        <td>{{ employee.LastName }}</td>
+        <td>{{ employee.Gender }}</td>
+        <td>{{ employee.HighestDegree }}</td>
+        <td>{{ employee.ExternalYearsWorked }}</td>
+        <td>{{ employee.Departments }}</td>
+        <td>{{ employee.Position }}</td>
+        <td>{{ employee.Salary }}</td>
+        <td>
+          <a href="/employee/{{ employee.ID }}">Details</a>
+          <a href="/employee/{{ employee.ID }}/edit">Update</a>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
