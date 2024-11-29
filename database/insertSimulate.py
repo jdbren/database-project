@@ -4,6 +4,7 @@ import MySQLdb
 
 dataRoot='./database/default'
 employeeCount = 1000
+compileOnly = False
 
 db = MySQLdb.connect(
     host='localhost',
@@ -92,7 +93,7 @@ def randPositions(employees):
 
         group = []
         s = [1, 2, 3, 4, 5, 6]
-        while internal > 0:
+        while internal > 0: # Random scheduling.
             if internal - sum(s) >= 0 and random.randint(0, 99) > 5:
                 group.append(copy.deepcopy(s)); internal -= sum(s)
             elif sum(s) > 1: s.pop()
@@ -167,17 +168,107 @@ def randPositions(employees):
                 data.append(unit[j])
     return data
 
+
+def randDepartments(positions):
+    departments = f'{dataRoot}/Departments.csv'
+
+    with open(departments, 'r') as file:
+        departments = csv.DictReader(file)
+        departments = [row for row in departments]
+
+    data = []
+    for p in positions:
+        d = datetime.datetime.strptime(p[1], '%Y-%m-%d')
+        duration = (
+            datetime.datetime.today() - d if not p[2] else \
+            datetime.datetime.strptime(p[2], '%Y-%m-%d') - d
+        ).days // 7
+
+        active = []; dataForP = []
+        choices = [row['Name'] for row in departments]
+        while True:
+            if active and random.randint(0, 99) < len(active) * 25:
+                team = random.choice(active)
+
+                # See schema: EmployeeDepartments
+                dataForP[team[0]].append(d.strftime('%Y-%m-%d'))
+                choices.append(team[1])
+                active.remove(team)
+
+                timeSkip = random.randint(0, duration)
+                d += datetime.timedelta(weeks=timeSkip)
+                duration -= timeSkip
+            else:
+                team = random.choice(choices)
+
+                choices.remove(team)
+                active.append([len(dataForP), team])
+                dataForP.append([p[0], team, d.strftime('%Y-%m-%d')])
+                # See schema: EmployeeDepartments
+
+                timeSkip = 27 if duration < 27 else \
+                    random.randint(27, duration)
+                d += datetime.timedelta(weeks=timeSkip)
+                duration -= timeSkip
+
+            if duration < 27: break
+
+        for row in dataForP:
+            if len(row) < 4:
+                row.append(None if not p[2] else \
+                    datetime.datetime.strptime(p[2],'%Y-%m-%d')
+                ) # Or remove departments, randomly?
+        data.extend(dataForP)
+    return data
+
+def randBenefits(activeEmployees):
+    benefits = f'{dataRoot}/Benefits.csv'
+
+    with open(benefits, 'r') as file:
+        benefits = csv.DictReader(file)
+        benefits = [row for row in benefits]
+
+    data = []
+    for e in activeEmployees:
+        choices = [row['Name'] for row in benefits]
+        while random.randint(0, 1) and choices:
+            b = random.choice(choices)
+            choices.remove(b)
+
+            benefitStart = max(
+                datetime.datetime.strptime(e[1],'%Y-%m-%d'),
+                datetime.datetime.today()
+                - datetime.timedelta(weeks=random.randint(0, 13))
+            ) # Within six months or position StartDate.
+            if 'Insurance' in b:
+                benefitEnd = (benefitStart
+                    + datetime.timedelta(weeks=52)
+                ).strftime('%Y-%m-%d')
+            else: benefitEnd = None
+
+            benefitStart = benefitStart.strftime('%Y-%m-%d')
+            data.append([e[0], b, benefitStart, benefitEnd])
+            # See schema: EmployeeBenefits
+    return data
+
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         print('Usage: python insertSimulate.py')
         sys.exit(1) # Disables command-line arguments.
 
-    employees = randEmployees(employeeCount)
-    cursor.executemany(f'INSERT INTO Employees VALUES({
-        ", ".join(["%s" for x in employees[0]])
-    })', employees); db.commit()
+    activeEmployees = []
 
+    print("Compiling Employees...")
+    employees = randEmployees(employeeCount)
+    print("Inserting Employees...")
+    if not compileOnly:
+        cursor.executemany(f'INSERT INTO Employees VALUES({
+            ", ".join(["%s" for x in employees[0]])
+        })', employees); db.commit()
+
+    print("Compiling EmployeePositionsHistory...")
     positions = randPositions(employees)
+    print("Inserting EmployeePositionsHistory...")
     processing = copy.deepcopy(positions)
     while processing:
         batch = []
@@ -187,19 +278,53 @@ if __name__ == '__main__':
                 encountered.add(row[0])
                 batch.append(row)
 
-        processing = [row for row in
-            filter(lambda x: x not in batch, processing)
-        ] # Removes current batch from processing list.
-
         endDates = []
-        for i, row in enumerate(batch):
-            if row[2] != None: endDates.append([row[0], row[2]])
-            batch[i] = [row[j] for j in range(len(row)) if j != 2]
+        for row in batch:
+            processing.remove(row)
+            eDate = row.pop(2)
+            if eDate: endDates.append([row[0], eDate])
+            else: activeEmployees.append([row[0], row[1]])
 
-        cursor.executemany(f'INSERT INTO EmployeePositions VALUES({
-            ", ".join(["%s" for x in batch[0]])
-        })', batch); db.commit()
-        if endDates:
+        if not compileOnly:
+            cursor.executemany(f'INSERT INTO EmployeePositions VALUES({
+                ", ".join(["%s" for x in batch[0]])
+            })', batch); db.commit()
+        if not compileOnly and endDates:
             cursor.executemany(f'CALL RetireFromPosition({
                 ", ".join(["%s" for x in endDates[0]])
             })', endDates); db.commit()
+
+    print("Compiling EmployeeDepartments...")
+    departments = randDepartments(positions)
+    print("Inserting EmployeeDepartments...")
+    processing = copy.deepcopy(departments)
+    while processing:
+        batch = []
+        encountered = set()
+        for row in processing:
+            if tuple([row[0], row[1]]) not in encountered:
+                encountered.add(tuple([row[0], row[1]]))
+                batch.append(row)
+
+        endDates = []
+        for row in batch:
+            processing.remove(row)
+            eDate = row.pop(3)
+            if eDate: endDates.append([row[0], row[1], eDate])
+
+        if not compileOnly:
+            cursor.executemany(f'INSERT INTO EmployeeDepartments VALUES({
+                ", ".join(["%s" for x in batch[0]])
+            })', batch); db.commit()
+        if not compileOnly and endDates:
+            cursor.executemany(f'CALL LeaveDepartment({
+                ", ".join(["%s" for x in endDates[0]])
+            })', endDates); db.commit()
+
+    print("Compiling EmployeeBenefits...")
+    benefits = randBenefits(activeEmployees)
+    print("Inserting EmployeeBenefits...")
+    if not compileOnly and benefits:
+        cursor.executemany(f'INSERT INTO EmployeeBenefits VALUES({
+            ", ".join(["%s" for x in benefits[0]])
+        })', benefits); db.commit()
