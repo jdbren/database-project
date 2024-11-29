@@ -6,6 +6,7 @@ from app.db import (
     execute_and_fetchall, execute_and_fetchone, execute_and_commit, get_db, close_db
 )
 from MySQLdb import cursors
+from datetime import datetime
 
 bp = Blueprint('employee', __name__, url_prefix='/employee')
 
@@ -16,11 +17,9 @@ def index():
 ## TODO: Add more than one department and health insurance
 @bp.route('/insert', methods=['GET', 'POST'])
 def insert():
-    benefitsList = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
-
     if request.method == 'POST':
         try:
-            # Retrieve form data
+            # Staff data
             ssn = request.form['ssn']
             fname = request.form['first_name']
             lname = request.form['last_name']
@@ -35,12 +34,18 @@ def insert():
             if request.form['degree']:
                 degree = request.form['degree']
             experience = request.form['experience']
+            # PositionsHistory data
             position = request.form['position']
             employment_type = request.form['employment_type']
-            selected_departments = request.form.getlist('departments')
             salary = request.form['salary']
-            health_insurance = None
+            health_insurance = request.form['health_insurance']
+            health_insurance_start_date = None
+            if health_insurance == 'company':
+                health_insurance_start_date = datetime.date(datetime.now())
             external_hire = request.form['external_hire']
+            # DepartmentsHistory data
+            selected_departments = request.form.getlist('departments')
+            # BenefitsHistory data
             selected_benefits = request.form.getlist('benefits')
 
             db = get_db()
@@ -62,9 +67,11 @@ def insert():
             cursor.execute('''
                 INSERT INTO PositionsHistory (
                     ID, StartDate, Position, EmploymentType, Salary,
-                    IsExternalHire
-                ) VALUES (%s, CURDATE(), %s, %s, %s, %s)
-            ''', (id, position, employment_type, salary, external_hire))
+                    IsExternalHire, HealthCoverageStartDate
+                ) VALUES (%s, CURDATE(), %s, %s, %s, %s, %s)
+            ''', (id, position, employment_type, salary, external_hire,
+                health_insurance_start_date)
+            )
 
             for department in selected_departments:
                 cursor.execute('''
@@ -86,12 +93,15 @@ def insert():
             db.commit()
             close_db()
 
+            flash('Employee added successfully')
             return redirect('/employee', HTTPStatus.CREATED)
 
         except Exception as e:
             print(e)
-            return "Error", 500
+            flash('An error occurred while adding the employee')
+            return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
 
+    benefitsList = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
     positionsList = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
     departmentsList = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
     return render_template('employee/insert.html',
