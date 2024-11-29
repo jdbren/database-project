@@ -14,7 +14,6 @@ bp = Blueprint('employee', __name__, url_prefix='/employee')
 def index():
     return render_template('employee/index.html')
 
-## TODO: Add more than one department and health insurance
 @bp.route('/insert', methods=['GET', 'POST'])
 def insert():
     if request.method == 'POST':
@@ -111,33 +110,34 @@ def insert():
     )
 
 
-
 @bp.get('/search')
 def search():
     fname = request.args.get('first_name')
     lname = request.args.get('last_name')
     ssn = request.args.get('ssn')
+    id = request.args.get('employee_number')
     phone = request.args.get('phone')
     gender = request.args.get('gender')
     degree = request.args.get('degree')
+    experience = request.args.get('experience')
     position = request.args.get('position')
     salary_min = request.args.get('salary_min')
     salary_max = request.args.get('salary_max')
+    address = request.args.get('address')
+    city = request.args.get('city')
+    state = request.args.get('state')
+    zip_code = request.args.get('zip')
+    employment_type = request.args.get('employment_type')
+    departments = request.args.get('departments')
     try:
         # Construct SQL query
         query = """
             SELECT
                 s.ID,
+                s.SocialSecurity,
                 s.FirstName,
                 s.LastName,
                 s.Gender,
-                s.BirthDate,
-                s.SocialSecurity,
-                s.PhoneNumber,
-                s.StreetAddress,
-                s.City,
-                s.State,
-                s.ZIPCode,
                 s.HighestDegree,
                 s.ExternalYearsWorked,
                 GROUP_CONCAT(DISTINCT dh.Department ORDER BY dh.StartDate SEPARATOR ', ') AS Departments,
@@ -153,12 +153,12 @@ def search():
                 ON s.ID = ph.ID AND ph.EndDate IS NULL
         """
 
-        # Build WHERE conditions dynamically
+        # Build WHERE conditions
         conditions = []
         params = {}
 
         if fname:
-            conditions.append("(s.FirstName LIKE %(fname)s")
+            conditions.append("s.FirstName LIKE %(fname)s")
             params['fname'] = f"%{fname}%"
         if lname:
             conditions.append("s.LastName LIKE %(lname)s")
@@ -166,6 +166,9 @@ def search():
         if ssn:
             conditions.append("s.SocialSecurity = %(ssn)s")
             params['ssn'] = ssn
+        if id:
+            conditions.append("s.ID = %(id)s")
+            params['id'] = id
         if phone:
             conditions.append("s.PhoneNumber = %(phone)s")
             params['phone'] = phone
@@ -175,15 +178,36 @@ def search():
         if degree:
             conditions.append("s.HighestDegree = %(degree)s")
             params['degree'] = degree
+        if experience:
+            conditions.append("s.ExternalYearsWorked = %(experience)s")
+            params['experience'] = experience
         if position:
             conditions.append("ph.Position = %(position)s")
             params['position'] = position
+        if employment_type:
+            conditions.append("ph.EmploymentType = %(employment_type)s")
+            params['employment_type'] = employment_type
+        if departments:
+            conditions.append("dh.Department IN %(departments)s")
+            params['departments'] = departments
         if salary_min:
             conditions.append("ph.Salary >= %(salary_min)s")
             params['salary_min'] = salary_min
         if salary_max:
             conditions.append("ph.Salary <= %(salary_max)s")
             params['salary_max'] = salary_max
+        if address:
+            conditions.append("s.StreetAddress LIKE %(address)s")
+            params['address'] = f"%{address}%"
+        if city:
+            conditions.append("s.City = %(city)s")
+            params['city'] = city
+        if state:
+            conditions.append("s.State = %(state)s")
+            params['state'] = state
+        if zip_code:
+            conditions.append("s.ZIPCode = %(zip_code)s")
+            params['zip_code'] = zip_code
 
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
@@ -195,12 +219,16 @@ def search():
                 s.HighestDegree, s.ExternalYearsWorked, ph.Position, ph.Salary
         """
         print(query)
-        results = execute_and_fetchall(query, cursors.Cursor, params)
+        results = execute_and_fetchall(query, cursors.DictCursor, params)
+        for row in results:
+            row['SocialSecurity'] = f"XXX-XX-{row['SocialSecurity'][-4:]}"
 
         positionsList = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
+        departmentsList = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
         return render_template('employee/search.html',
             employees=results,
-            positions=positionsList)
+            positions=positionsList,
+            departments=departmentsList)
     except Exception as e:
         print(e)
         flash('An error occurred while fetching the employees')
@@ -208,7 +236,44 @@ def search():
 
 @bp.route('/<int:id>', methods=['GET', 'POST'])
 def view(id):
-    return ""
+    data = execute_and_fetchone('''
+        SELECT
+            s.ID,
+            s.SocialSecurity,
+            s.FirstName,
+            s.LastName,
+            s.Gender,
+            s.BirthDate,
+            s.SocialSecurity,
+            s.PhoneNumber,
+            s.StreetAddress,
+            s.City,
+            s.State,
+            s.ZIPCode,
+            s.HighestDegree,
+            s.ExternalYearsWorked,
+            GROUP_CONCAT(DISTINCT dh.Department ORDER BY dh.StartDate SEPARATOR ', ') AS Departments,
+            ph.Position,
+            ph.Salary
+        FROM
+            Staff AS s
+        LEFT JOIN
+            DepartmentsHistory AS dh
+            ON s.ID = dh.ID AND dh.EndDate IS NULL
+        LEFT JOIN
+            PositionsHistory AS ph
+            ON s.ID = ph.ID AND ph.EndDate IS NULL
+        WHERE
+            s.ID = %s
+        GROUP BY
+            s.ID, s.FirstName, s.LastName, s.Gender, s.BirthDate, s.SocialSecurity,
+            s.PhoneNumber, s.StreetAddress, s.City, s.State, s.ZIPCode,
+            s.HighestDegree, s.ExternalYearsWorked, ph.Position, ph.Salary
+    ''', cursors.DictCursor, (id,))
+    if not data:
+        return "Employee not found", HTTPStatus.NOT_FOUND
+    return render_template('employee/view.html', employee=data)
+
 
 @bp.route('/<int:id>/edit', methods=['GET', 'POST'])
 def edit(id):
