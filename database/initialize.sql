@@ -57,7 +57,7 @@ GRANT INSERT, UPDATE, DELETE
 -- Degrees: Raise a ticket!
 --  Request by Data Analysts.
 
-GRANT INSERT, UPDATE, DELETE
+GRANT INSERT, UPDATE
   ON GenericCompany.Employees
   TO 'GenericApplication'@'localhost';
 -- We should have separate privileges, but

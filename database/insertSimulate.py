@@ -2,9 +2,10 @@ import sys, copy, datetime, csv
 import math, random
 import MySQLdb
 
+compileOnly = False
 dataRoot='./database/default'
 employeeCount = 1000
-compileOnly = False
+projectCount = 200
 
 db = MySQLdb.connect(
     host='localhost',
@@ -265,6 +266,7 @@ if __name__ == '__main__':
         cursor.executemany(f'INSERT INTO Employees VALUES({
             ", ".join(["%s" for x in employees[0]])
         })', employees); db.commit()
+    else: print(employees)
 
     print("Compiling EmployeePositionsHistory...")
     positions = randPositions(employees)
@@ -293,6 +295,7 @@ if __name__ == '__main__':
             cursor.executemany(f'CALL RetireFromPosition({
                 ", ".join(["%s" for x in endDates[0]])
             })', endDates); db.commit()
+    if compileOnly: print(positions)
 
     print("Compiling EmployeeDepartments...")
     departments = randDepartments(positions)
@@ -320,6 +323,7 @@ if __name__ == '__main__':
             cursor.executemany(f'CALL LeaveDepartment({
                 ", ".join(["%s" for x in endDates[0]])
             })', endDates); db.commit()
+    if compileOnly: print(departments)
 
     print("Compiling EmployeeBenefits...")
     benefits = randBenefits(activeEmployees)
@@ -328,3 +332,4 @@ if __name__ == '__main__':
         cursor.executemany(f'INSERT INTO EmployeeBenefits VALUES({
             ", ".join(["%s" for x in benefits[0]])
         })', benefits); db.commit()
+    if compileOnly: print(benefits)
