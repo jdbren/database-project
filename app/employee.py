@@ -104,6 +104,7 @@ def insert():
                     ExternalYearsWorked
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 <<<<<<< HEAD
+<<<<<<< HEAD
             ''', (ssn, fname, lname, gender, dob, address, city, state, zip,
                 phone, degree, experience)
             )
@@ -111,6 +112,20 @@ def insert():
             ''', (ssn, fname, lname, gender, dob, address, city, state, postcode,
                 phone, degree, experience))
 >>>>>>> 9d18a2b (updates to work with new schema)
+=======
+            ''', (ssn, fname, lname, gender, dob, address, city, state, postcode,
+                phone, degree, experience))
+=======
+<<<<<<< HEAD
+            ''', (ssn, fname, lname, gender, dob, address, city, state, zip,
+                phone, degree, experience)
+            )
+=======
+            ''', (ssn, fname, lname, gender, dob, address, city, state, postcode,
+                phone, degree, experience))
+>>>>>>> 9d18a2b (updates to work with new schema)
+>>>>>>> eaadb78 (updates to work with new schema)
+>>>>>>> eb78738 (updates to work with new schema)
 
             id = cursor.lastrowid
 
@@ -157,6 +172,7 @@ def insert():
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     benefits_list = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
     positions_list = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
     departments_list = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
@@ -180,6 +196,8 @@ def insert():
 =======
 =======
 >>>>>>> 659a47c (add delete selected)
+=======
+>>>>>>> eb78738 (updates to work with new schema)
     genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
     degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
     benefits_list = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
@@ -187,6 +205,8 @@ def insert():
     departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
     employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
 =======
+=======
+>>>>>>> eaadb78 (updates to work with new schema)
 <<<<<<< HEAD
     benefits_list = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
     positions_list = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
@@ -222,8 +242,27 @@ def insert():
         degrees=degreesList,
         genders=gendersList
 >>>>>>> f6130f2 (Resolved conflicts.)
+<<<<<<< HEAD
 >>>>>>> 6496a80 (add delete selected)
+<<<<<<< HEAD
 >>>>>>> 659a47c (add delete selected)
+=======
+=======
+=======
+    genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
+    degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
+    benefits_list = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
+    positions_list = search_db('SELECT Name FROM Positions', cursors.DictCursor)
+    departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
+    return render_template('employee/form.html',
+        departments=departments_list,
+        positions=positions_list,
+        benefits=benefits_list,
+        degrees=degrees_list,
+        genders=genders_list
+>>>>>>> 9d18a2b (updates to work with new schema)
+>>>>>>> eaadb78 (updates to work with new schema)
+>>>>>>> eb78738 (updates to work with new schema)
     )
 
 
@@ -276,6 +315,7 @@ def search():
             LEFT JOIN
                 EmployeeDepartments AS dh
                 ON s.ID = dh.ID
+<<<<<<< HEAD
             LEFT JOIN
                 EmployeeBenefits AS bh
                 ON s.ID = bh.ID
@@ -283,6 +323,12 @@ def search():
                 EmployeePositions AS ph
                 ON s.ID = ph.ID
         """.format(join_type)
+=======
+            INNER JOIN
+                EmployeePositions AS ph
+                ON s.ID = ph.ID
+        """
+>>>>>>> eaadb78 (updates to work with new schema)
 
         # Build WHERE conditions
         conditions = []
@@ -429,6 +475,7 @@ def view(id):
         LEFT JOIN
             EmployeeDepartments AS dh
             ON s.ID = dh.ID
+<<<<<<< HEAD
         LEFT JOIN
             EmployeePositions AS ph
             ON s.ID = ph.ID
@@ -441,6 +488,11 @@ def view(id):
         LEFT JOIN
             Projects AS p
             ON er.ProjectID = p.ID
+=======
+        INNER JOIN
+            EmployeePositions AS ph
+            ON s.ID = ph.ID
+>>>>>>> eaadb78 (updates to work with new schema)
         WHERE
             s.ID = %s
         GROUP BY
@@ -535,6 +587,21 @@ def edit(id):
                     ExternalYearsWorked = %s
                 WHERE ID = %s
 <<<<<<< HEAD
+<<<<<<< HEAD
+            ''', (ssn, fname, lname, gender, dob, address, city, state, zip,
+                phone, degree, experience, id)
+            )
+=======
+=======
+>>>>>>> eb78738 (updates to work with new schema)
+            ''', (ssn, fname, lname, gender, dob, address, city, state, postcode,
+                phone, degree, experience, id))
+>>>>>>> 9d18a2b (updates to work with new schema)
+
+            if not current_position:
+                cursor.execute('''
+=======
+<<<<<<< HEAD
             ''', (ssn, fname, lname, gender, dob, address, city, state, zip,
                 phone, degree, experience, id)
             )
@@ -543,8 +610,17 @@ def edit(id):
                 phone, degree, experience, id))
 >>>>>>> 9d18a2b (updates to work with new schema)
 
-            if not current_position:
+            if (current_position['Position'] != position
+            or current_position['Salary'] != salary
+            or current_position['EmploymentType'] != employment_type):
+                # Remove records from active table
                 cursor.execute('''
+                    DELETE FROM EmployeePositions
+                    WHERE ID = %s
+                ''', (id,))
+                # Insert updated information
+                cursor.execute('''
+>>>>>>> eaadb78 (updates to work with new schema)
                     INSERT INTO EmployeePositions (
                         ID, StartDate, Position, EmploymentType, Salary,
                         IsExternalHire, HealthStartDate, HealthInsurance
@@ -578,8 +654,15 @@ def edit(id):
             # Update departments no longer associated with the employee
             for department in current_departments:
                 if department not in selected_departments:
+<<<<<<< HEAD
                     cursor.callproc('LeaveDepartment',
                         (id, department, datetime.date.today()))
+=======
+                    cursor.execute('''
+                        DELETE FROM EmployeeDepartments
+                        WHERE ID = %s AND Department = %s
+                    ''', (id, department))
+>>>>>>> eaadb78 (updates to work with new schema)
 
             # Add new departments
             for department in selected_departments:
@@ -626,24 +709,39 @@ def edit(id):
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+=======
+=======
+>>>>>>> eb78738 (updates to work with new schema)
+<<<<<<< HEAD
     emp = execute_and_fetchone('SELECT * FROM Staff WHERE ID = %s', cursors.DictCursor, (id,))
     benefits_list = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
     positions_list = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
     departments_list = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
 =======
     emp = search_db('SELECT * FROM Employees WHERE ID = %s', cursors.DictCursor, False, (id,))
+<<<<<<< HEAD
 =======
 >>>>>>> 0ce6406 (allow searching including inactive staff)
+=======
+>>>>>>> eaadb78 (updates to work with new schema)
+>>>>>>> eb78738 (updates to work with new schema)
     benefits_list = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
     positions_list = search_db('SELECT Name FROM Positions', cursors.DictCursor)
     departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
     genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
     degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 9d18a2b (updates to work with new schema)
 =======
     employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
 >>>>>>> 740a42f (bug fixes)
+=======
+    employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
+=======
+>>>>>>> 9d18a2b (updates to work with new schema)
+>>>>>>> eaadb78 (updates to work with new schema)
+>>>>>>> eb78738 (updates to work with new schema)
 
     emp['Departments'] = current_departments
     emp['Benefits'] = current_benefits
@@ -658,17 +756,24 @@ def edit(id):
         departments=departments_list,
         benefits=benefits_list,
         degrees=degrees_list,
+<<<<<<< HEAD
         genders=genders_list,
         employment_types=employment_types
+=======
+        genders=genders_list
+>>>>>>> eaadb78 (updates to work with new schema)
     )
 
 @bp.delete('<int:id>')
 def archive_employee(id):
     try:
 <<<<<<< HEAD
+<<<<<<< HEAD
         emp = execute_and_fetchone('SELECT ID, LastName FROM Staff WHERE ID = %s',
             cursors.DictCursor, (id,))
 =======
+=======
+>>>>>>> eb78738 (updates to work with new schema)
         emp = search_db('SELECT ID, LastName FROM Employees WHERE ID = %s',
             cursors.DictCursor, False, (id,))
 >>>>>>> 9d18a2b (updates to work with new schema)
@@ -697,8 +802,27 @@ def archive_employee(id):
         return redirect(url_for('employee.search')), HTTPStatus.OK
 =======
         execute_and_commit("DELETE FROM Staff WHERE ID = %s", (id,))
+=======
+<<<<<<< HEAD
+        emp = execute_and_fetchone('SELECT ID, LastName FROM Staff WHERE ID = %s',
+            cursors.DictCursor, (id,))
+=======
+        emp = search_db('SELECT ID, LastName FROM Employees WHERE ID = %s',
+            cursors.DictCursor, False, (id,))
+>>>>>>> 9d18a2b (updates to work with new schema)
+        if not emp:
+            return "Employee not found", HTTPStatus.NOT_FOUND
+        db = open_db()
+        cursor = db.cursor()
+        cursor.execute("DELETE FROM EmployeeDepartments WHERE ID = %s", (id,))
+        cursor.execute("DELETE FROM EmployeeBenefits WHERE ID = %s", (id,))
+        cursor.execute("DELETE FROM EmployeePositions WHERE ID = %s", (id,))
+        cursor.close()
+        db.commit()
+        close_db()
+>>>>>>> eaadb78 (updates to work with new schema)
         # Rest of the data is deleted by cascade
-        flash(f"Employee {emp['ID']} deleted successfully")
+        flash(f"Employee {emp['ID']} archived successfully")
         return "Success", HTTPStatus.OK
 >>>>>>> 6496a80 (add delete selected)
     except Exception as e:
@@ -708,6 +832,7 @@ def archive_employee(id):
 
 def get_employee_departments(id):
 <<<<<<< HEAD
+<<<<<<< HEAD
     current_departments = execute_and_fetchall('''
         SELECT Department FROM DepartmentsHistory WHERE ID = %s AND EndDate IS NULL
     ''', cursors.Cursor, (id,))
@@ -716,10 +841,27 @@ def get_employee_departments(id):
         SELECT Department FROM EmployeeDepartments WHERE ID = %s
     ''', cursors.Cursor, True, (id,))
 >>>>>>> 9d18a2b (updates to work with new schema)
+=======
+    current_departments = search_db('''
+        SELECT Department FROM EmployeeDepartments WHERE ID = %s
+    ''', cursors.Cursor, True, (id,))
+=======
+<<<<<<< HEAD
+    current_departments = execute_and_fetchall('''
+        SELECT Department FROM DepartmentsHistory WHERE ID = %s AND EndDate IS NULL
+    ''', cursors.Cursor, (id,))
+=======
+    current_departments = search_db('''
+        SELECT Department FROM EmployeeDepartments WHERE ID = %s
+    ''', cursors.Cursor, True, (id,))
+>>>>>>> 9d18a2b (updates to work with new schema)
+>>>>>>> eaadb78 (updates to work with new schema)
+>>>>>>> eb78738 (updates to work with new schema)
     current_departments = [department[0] for department in current_departments]
     return current_departments
 
 def get_employee_benefits(id):
+<<<<<<< HEAD
 <<<<<<< HEAD
     current_benefits = execute_and_fetchall('''
         SELECT Benefit FROM StaffBenefits WHERE ID = %s AND EndDate IS NULL
@@ -729,18 +871,51 @@ def get_employee_benefits(id):
         SELECT Benefit FROM EmployeeBenefits WHERE ID = %s
     ''', cursors.Cursor, True, (id,))
 >>>>>>> 9d18a2b (updates to work with new schema)
+=======
+    current_benefits = search_db('''
+        SELECT Benefit FROM EmployeeBenefits WHERE ID = %s
+    ''', cursors.Cursor, True, (id,))
+=======
+<<<<<<< HEAD
+    current_benefits = execute_and_fetchall('''
+        SELECT Benefit FROM StaffBenefits WHERE ID = %s AND EndDate IS NULL
+    ''', cursors.Cursor, (id,))
+=======
+    current_benefits = search_db('''
+        SELECT Benefit FROM EmployeeBenefits WHERE ID = %s AND EndDate IS NULL
+    ''', cursors.Cursor, True, (id,))
+>>>>>>> 9d18a2b (updates to work with new schema)
+>>>>>>> eaadb78 (updates to work with new schema)
+>>>>>>> eb78738 (updates to work with new schema)
     current_benefits = [benefit[0] for benefit in current_benefits]
     return current_benefits
 
 def get_employee_position(id):
+<<<<<<< HEAD
+<<<<<<< HEAD
+    return execute_and_fetchone('''
+        SELECT Salary, Position FROM PositionsHistory WHERE ID = %s AND EndDate IS NULL
+    ''', cursors.DictCursor, (id,))
+=======
+=======
+>>>>>>> eb78738 (updates to work with new schema)
+    return search_db('''
+        SELECT Salary, Position, EmploymentType, HealthInsurance
+        FROM EmployeePositions
+        WHERE ID = %s
+    ''', cursors.DictCursor, False, (id,))
+<<<<<<< HEAD
+>>>>>>> 9d18a2b (updates to work with new schema)
+=======
+=======
 <<<<<<< HEAD
     return execute_and_fetchone('''
         SELECT Salary, Position FROM PositionsHistory WHERE ID = %s AND EndDate IS NULL
     ''', cursors.DictCursor, (id,))
 =======
     return search_db('''
-        SELECT Salary, Position, EmploymentType, HealthInsurance
-        FROM EmployeePositions
-        WHERE ID = %s
+        SELECT Salary, Position FROM EmployeePositions WHERE ID = %s
     ''', cursors.DictCursor, False, (id,))
 >>>>>>> 9d18a2b (updates to work with new schema)
+>>>>>>> eaadb78 (updates to work with new schema)
+>>>>>>> eb78738 (updates to work with new schema)

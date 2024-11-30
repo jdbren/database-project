@@ -13,6 +13,7 @@ mysqlclient==2.2.6
 platformdirs==4.3.6
 pylint==3.3.1
 tomlkit==0.13.2
+<<<<<<< HEAD
 =======
 blinker==1.9.0
 click==8.1.7
@@ -25,4 +26,6 @@ mysqlclient==2.2.5
 PyMySQL==1.1.1
 python-dotenv==1.0.1
 >>>>>>> dc89b43 (add set up)
+=======
+>>>>>>> eaadb78 (updates to work with new schema)
 Werkzeug==3.1.3
