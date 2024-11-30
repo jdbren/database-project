@@ -24,6 +24,15 @@ function formatSSN() {
         ssn.value += '-';
 }
 
+function formatPhone() {
+    let phone = document.getElementById('phone');
+    let phoneValue = phone.value;
+    if (phoneValue.length === 3)
+        phone.value += ' ';
+    if (phoneValue.length === 7)
+        phone.value += '-';
+}
+
 function setCompanyInsuranceCheckbox() {
     let checkbox = document.getElementById('Health Insurance');
     if (document.getElementById('health_insurance').value === 'company')

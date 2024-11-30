@@ -30,9 +30,9 @@
 
       <label for="gender">Gender:</label>
       <select id="gender" name="gender" required>
-        <option value="Male" {{ 'selected' if emp and emp.Gender == 'Male' else '' }}>Male</option>
-        <option value="Female" {{ 'selected' if emp and emp.Gender == 'Female' else '' }}>Female</option>
-        <option value="Other" {{ 'selected' if emp and emp.Gender == 'Other' else '' }}>Other</option>
+      {% for gender in genders %}
+        <option value="{{ gender.Name }}" {{ 'selected' if emp and emp.Gender == gender.Name else '' }}>{{ gender.Name }}</option>
+      {% endfor %}
       </select><br><br>
 
       <label for="ssn">Social Security Number:</label>
@@ -54,16 +54,14 @@
       <input type="number" id="zip" name="zip" value="{{ emp.ZIPCode if emp else '' }}" required><br><br>
 
       <label for="phone">Phone Number:</label>
-      <input type="tel" id="phone" name="phone" maxlength="10" value="{{ emp.PhoneNumber if emp else '' }}" required><br><br>
+      <input type="tel" id="phone" name="phone" maxlength="12" value="{{ emp.PhoneNumber if emp else '' }}" required oninput="formatPhone()"><br><br>
 
       <label for="degree">Highest Academic Degree:</label>
       <select id="degree" name="degree">
         <option value="" {{ 'selected' if not emp or not emp.HighestDegree }}>-- Select --</option>
-        <option value="Diploma" {{ 'selected' if emp and emp.HighestDegree == 'Diploma' }}>High School</option>
-        <option value="Associate" {{ 'selected' if emp and emp.HighestDegree == 'Associate' }}>Associate's Degree</option>
-        <option value="Bachelor" {{ 'selected' if emp and emp.HighestDegree == 'Bachelor' }}>Bachelor's Degree</option>
-        <option value="Master" {{ 'selected' if emp and emp.HighestDegree == 'Master' }}>Master's Degree</option>
-        <option value="Doctoral" {{ 'selected' if emp and emp.HighestDegree == 'Doctoral' }}>Doctorate</option>
+      {% for degree in degrees %}
+        <option value="{{ degree.Name }}" {{ 'selected' if emp and emp.HighestDegree == degree.Name }}>{{ degree.Name }}</option>
+      {% endfor %}
       </select><br><br>
 
       <label for="experience">Years of Work Experience:</label>
@@ -92,7 +90,7 @@
       >
         <option value="Full-Time" {{ 'selected' if emp and emp.EmploymentType == 'Full-Time' }}>Full-Time</option>
         <option value="Part-Time" {{ 'selected' if emp and emp.EmploymentType == 'Part-Time' }}>Part-Time</option>
-        <option value="Seasonal" {{ 'selected' if emp and emp.EmploymentType == 'Seasonal' }}>Seasonal</option>
+        <option value="Temporary" {{ 'selected' if emp and emp.EmploymentType == 'Temporary' }}>Temporary</option>
         <option value="Contractor" {{ 'selected' if emp and emp.EmploymentType == 'Contractor' }}>Contract</option>
         <option value="Intern" {{ 'selected' if emp and emp.EmploymentType == 'Intern' }}>Internship</option>
       </select><br><br>
@@ -112,10 +110,10 @@
         onchange="setCompanyInsuranceCheckbox()"
       >
         <option value="" {{ 'selected' if not emp or not emp.HealthInsurance }}>-- Select --</option>
-        <option id="company_ins_opt" value="company" {{ 'selected' if emp and emp.HealthInsurance == 'company' }}>Company plan (if full time)</option>
-        <option value="family" {{ 'selected' if emp and emp.HealthInsurance == 'family' }}>Family member</option>
-        <option value="private" {{ 'selected' if emp and emp.HealthInsurance == 'private' }}>Private Insurance</option>
-        <option value="medicare" {{ 'selected' if emp and emp.HealthInsurance == 'medicare' }}>Medicare</option>
+        <option id="company_ins_opt" value="Company" {{ 'selected' if emp and emp.HealthInsurance == 'Company' }}>Company Plan (if full-time)</option>
+        <option value="Family" {{ 'selected' if emp and emp.HealthInsurance == 'Family' }}>Family Member</option>
+        <option value="Private" {{ 'selected' if emp and emp.HealthInsurance == 'Private' }}>Private Insurance</option>
+        <option value="Medicare" {{ 'selected' if emp and emp.HealthInsurance == 'Medicare' }}>Medicare</option>
       </select><br><br>
     </fieldset>
 

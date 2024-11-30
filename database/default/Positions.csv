@@ -1,0 +1,176 @@
+Name,MinimumSalary,MaximumSalary
+"Junior Software Engineer",70000,120000
+"Senior Software Engineer",120000,180000
+"Staff Software Engineer",140000,180000
+"Principal Software Engineer",160000,200000
+"Software Architect",160000,210000
+"DevOps Engineer",100000,160000
+"DevOps Manager",150000,200000
+"QA Engineer",80000,120000
+"SOC Analyst",70000,120000
+"IAM Engineer",120000,160000
+"Network Engineer",100000,150000
+"Security Engineer",120000,180000
+"Security Architect",150000,200000
+"Penetration Tester",100000,150000
+"Incident Response Engineer",120000,160000
+"Security Compliance Manager",120000,180000
+"System Administrator",80000,120000
+"IT Operations Manager",120000,180000
+"Data Engineer",120000,150000
+"Data Architect",160000,210000
+"Data Analyst",70000,100000
+"Data Scientist",120000,180000
+"Machine Learning Engineer",140000,180000
+"Data Governance Manager",120000,180000
+"Cloud Engineer",120000,160000
+"Cloud Architect",160000,200000
+"Cloud Security Engineer",120000,180000
+"Site Reliability Engineer",140000,180000
+"Engineering Manager",150000,200000
+"Director of Engineering",180000,250000
+"VP of Engineering",200000,350000
+"IT Support Specialist",50000,80000
+"Chief Technology Officer",200000,350000
+"Chief Information Security Officer",200000,350000
+"Chief Data Officer",200000,350000
+"UI/UX Designer",80000,120000
+"Lead UI/UX Designer",120000,160000
+"Interaction Designer",90000,120000
+"Visual Designer",80000,120000
+"Product Designer",100000,150000
+"Market Research Analyst",60000,100000
+"User Researcher",90000,120000
+"Usability Analyst",80000,100000
+"UI/UX Design Manager",120000,180000
+"Chief Design Officer",180000,300000
+"Product Analyst",70000,100000
+"Product Manager",90000,150000
+"Product Owner",90000,120000
+"Lead Product Manager",150000,200000
+"Group Product Manager",160000,210000
+"Director of Product Management",180000,250000
+"VP of Product",200000,350000
+"Chief Product Officer",250000,400000
+"Sales Development Representative",50000,80000
+"Business Development Representative",60000,80000
+"Sales Development Manager",90000,120000
+"Director of Sales Development",120000,180000
+"VP of Sales Development",180000,300000
+"Sales Engineer",100000,150000
+"Account Executive",60000,100000
+"SMB Account Executive",60000,80000
+"Enterprise Account Executive",100000,150000
+"Expansion Account Executive",70000,120000
+"Account Executive Manager",120000,160000
+"Chief Revenue Officer",200000,300000
+"Sales Operations Analyst",50000,70000
+"Sales Operations Associate",70000,100000
+"Sales Operations Manager",90000,140000
+"Director of Sales Operations",150000,200000
+"VP of Sales Operations",200000,350000
+"Sales Enablement Manager",90000,140000
+"Sales Compensation Analyst",70000,100000
+"Customer Success Analyst",70000,100000
+"Customer Success Architect",120000,160000
+"Customer Success Representative",50000,80000
+"Customer Success Manager",70000,120000
+"Customer Support Specialist",50000,80000
+"Director of Customer Success",140000,180000
+"VP of Customer Success",180000,300000
+"Content Marketing Specialist",50000,70000
+"SEO Content Specialist",60000,90000
+"Video Content Manager",70000,100000
+"Social Media Content Manager",60000,90000
+"Content Marketing Manager",80000,120000
+"Content Stategist",90000,140000
+"Director of Content Marketing",140000,200000
+"VP of Content Marketing",180000,300000
+"Product Marketing Associate",50000,70000
+"Product Marketing Strategist",90000,120000
+"Product Launch Manager",90000,140000
+"Product Marketing Manager",100000,150000
+"Director of Product Marketing",150000,200000
+"VP of Product Marketing",200000,350000
+"Chief Marketing Officer",180000,270000
+"Communications Associate",50000,70000
+"Communications Manager",80000,150000
+"Internal Communications Manager",80000,120000
+"Public Relations Manager",90000,140000
+"Brand Stategist",90000,140000
+"Director of Communications",150000,200000
+"VP of Communications",200000,350000
+"Customer Support Representative",40000,60000
+"Customer Support Supervisor",70000,100000
+"Customer Support Analyst",70000,100000
+"Customer Support Trainer",60000,80000
+"Customer Support Manager",90000,140000
+"Director of Customer Support",120000,180000
+"VP of Customer Support",180000,300000
+"Chief Customer Officer",180000,250000
+"Accounting Clerk",40000,50000
+"Staff Accountant",60000,80000
+"Senior Accountant",80000,120000
+"Accounting Manager",100000,140000
+"Controller",120000,180000
+"Revenue Manager",90000,120000
+"Financial Analyst",60000,80000
+"Financial Manager",100000,150000
+"Director of Finance",150000,210000
+"VP of Finance",200000,300000
+"Chief Financial Officer",250000,400000
+"Paralegal",50000,80000
+"Contract Manager",70000,100000
+"Corporate Counsel",120000,180000
+"Senior Corporate Counsel",180000,250000
+"Data Protection Counsel",150000,210000
+"Trademark Counsel",120000,200000
+"IP Manager",80000,120000
+"IP Counsel",180000,250000
+"Patent Attorney",180000,300000
+"Litigation Counsel",180000,210000
+"Compliance Counsel",120000,200000
+"General Counsel",250000,300000
+"Compliance Analyst",60000,80000
+"Data Privacy Officer",120000,200000
+"Internal Auditor",70000,120000
+"Compliance Manager",90000,120000
+"Compliance Risk Manager",120000,160000
+"Director of Compliance",160000,210000
+"Chief Compliance Officer",200000,350000
+"Chief Legal Officer",250000,500000
+"Revenue Operations Analyst",70000,90000
+"Revenue Operations Manager",100000,140000
+"Director of Revenue Operations",140000,200000
+"VP of Revenue Operations",200000,350000
+"BI Analyst",60000,90000
+"BI Developer",90000,120000
+"BI Architect",120000,160000
+"BI Manager",120000,180000
+"Director of BI",160000,210000
+"Process Improvement Analyst",60000,90000
+"Process Improvement Specialist",90000,120000
+"Process Improvement Manager",120000,150000
+"Continuous Improvement Lead",100000,150000
+"Director of Process Improvement",150000,200000
+"Chief Operating Officer",250000,300000
+"Sourcing Specialist",60000,90000
+"Talent Acquisition Specialist",60000,90000
+"Talent Acquisition Manager",120000,150000
+"Director of Talent Acquistion",160000,210000
+"Head of People",200000,350000
+"HR Generalist",60000,90000
+"HR Manager",90000,120000
+"HR Business Partner",120000,150000
+"Director of HR",150000,200000
+"Chief Human Resources Officer",200000,350000
+"Compensation & Benefits Manager",100000,140000
+"Employee Experience Manager",80000,120000
+"Learning & Development Manager",90000,120000
+"IT Procurement Specialist",60000,90000
+"Database Administrator",80000,120000
+"Business Continuity Manager",90000,140000
+"Chief Information Officer",150000,250000
+"Chief Strategist Officer",180000,250000
+"Chief Innovation Officer",150000,400000
+"Chief Executive Officer",200000,400000
