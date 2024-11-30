@@ -1,5 +1,4 @@
 import MySQLdb
-
 from flask import current_app, g
 
 def get_db():
@@ -13,7 +12,7 @@ def get_db():
 
     return g.db
 
-def close_db(e=None):
+def close_db():
     db = g.pop('db', None)
 
     if db is not None:
@@ -26,7 +25,6 @@ def execute_and_commit(query: str, args=None):
     cursor.close()
     db.commit()
     close_db()
-    return
 
 def execute_and_fetchone(query: str, cursor_type, args=None):
     db = get_db()
