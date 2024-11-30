@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Database Manager</title>
-  </head>
-  <body>
-    <h2>Database Manager</h2>
-    <nav>
+<head>
+  {% block head %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  {% endblock %}
+  <title>Company Database</title>
+</head>
+<body>
+  <div style="display: flex; align-items: baseline;">
+    <h1>Company Database</h1>
+    <nav style="margin-left: 10px;">
       <a href="/">Home</a> |
       <a href="/employee">Employees</a> |
-      <a href="/project">Projects</a>
+      <a href="/project">Projects</a> |
+      <a href="/query">Enter SQL</a>
     </nav>
-  </body>
+  </div>
+  <div>{% block content %}{% endblock %}</div>
+</body>
 </html>

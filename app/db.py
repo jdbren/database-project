@@ -1,5 +1,4 @@
 import MySQLdb
-
 from flask import current_app, g
 
 def open_db():

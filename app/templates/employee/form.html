@@ -1,15 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'employee/index.html' %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block head %}
+  {{ super() }}
   <title>Employee Data Form</title>
+  <style>
+    button {
+      padding: 10px 20px;
+      color: black;
+      border-radius: 5px;
+      margin-top: 20px;
+      margin-right: 10px;
+    }
+  </style>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
-</head>
+{% endblock %}
 
-<body>
-  <h1>Employee Data Form</h1>
+{% block content %}
+  {{ super() }}
+  <h3>Employee Data Form</h3>
   <form method="POST">
     <fieldset>
       <legend>Personal Information</legend>
@@ -126,6 +134,4 @@
     <button type="submit" id="update-button" formaction="/employee/{{ emp.ID }}/edit">Update</button>
     {% endif %}
   </form>
-</body>
-
-</html>
+{% endblock %}
