@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'employee/index.html' %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Employee Details</title>
+{% block head %}
+  {{ super() }}
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -33,8 +30,9 @@
       font-size: 1.5em;
       margin-bottom: 20px;
     }
-    .edit-link {
+    .link-button {
       margin-top: 20px;
+      margin-right: 10px;
       display: inline-block;
       padding: 10px 20px;
       background-color: #f2f2f2;
@@ -43,13 +41,21 @@
       border-radius: 5px;
     }
   </style>
-</head>
+  <script>
+    function deleteEmployee() {
+      if (confirm("Are you sure you want to delete this employee?")) {
+        fetch(`/employee/{{ employee.ID }}`, {
+          method: 'DELETE'
+        })
+      }
+    }
+  </script>
+{% endblock %}
 
-<body>
-  <h1>Employee Details</h1>
+{% block content %}
 
   <!-- Employee Basic Information -->
-  <h2 class="details-header">Personal Information</h2>
+  <h3 class="details-header">Personal Information</h3>
   <table>
     <tr>
       <th>ID</th>
@@ -86,7 +92,7 @@
   </table>
 
   <!-- Employee Professional Information -->
-  <h2 class="details-header">Professional Information</h2>
+  <h3 class="details-header">Professional Information</h3>
   <table>
     <tr>
       <th>Highest Degree</th>
@@ -109,7 +115,8 @@
       <td>${{ employee.Salary }}</td>
     </tr>
   </table>
-  <a href="/employee/{{ employee.ID }}/edit" class="edit-link">Edit Employee Data</a>
-</body>
-
-</html>
+  <button class="link-button"
+    onclick="window.location.href = '/employee/{{ employee.ID }}/edit'"
+  >Edit Employee Data</button>
+  <button class="link-button" onclick="deleteEmployee()">Delete Employee</a>
+{% endblock %}

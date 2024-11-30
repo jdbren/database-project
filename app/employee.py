@@ -148,7 +148,7 @@ def search():
             LEFT JOIN
                 DepartmentsHistory AS dh
                 ON s.ID = dh.ID AND dh.EndDate IS NULL
-            LEFT JOIN
+            INNER JOIN
                 PositionsHistory AS ph
                 ON s.ID = ph.ID AND ph.EndDate IS NULL
         """
@@ -221,7 +221,7 @@ def search():
         print(query)
         results = execute_and_fetchall(query, cursors.DictCursor, params)
         for row in results:
-            row['SocialSecurity'] = f"XXX-XX-{row['SocialSecurity'][-4:]}"
+            row['SocialSecurity'] = f"***-**-{row['SocialSecurity'][-4:]}"
 
         positionsList = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
         departmentsList = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
@@ -234,7 +234,7 @@ def search():
         flash('An error occurred while fetching the employees')
         return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
 
-@bp.route('/<int:id>', methods=['GET', 'POST'])
+@bp.get('/<int:id>')
 def view(id):
     data = execute_and_fetchone('''
         SELECT
@@ -260,7 +260,7 @@ def view(id):
         LEFT JOIN
             DepartmentsHistory AS dh
             ON s.ID = dh.ID AND dh.EndDate IS NULL
-        LEFT JOIN
+        INNER JOIN
             PositionsHistory AS ph
             ON s.ID = ph.ID AND ph.EndDate IS NULL
         WHERE
@@ -407,9 +407,20 @@ def edit(id):
         benefits=benefitsList
     )
 
-@bp.post('<int:id>/delete')
+@bp.delete('<int:id>')
 def delete(id):
-    return ""
+    try:
+        emp = execute_and_fetchone('SELECT ID, LastName FROM Staff WHERE ID = %s', cursors.DictCursor, (id,))
+        if not emp:
+            return "Employee not found", HTTPStatus.NOT_FOUND
+        execute_and_commit("DELETE FROM Staff WHERE ID = %s", (id,))
+        # Rest of the data is deleted by cascade
+        flash(f"Employee {emp['ID']} deleted successfully")
+        return redirect('/employee', HTTPStatus.OK)
+    except Exception as e:
+        print(e)
+        flash('An error occurred while deleting the employee')
+        return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 def get_employee_departments(id):
