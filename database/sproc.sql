@@ -17,6 +17,7 @@ FOR EACH ROW
   END $$
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 DROP TRIGGER IF EXISTS BeforePositionsHistoryInsert $$
 CREATE TRIGGER BeforePositionsHistoryInsert
 BEFORE INSERT ON EmployeePositionsHistory
@@ -25,6 +26,11 @@ DROP TRIGGER IF EXISTS BeforePositionUpdate $$
 CREATE TRIGGER BeforePositionUpdate
 BEFORE UPDATE ON EmployeePositions
 >>>>>>> 6496a80 (add delete selected)
+=======
+DROP TRIGGER IF EXISTS BeforePositionsHistoryInsert $$
+CREATE TRIGGER BeforePositionsHistoryInsert
+BEFORE INSERT ON EmployeePositionsHistory
+>>>>>>> 5dde58d (fix gender and degree search)
 FOR EACH ROW
   BEGIN
     DECLARE hasConflicts INT;
@@ -45,6 +51,9 @@ FOR EACH ROW
     END IF;
   END $$
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 5dde58d (fix gender and degree search)
 DROP TRIGGER IF EXISTS BeforePositionsHistoryUpdate $$
 CREATE TRIGGER BeforePositionsHistoryUpdate
 BEFORE UPDATE ON EmployeePositionsHistory
@@ -68,8 +77,11 @@ FOR EACH ROW
     END IF;
   END $$
 
+<<<<<<< HEAD
 =======
 >>>>>>> 6496a80 (add delete selected)
+=======
+>>>>>>> 5dde58d (fix gender and degree search)
 DROP TRIGGER IF EXISTS AfterPositionUpdate $$
 CREATE TRIGGER AfterPositionUpdate
 AFTER UPDATE ON EmployeePositions
@@ -124,6 +136,7 @@ FOR EACH ROW
   END $$
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 DROP TRIGGER IF EXISTS BeforeDepartmentsHistoryInsert $$
 CREATE TRIGGER BeforeDepartmentsHistoryInsert
 BEFORE INSERT ON EmployeeDepartmentsHistory
@@ -132,6 +145,11 @@ DROP TRIGGER IF EXISTS BeforeDepartmentUpdate $$
 CREATE TRIGGER BeforeDepartmentUpdate
 BEFORE UPDATE ON EmployeeDepartments
 >>>>>>> 6496a80 (add delete selected)
+=======
+DROP TRIGGER IF EXISTS BeforeDepartmentsHistoryInsert $$
+CREATE TRIGGER BeforeDepartmentsHistoryInsert
+BEFORE INSERT ON EmployeeDepartmentsHistory
+>>>>>>> 5dde58d (fix gender and degree search)
 FOR EACH ROW
   BEGIN
     DECLARE hasConflicts INT;
@@ -153,6 +171,9 @@ FOR EACH ROW
     END IF;
   END $$
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 5dde58d (fix gender and degree search)
 DROP TRIGGER IF EXISTS BeforeDepartmentsHistoryUpdate $$
 CREATE TRIGGER BeforeDepartmentsHistoryUpdate
 BEFORE UPDATE ON EmployeeDepartmentsHistory
@@ -177,8 +198,11 @@ FOR EACH ROW
     END IF;
   END $$
 
+<<<<<<< HEAD
 =======
 >>>>>>> 6496a80 (add delete selected)
+=======
+>>>>>>> 5dde58d (fix gender and degree search)
 DROP TRIGGER IF EXISTS AfterDepartmentUpdate $$
 CREATE TRIGGER AfterDepartmentUpdate
 AFTER UPDATE ON EmployeeDepartments
@@ -317,6 +341,9 @@ CREATE PROCEDURE ReviveProject(
 )
 BEGIN
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 5dde58d (fix gender and degree search)
   DECLARE hasConflicts INT;
 
   START TRANSACTION;
@@ -334,11 +361,14 @@ BEGIN
     SET MESSAGE_TEXT = 'ReviveDate conflicts with previous records.';
   END IF;
 
+<<<<<<< HEAD
 =======
   START TRANSACTION;
   SET @disableProjectTrigger = 1;
 
 >>>>>>> 6496a80 (add delete selected)
+=======
+>>>>>>> 5dde58d (fix gender and degree search)
   UPDATE Projects
   SET Status = 'In Progress'
   WHERE ID = Project;
@@ -375,10 +405,14 @@ BEGIN
   IF isSameLeader = 0 THEN
     UPDATE EmployeeRolesHistory
 <<<<<<< HEAD
+<<<<<<< HEAD
     SET EndDate = DATE_SUB(ChangeDate, INTERVAL 1 DAY)
 =======
     SET EndDate = ChangeDate
 >>>>>>> 6496a80 (add delete selected)
+=======
+    SET EndDate = DATE_SUB(ChangeDate, INTERVAL 1 DAY)
+>>>>>>> 5dde58d (fix gender and degree search)
     WHERE ProjectID = Project AND
       EndDate IS NULL AND
       Role = 'Leader';
@@ -389,10 +423,14 @@ BEGIN
     UPDATE Projects
     SET Leader = NewTeamLeader
 <<<<<<< HEAD
+<<<<<<< HEAD
     WHERE ID = Project;
 =======
     WHERE ProjectID = Project;
 >>>>>>> 6496a80 (add delete selected)
+=======
+    WHERE ID = Project;
+>>>>>>> 5dde58d (fix gender and degree search)
   END IF;
 
   SET @disableProjectTrigger = NULL;
@@ -401,12 +439,17 @@ END $$
 
 -- EmployeeRoles --
 <<<<<<< HEAD
+<<<<<<< HEAD
 DROP TRIGGER IF EXISTS AfterRoleInsert $$
 CREATE TRIGGER AfterRoleInsert
 =======
 DROP TRIGGER IF EXISTS AfterEmployeeRoleInsert $$
 CREATE TRIGGER AfterEmployeeRoleInsert
 >>>>>>> 6496a80 (add delete selected)
+=======
+DROP TRIGGER IF EXISTS AfterRoleInsert $$
+CREATE TRIGGER AfterRoleInsert
+>>>>>>> 5dde58d (fix gender and degree search)
 AFTER INSERT ON EmployeeRoles
 FOR EACH ROW
   BEGIN
@@ -417,6 +460,7 @@ FOR EACH ROW
   END $$
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 DROP TRIGGER IF EXISTS BeforeRolesHistoryInsert $$
 CREATE TRIGGER BeforeRolesHistoryInsert
 BEFORE INSERT ON EmployeeRolesHistory
@@ -425,6 +469,11 @@ DROP TRIGGER IF EXISTS BeforeEmployeeRoleUpdate $$
 CREATE TRIGGER BeforeEmployeeRoleUpdate
 BEFORE UPDATE ON EmployeeRoles
 >>>>>>> 6496a80 (add delete selected)
+=======
+DROP TRIGGER IF EXISTS BeforeRolesHistoryInsert $$
+CREATE TRIGGER BeforeRolesHistoryInsert
+BEFORE INSERT ON EmployeeRolesHistory
+>>>>>>> 5dde58d (fix gender and degree search)
 FOR EACH ROW
   BEGIN
     DECLARE hasConflicts INT;
@@ -433,11 +482,16 @@ FOR EACH ROW
     INTO hasConflicts
     FROM EmployeeRolesHistory
 <<<<<<< HEAD
+<<<<<<< HEAD
     WHERE Role != 'Leader' AND
       EmployeeID = NEW.EmployeeID AND
 =======
     WHERE EmployeeID = NEW.EmployeeID AND
 >>>>>>> 6496a80 (add delete selected)
+=======
+    WHERE Role != 'Leader' AND
+      EmployeeID = NEW.EmployeeID AND
+>>>>>>> 5dde58d (fix gender and degree search)
       ProjectID = NEW.ProjectID AND
       StartDate != NEW.StartDate AND
       NEW.StartDate BETWEEN StartDate AND EndDate;
@@ -451,6 +505,9 @@ FOR EACH ROW
     END IF;
   END $$
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 5dde58d (fix gender and degree search)
 DROP TRIGGER IF EXISTS BeforeRolesHistoryUpdate $$
 CREATE TRIGGER BeforeRolesHistoryUpdate
 BEFORE UPDATE ON EmployeeRolesHistory
@@ -478,10 +535,13 @@ FOR EACH ROW
 
 DROP TRIGGER IF EXISTS AfterRoleUpdate $$
 CREATE TRIGGER AfterRoleUpdate
+<<<<<<< HEAD
 =======
 DROP TRIGGER IF EXISTS AfterEmployeeRoleUpdate $$
 CREATE TRIGGER AfterEmployeeRoleUpdate
 >>>>>>> 6496a80 (add delete selected)
+=======
+>>>>>>> 5dde58d (fix gender and degree search)
 AFTER UPDATE ON EmployeeRoles
 FOR EACH ROW
   BEGIN
@@ -496,12 +556,17 @@ FOR EACH ROW
   END $$
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 DROP TRIGGER IF EXISTS AfterRoleDelete $$
 CREATE TRIGGER AfterRoleDelete
 =======
 DROP TRIGGER IF EXISTS AfterEmployeeRoleDelete $$
 CREATE TRIGGER AfterEmployeeRoleDelete
 >>>>>>> 6496a80 (add delete selected)
+=======
+DROP TRIGGER IF EXISTS AfterRoleDelete $$
+CREATE TRIGGER AfterRoleDelete
+>>>>>>> 5dde58d (fix gender and degree search)
 AFTER DELETE ON EmployeeRoles
 FOR EACH ROW
   BEGIN
@@ -524,6 +589,7 @@ BEGIN
   UPDATE EmployeeRolesHistory
   SET EndDate = EmployeeRoleEndDate
 <<<<<<< HEAD
+<<<<<<< HEAD
   WHERE Role != 'Leader' AND
     EmployeeID = Employee AND
     ProjectID = Project AND
@@ -538,7 +604,17 @@ BEGIN
     EndDate IS NULL;
   DELETE FROM EmployeePositions
 >>>>>>> 6496a80 (add delete selected)
+<<<<<<< HEAD
 >>>>>>> 659a47c (add delete selected)
+=======
+=======
+  WHERE Role != 'Leader' AND
+    EmployeeID = Employee AND
+    ProjectID = Project AND
+    EndDate IS NULL;
+  DELETE FROM EmployeeRoles
+>>>>>>> 5dde58d (fix gender and degree search)
+>>>>>>> 919fa41 (fix gender and degree search)
   WHERE EmployeeID = Employee AND
     ProjectID = Project;
 

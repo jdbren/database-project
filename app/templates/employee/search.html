@@ -91,9 +91,13 @@
       <select id="gender" name="gender">
         <option value>-- Select --</option>
       {% for gender in genders %}
+<<<<<<< HEAD
         <option value="{{ gender.Name }}" {% if args.gender == gender.Name %}selected{% endif %}>
           {{ gender.Name }}
         </option>
+=======
+        <option value="{{ gender.Name }}">{{ gender.Name }}</option>
+>>>>>>> 5dde58d (fix gender and degree search)
       {% endfor %}
       </select><br><br>
 
@@ -101,7 +105,11 @@
       <select id="degree" name="degree">
         <option value>-- Select --</option>
       {% for degree in degrees %}
+<<<<<<< HEAD
         <option value="{{ degree.Name }}" {% if args.degree == degree.Name %}selected{% endif %}>{{ degree.Name }}</option>
+=======
+        <option value="{{ degree.Name }}">{{ degree.Name }}</option>
+>>>>>>> 5dde58d (fix gender and degree search)
       {% endfor %}
       </select><br><br>
 

@@ -143,6 +143,7 @@ CREATE TABLE IF NOT EXISTS EmployeePositions (
   CONSTRAINT EmployeePositionsFK_EmploymentType
     FOREIGN KEY (EmploymentType)
 <<<<<<< HEAD
+<<<<<<< HEAD
     REFERENCES EmploymentTypes (Name)
     -- ON DELETE RESTRICT --
     ON UPDATE CASCADE,
@@ -151,6 +152,11 @@ CREATE TABLE IF NOT EXISTS EmployeePositions (
     -- ON DELETE RESTRICT --
     -- ON UPDATE RESTRICT --
 >>>>>>> 6496a80 (add delete selected)
+=======
+    REFERENCES EmploymentTypes (Name)
+    -- ON DELETE RESTRICT --
+    ON UPDATE CASCADE,
+>>>>>>> 5dde58d (fix gender and degree search)
   CONSTRAINT EmployeePositionsFK_HealthInsurance
     FOREIGN KEY (HealthInsurance)
     REFERENCES HealthInsurance (Name)
@@ -263,10 +269,14 @@ CREATE TABLE IF NOT EXISTS Projects (
     FOREIGN KEY (Leader)
     REFERENCES Employees (ID)
 <<<<<<< HEAD
+<<<<<<< HEAD
     ON DELETE CASCADE
 =======
     -- ON DELETE RESTRICT --
 >>>>>>> 6496a80 (add delete selected)
+=======
+    ON DELETE CASCADE
+>>>>>>> 5dde58d (fix gender and degree search)
     ON UPDATE CASCADE
 );
 
@@ -290,10 +300,14 @@ CREATE TABLE IF NOT EXISTS EmployeeRoles (
     FOREIGN KEY (Role)
     REFERENCES ProjectRoles (Name)
 <<<<<<< HEAD
+<<<<<<< HEAD
     ON DELETE CASCADE
 =======
     -- ON DELETE RESTRICT --
 >>>>>>> 6496a80 (add delete selected)
+=======
+    ON DELETE CASCADE
+>>>>>>> 5dde58d (fix gender and degree search)
     ON UPDATE CASCADE
 );
 CREATE TABLE IF NOT EXISTS EmployeeRolesHistory (
@@ -303,10 +317,14 @@ CREATE TABLE IF NOT EXISTS EmployeeRolesHistory (
   EndDate DATE NULL,
   Role CHAR(36) NOT NULL,
 <<<<<<< HEAD
+<<<<<<< HEAD
   PRIMARY KEY (EmployeeID, ProjectID, StartDate, Role),
 =======
   PRIMARY KEY (EmployeeID, ProjectID, StartDate),
 >>>>>>> 6496a80 (add delete selected)
+=======
+  PRIMARY KEY (EmployeeID, ProjectID, StartDate, Role),
+>>>>>>> 5dde58d (fix gender and degree search)
   CONSTRAINT EmployeeRolesHistoryFK_EmployeeID
     FOREIGN KEY (EmployeeID)
     REFERENCES Employees (ID)
@@ -316,12 +334,18 @@ CREATE TABLE IF NOT EXISTS EmployeeRolesHistory (
     FOREIGN KEY (ProjectID)
     REFERENCES Projects (ID)
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 5dde58d (fix gender and degree search)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT EmployeeRolesHistoryCK_ValidDateRange
     CHECK ( EndDate IS NULL OR EndDate >= StartDate )
+<<<<<<< HEAD
 =======
     -- ON DELETE RESTRICT --
     ON UPDATE CASCADE
 >>>>>>> 6496a80 (add delete selected)
+=======
+>>>>>>> 5dde58d (fix gender and degree search)
 );

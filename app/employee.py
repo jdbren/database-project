@@ -413,33 +413,55 @@ def search():
             row['SocialSecurity'] = f"***-**-{row['SocialSecurity'][-4:]}"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         positions_list = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
         departments_list = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
 =======
+=======
+=======
+<<<<<<< HEAD
+        positions_list = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
+        departments_list = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
+=======
+>>>>>>> 5dde58d (fix gender and degree search)
+>>>>>>> 919fa41 (fix gender and degree search)
         positions_list = search_db('SELECT Name FROM Positions', cursors.DictCursor)
         departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
         genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
         degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 4dca8a4 (fix gender and degree search)
 =======
+=======
+>>>>>>> 919fa41 (fix gender and degree search)
         employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
 <<<<<<< HEAD
 >>>>>>> 4d2ba1c (fixes to emp)
 =======
         benefits = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
         health_insurance = search_db('SELECT Name FROM HealthInsurance', cursors.DictCursor)
+<<<<<<< HEAD
 >>>>>>> a313a5d (Added position manager.)
+=======
+=======
+>>>>>>> 4dca8a4 (fix gender and degree search)
+>>>>>>> 5dde58d (fix gender and degree search)
+>>>>>>> 919fa41 (fix gender and degree search)
         return render_template('employee/search.html',
             employees=results,
             positions=positions_list,
             departments=departments_list,
             genders=genders_list,
+<<<<<<< HEAD
             degrees=degrees_list,
             employment_types=employment_types,
             benefits=benefits,
             health_insurance=health_insurance,
             args=request.args
+=======
+            degrees=degrees_list
+>>>>>>> 5dde58d (fix gender and degree search)
         )
     except Exception as e:
         print(e)
