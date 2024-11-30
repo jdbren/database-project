@@ -1,12 +1,12 @@
 from http import HTTPStatus
+from datetime import datetime
+from MySQLdb import cursors
 from flask import (
-    Blueprint, flash, redirect, render_template, request, session, url_for
+    Blueprint, flash, redirect, render_template, request
 )
 from app.db import (
     execute_and_fetchall, execute_and_fetchone, execute_and_commit, get_db, close_db
 )
-from MySQLdb import cursors
-from datetime import datetime
 
 bp = Blueprint('employee', __name__, url_prefix='/employee')
 
@@ -100,13 +100,13 @@ def insert():
             flash('An error occurred while adding the employee')
             return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
 
-    benefitsList = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
-    positionsList = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
-    departmentsList = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
+    benefits_list = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
+    positions_list = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
+    departments_list = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
     return render_template('employee/form.html',
-        positions=positionsList,
-        departments=departmentsList,
-        benefits=benefitsList
+        positions=positions_list,
+        departments=departments_list,
+        benefits=benefits_list
     )
 
 
@@ -223,12 +223,12 @@ def search():
         for row in results:
             row['SocialSecurity'] = f"***-**-{row['SocialSecurity'][-4:]}"
 
-        positionsList = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
-        departmentsList = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
+        positions_list = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
+        departments_list = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
         return render_template('employee/search.html',
             employees=results,
-            positions=positionsList,
-            departments=departmentsList)
+            positions=positions_list,
+            departments=departments_list)
     except Exception as e:
         print(e)
         flash('An error occurred while fetching the employees')
@@ -277,9 +277,9 @@ def view(id):
 
 @bp.route('/<int:id>/edit', methods=['GET', 'POST'])
 def edit(id):
-    currentPosition = get_employee_position(id)
-    currentDepartments = get_employee_departments(id)
-    currentBenefits = get_employee_benefits(id)
+    current_position = get_employee_position(id)
+    current_departments = get_employee_departments(id)
+    current_benefits = get_employee_benefits(id)
     if request.method == 'POST':
         try:
             # Staff data
@@ -326,9 +326,9 @@ def edit(id):
                 phone, degree, experience, id)
             )
 
-            if (currentPosition['Position'] != position
-            or currentPosition['Salary'] != salary
-            or currentPosition['EmploymentType'] != employment_type):
+            if (current_position['Position'] != position
+            or current_position['Salary'] != salary
+            or current_position['EmploymentType'] != employment_type):
                 # Update the old record, maybe make this trigger
                 cursor.execute('''
                     UPDATE PositionsHistory
@@ -345,7 +345,7 @@ def edit(id):
                     health_insurance_start_date))
 
             # Update departments no longer associated with the employee
-            for department in currentDepartments:
+            for department in current_departments:
                 if department not in selected_departments:
                     cursor.execute('''
                         UPDATE DepartmentsHistory
@@ -355,7 +355,7 @@ def edit(id):
 
             # Add new departments
             for department in selected_departments:
-                if department not in currentDepartments:
+                if department not in current_departments:
                     cursor.execute('''
                         INSERT INTO DepartmentsHistory (
                             ID, Department, StartDate
@@ -363,7 +363,7 @@ def edit(id):
                     ''', (id, department))
 
             # Update benefits no longer associated with the employee
-            for benefit in currentBenefits:
+            for benefit in current_benefits:
                 if benefit not in selected_benefits:
                     cursor.execute('''
                         UPDATE StaffBenefits
@@ -373,7 +373,7 @@ def edit(id):
 
             # Add new benefits
             for benefit in selected_benefits:
-                if benefit not in currentBenefits:
+                if benefit not in current_benefits:
                     cursor.execute('''
                         INSERT INTO StaffBenefits (
                             ID, Benefit, StartDate
@@ -392,25 +392,26 @@ def edit(id):
 
 
     emp = execute_and_fetchone('SELECT * FROM Staff WHERE ID = %s', cursors.DictCursor, (id,))
-    benefitsList = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
-    positionsList = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
-    departmentsList = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
+    benefits_list = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
+    positions_list = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
+    departments_list = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
 
-    emp['Departments'] = currentDepartments
-    emp['Benefits'] = currentBenefits
-    emp['Salary'] = currentPosition['Salary']
-    emp['Position'] = currentPosition['Position']
+    emp['Departments'] = current_departments
+    emp['Benefits'] = current_benefits
+    emp['Salary'] = current_position['Salary']
+    emp['Position'] = current_position['Position']
     return render_template('employee/form.html',
         emp=emp,
-        positions=positionsList,
-        departments=departmentsList,
-        benefits=benefitsList
+        positions=positions_list,
+        departments=departments_list,
+        benefits=benefits_list
     )
 
 @bp.delete('<int:id>')
 def delete(id):
     try:
-        emp = execute_and_fetchone('SELECT ID, LastName FROM Staff WHERE ID = %s', cursors.DictCursor, (id,))
+        emp = execute_and_fetchone('SELECT ID, LastName FROM Staff WHERE ID = %s',
+            cursors.DictCursor, (id,))
         if not emp:
             return "Employee not found", HTTPStatus.NOT_FOUND
         execute_and_commit("DELETE FROM Staff WHERE ID = %s", (id,))
@@ -424,18 +425,18 @@ def delete(id):
 
 
 def get_employee_departments(id):
-    currentDepartments = execute_and_fetchall('''
+    current_departments = execute_and_fetchall('''
         SELECT Department FROM DepartmentsHistory WHERE ID = %s AND EndDate IS NULL
     ''', cursors.Cursor, (id,))
-    currentDepartments = [department[0] for department in currentDepartments]
-    return currentDepartments
+    current_departments = [department[0] for department in current_departments]
+    return current_departments
 
 def get_employee_benefits(id):
-    currentBenefits = execute_and_fetchall('''
+    current_benefits = execute_and_fetchall('''
         SELECT Benefit FROM StaffBenefits WHERE ID = %s AND EndDate IS NULL
     ''', cursors.Cursor, (id,))
-    currentBenefits = [benefit[0] for benefit in currentBenefits]
-    return currentBenefits
+    current_benefits = [benefit[0] for benefit in current_benefits]
+    return current_benefits
 
 def get_employee_position(id):
     return execute_and_fetchone('''
