@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Data Form</title>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+
+<body>
+  <h1>Employee Data Form</h1>
+  <form method="POST">
+    <fieldset>
+      <legend>Personal Information</legend>
+
+      <label for="first_name">First Name:</label>
+      <input type="text" id="first_name" name="first_name" value="{{ emp.FirstName if emp else '' }}" required><br><br>
+
+      <label for="last_name">Last Name:</label>
+      <input type="text" id="last_name" name="last_name" value="{{ emp.LastName if emp else '' }}" required><br><br>
+
+      <label for="gender">Gender:</label>
+      <select id="gender" name="gender" required>
+        <option value="Male" {{ 'selected' if emp and emp.Gender == 'Male' else '' }}>Male</option>
+        <option value="Female" {{ 'selected' if emp and emp.Gender == 'Female' else '' }}>Female</option>
+        <option value="Other" {{ 'selected' if emp and emp.Gender == 'Other' else '' }}>Other</option>
+      </select><br><br>
+
+      <label for="ssn">Social Security Number:</label>
+      <input type="text" id="ssn" name="ssn" maxlength="11" value="{{ emp.SocialSecurity if emp else '' }}" required oninput="formatSSN()"><br><br>
+
+      <label for="dob">Date of Birth:</label>
+      <input type="date" id="dob" name="dob" min="1900-01-01" max="2007-01-01" value="{{ emp.BirthDate if emp else '' }}" required><br><br>
+
+      <label for="address">Primary Address:</label>
+      <input type="text" id="address" name="address" value="{{ emp.StreetAddress if emp else '' }}" required><br><br>
+
+      <label for="city">City:</label>
+      <input type="text" id="city" name="city" value="{{ emp.City if emp else '' }}" required><br><br>
+
+      <label for="state">State (Abbr.):</label>
+      <input type="text" id="state" name="state" maxlength="2" value="{{ emp.State if emp else '' }}" required><br><br>
+
+      <label for="zip">Zip Code:</label>
+      <input type="number" id="zip" name="zip" value="{{ emp.ZIPCode if emp else '' }}" required><br><br>
+
+      <label for="phone">Phone Number:</label>
+      <input type="tel" id="phone" name="phone" maxlength="12" value="{{ emp.PhoneNumber if emp else '' }}" required oninput="formatPhone()"><br><br>
+
+      <label for="degree">Highest Academic Degree:</label>
+      <select id="degree" name="degree">
+        <option value="" {{ 'selected' if not emp or not emp.HighestDegree }}>-- Select --</option>
+        <option value="Diploma" {{ 'selected' if emp and emp.HighestDegree == "Diploma" }}>High School</option>
+        <option value="Associate's" {{ 'selected' if emp and emp.HighestDegree == "Associate's" }}>Associate's Degree</option>
+        <option value="Bachelor's" {{ 'selected' if emp and emp.HighestDegree == "Bachelor" }}>Bachelor's Degree</option>
+        <option value="Master's" {{ 'selected' if emp and emp.HighestDegree == "Master's" }}>Master's Degree</option>
+        <option value="Doctoral" {{ 'selected' if emp and emp.HighestDegree == "Doctoral" }}>Doctorate</option>
+      </select><br><br>
+
+      <label for="experience">Years of Work Experience:</label>
+      <input type="number" id="experience" name="experience" min="0" value="{{ emp.ExternalYearsWorked if emp else '' }}" required><br><br>
+    </fieldset>
+
+    <fieldset>
+      <legend>Job Information</legend>
+
+      <label for="external_hire">External Hire:</label>
+      <select id="external_hire" name="external_hire" required>
+        <option value="1" {{ 'selected' if emp and emp.ExternalHire == '1' }}>Yes</option>
+        <option value="0" {{ 'selected' if emp and emp.ExternalHire == '0' }}>No</option>
+      </select><br><br>
+
+      <label for="position">Position:</label>
+      <select id="position" name="position" required>
+        {% for position in positions %}
+        <option value="{{ position.Name }}" {{ 'selected' if emp and emp.Position == position.Name }}>{{ position.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      <label for="employment_type">Employment Type:</label>
+      <select id="employment_type" name="employment_type" required
+        onchange="setCompanyHealthInsuranceEnabled(); setBenefitsEnabled();"
+      >
+        <option value="Full-Time" {{ 'selected' if emp and emp.EmploymentType == 'Full-Time' }}>Full-Time</option>
+        <option value="Part-Time" {{ 'selected' if emp and emp.EmploymentType == 'Part-Time' }}>Part-Time</option>
+        <option value="Temporary" {{ 'selected' if emp and emp.EmploymentType == 'Temporary' }}>Temporary</option>
+        <option value="Contractor" {{ 'selected' if emp and emp.EmploymentType == 'Contractor' }}>Contract</option>
+        <option value="Intern" {{ 'selected' if emp and emp.EmploymentType == 'Intern' }}>Internship</option>
+      </select><br><br>
+
+      <label for="salary">Salary:</label>
+      <input type="number" id="salary" name="salary" min="0" value="{{ emp.Salary if emp else '' }}" required><br><br>
+
+      <label for="departments">Departments:</label>
+      <select id="departments" name="departments" multiple>
+        {% for department in departments %}
+        <option value="{{ department.Name }}" {{ 'selected' if emp and department.Name in emp.Departments }}>{{ department.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      <label for="health_insurance">Health Insurance Provider:</label>
+      <select type="text" id="health_insurance" name="health_insurance" required
+        onchange="setCompanyInsuranceCheckbox()"
+      >
+        <option value="" {{ 'selected' if not emp or not emp.HealthInsurance }}>-- Select --</option>
+        <option id="company_ins_opt" value="Company" {{ 'selected' if emp and emp.HealthInsurance == 'Company' }}>Company Plan (if full-time)</option>
+        <option value="Family" {{ 'selected' if emp and emp.HealthInsurance == 'Family' }}>Family Member</option>
+        <option value="Private" {{ 'selected' if emp and emp.HealthInsurance == 'Private' }}>Private Insurance</option>
+        <option value="Medicare" {{ 'selected' if emp and emp.HealthInsurance == 'Medicare' }}>Medicare</option>
+      </select><br><br>
+    </fieldset>
+
+    <fieldset>
+      <legend>Company Benefits Selection</legend>
+      {% for benefit in benefits %}
+      <input type="checkbox" id="{{ benefit.Name }}" name="benefits" value="{{ benefit.Name }}"
+        {{ 'checked' if emp and benefit.Name in emp.Benefits }}
+        onchange="setCompanyInsuranceOption()"
+      >
+      <label for="{{ benefit.Name }}">{{ benefit.Name }}</label><br>
+      {% endfor %}
+    </fieldset>
+
+    {% if emp is not defined %}
+    <button type="submit" id="submit-button" formaction="/employee/insert">Submit</button>
+    {% else %}
+    <button type="submit" id="update-button" formaction="/employee/{{ emp.ID }}/edit">Update</button>
+    {% endif %}
+  </form>
+</body>
+
+</html>

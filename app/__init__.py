@@ -3,14 +3,14 @@ import os
 from flask import Flask, render_template
 
 def create_app():
-    # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
+    # Create and configure the app
+    app = Flask(__name__)
     app.config.from_mapping(
-        SECRET_KEY='dev',
+        SECRET_KEY = 'dev',
         MYSQL_HOST = 'localhost',
-        MYSQL_USER = 'root',
-        MYSQL_PASSWORD = os.getenv("DB_PASSWORD"),
-        MYSQL_DB = 'company'
+        MYSQL_USER = 'GenericApplication',
+        MYSQL_PASSWORD = os.getenv("DB_PASSWORD", ""),
+        MYSQL_DB = 'GenericCompany'
     )
 
     from . import db

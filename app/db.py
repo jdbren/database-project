@@ -2,7 +2,7 @@ import MySQLdb
 
 from flask import current_app, g
 
-def get_db():
+def open_db():
     if 'db' not in g:
         g.db = MySQLdb.connect(
             current_app.config['MYSQL_HOST'],
@@ -10,42 +10,42 @@ def get_db():
             current_app.config['MYSQL_PASSWORD'],
             current_app.config['MYSQL_DB']
         )
-        g.db.row_factory = MySQLdb.cursors.DictCursor
 
     return g.db
 
 def close_db(e=None):
-    db = g.pop('db', None)
+    db = g.pop('db', e)
 
     if db is not None:
         db.close()
 
-def execute_and_commit(query: str, args=None):
-    db = get_db()
+def modify_db(query: str, args=None):
+    db = open_db()
     cursor = db.cursor()
-    cursor.execute(query, args)
-    cursor.close()
-    db.commit()
-    close_db()
-    return
 
-def execute_and_fetchone(query: str, cursor_type, args=None):
-    db = get_db()
-    cursor = db.cursor(cursor_type)
-    cursor.execute(query, args)
-    result = cursor.fetchone()
-    cursor.close()
-    close_db()
-    return result
+    try:
+        cursor.execute(query, args)
+        db.commit()
+    except MySQLdb.Error:
+        db.rollback()
+        raise
+    finally:
+        cursor.close()
+        close_db()
 
-def execute_and_fetchall(query: str, cursor_type, args=None):
-    db = get_db()
+def search_db(query: str, cursor_type, multi=True, args=None):
+    db = open_db()
     cursor = db.cursor(cursor_type)
-    cursor.execute(query, args)
-    result = cursor.fetchall()
-    cursor.close()
-    close_db()
-    return result
+
+    try:
+        cursor.execute(query, args)
+        if not multi:
+            return cursor.fetchone()
+        else:
+            return cursor.fetchall()
+    finally:
+        cursor.close()
+        close_db()
 
 def init_db(app):
     app.teardown_appcontext(close_db)
