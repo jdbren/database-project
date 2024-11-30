@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS States (
     CHECK ( Name REGEXP '^[A-Z]{2}$' )
 );
 CREATE TABLE IF NOT EXISTS Degrees (
-  Name CHAR(16) NOT NULL,
+  Name CHAR(32) NOT NULL,
   PRIMARY KEY (Name),
   CONSTRAINT DegreesCK_ValidName
     CHECK ( Name REGEXP '^[.'' a-zA-Z]+$' )
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS Employees (
   City VARCHAR(64) NOT NULL,
   State CHAR(2) NOT NULL,
   ZIPCode CHAR(10) NOT NULL,
-  HighestDegree CHAR(16) NULL,
+  HighestDegree CHAR(32) NULL,
   ExternalYearsWorked SMALLINT NOT NULL,
   PRIMARY KEY (ID),
   CONSTRAINT EmployeesFK_Gender

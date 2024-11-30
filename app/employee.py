@@ -1,6 +1,6 @@
 from datetime import datetime
-from http import HTTPStatus
 from MySQLdb import cursors
+from http import HTTPStatus
 from flask import ( Blueprint, render_template,
     flash, redirect, request, session, url_for
 )
@@ -65,17 +65,17 @@ def insert():
             id = cursor.lastrowid
 
             cursor.execute('''
-                INSERT INTO PositionsHistory (
+                INSERT INTO EmployeePositions (
                     ID, StartDate, Position, EmploymentType, Salary,
-                    IsExternalHire, HealthCoverageStartDate
-                ) VALUES (%s, CURDATE(), %s, %s, %s, %s, %s)
+                    IsExternalHire, HealthInsurance, HealthStartDate
+                ) VALUES (%s, CURDATE(), %s, %s, %s, %s, %s, %s)
             ''', (id, position, employment_type, salary, external_hire,
-                health_insurance_start_date)
+                health_insurance, health_insurance_start_date)
             )
 
             for department in selected_departments:
                 cursor.execute('''
-                    INSERT INTO DepartmentsHistory (
+                    INSERT INTO EmployeeDepartments (
                         ID, Department, StartDate
                     ) VALUES (%s, %s, CURDATE())
                 ''', (id, department))
@@ -101,13 +101,17 @@ def insert():
             flash('An error occurred while adding the employee')
             return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
 
+    gendersList = search_db('SELECT Name FROM Genders', cursors.DictCursor)
+    degreesList = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
     benefitsList = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
     positionsList = search_db('SELECT Name FROM Positions', cursors.DictCursor)
     departmentsList = search_db('SELECT Name FROM Departments', cursors.DictCursor)
     return render_template('employee/form.html',
-        positions=positionsList,
         departments=departmentsList,
-        benefits=benefitsList
+        positions=positionsList,
+        benefits=benefitsList,
+        degrees=degreesList,
+        genders=gendersList
     )
 
 
