@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 from http import HTTPStatus
 from datetime import datetime
 from MySQLdb import cursors
 from flask import (
     Blueprint, flash, redirect, render_template, request
+=======
+from datetime import datetime
+from MySQLdb import cursors
+from http import HTTPStatus
+from flask import ( Blueprint, render_template,
+    flash, redirect, request, session, url_for
+>>>>>>> f6130f2 (Resolved conflicts.)
 )
 from app.db import (
     execute_and_fetchall, execute_and_fetchone, execute_and_commit, get_db, close_db
@@ -64,17 +72,17 @@ def insert():
             id = cursor.lastrowid
 
             cursor.execute('''
-                INSERT INTO PositionsHistory (
+                INSERT INTO EmployeePositions (
                     ID, StartDate, Position, EmploymentType, Salary,
-                    IsExternalHire, HealthCoverageStartDate
-                ) VALUES (%s, CURDATE(), %s, %s, %s, %s, %s)
+                    IsExternalHire, HealthInsurance, HealthStartDate
+                ) VALUES (%s, CURDATE(), %s, %s, %s, %s, %s, %s)
             ''', (id, position, employment_type, salary, external_hire,
-                health_insurance_start_date)
+                health_insurance, health_insurance_start_date)
             )
 
             for department in selected_departments:
                 cursor.execute('''
-                    INSERT INTO DepartmentsHistory (
+                    INSERT INTO EmployeeDepartments (
                         ID, Department, StartDate
                     ) VALUES (%s, %s, CURDATE())
                 ''', (id, department))
@@ -100,6 +108,7 @@ def insert():
             flash('An error occurred while adding the employee')
             return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
 
+<<<<<<< HEAD
     benefits_list = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
     positions_list = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
     departments_list = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
@@ -107,6 +116,19 @@ def insert():
         positions=positions_list,
         departments=departments_list,
         benefits=benefits_list
+=======
+    gendersList = search_db('SELECT Name FROM Genders', cursors.DictCursor)
+    degreesList = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
+    benefitsList = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
+    positionsList = search_db('SELECT Name FROM Positions', cursors.DictCursor)
+    departmentsList = search_db('SELECT Name FROM Departments', cursors.DictCursor)
+    return render_template('employee/form.html',
+        departments=departmentsList,
+        positions=positionsList,
+        benefits=benefitsList,
+        degrees=degreesList,
+        genders=gendersList
+>>>>>>> f6130f2 (Resolved conflicts.)
     )
 
 
@@ -417,7 +439,7 @@ def delete(id):
         execute_and_commit("DELETE FROM Staff WHERE ID = %s", (id,))
         # Rest of the data is deleted by cascade
         flash(f"Employee {emp['ID']} deleted successfully")
-        return redirect('/employee', HTTPStatus.OK)
+        return "Success", HTTPStatus.OK
     except Exception as e:
         print(e)
         flash('An error occurred while deleting the employee')

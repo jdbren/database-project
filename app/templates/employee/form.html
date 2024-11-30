@@ -30,9 +30,9 @@
 
       <label for="gender">Gender:</label>
       <select id="gender" name="gender" required>
-        <option value="Male" {{ 'selected' if emp and emp.Gender == 'Male' else '' }}>Male</option>
-        <option value="Female" {{ 'selected' if emp and emp.Gender == 'Female' else '' }}>Female</option>
-        <option value="Other" {{ 'selected' if emp and emp.Gender == 'Other' else '' }}>Other</option>
+      {% for gender in genders %}
+        <option value="{{ gender.Name }}" {{ 'selected' if emp and emp.Gender == gender.Name else '' }}>{{ gender.Name }}</option>
+      {% endfor %}
       </select><br><br>
 
       <label for="ssn">Social Security Number:</label>
@@ -59,11 +59,17 @@
       <label for="degree">Highest Academic Degree:</label>
       <select id="degree" name="degree">
         <option value="" {{ 'selected' if not emp or not emp.HighestDegree }}>-- Select --</option>
+<<<<<<< HEAD
         <option value="Diploma" {{ 'selected' if emp and emp.HighestDegree == 'Diploma' }}>High School</option>
         <option value="Associate" {{ 'selected' if emp and emp.HighestDegree == 'Associate' }}>Associate's Degree</option>
         <option value="Bachelor" {{ 'selected' if emp and emp.HighestDegree == 'Bachelor' }}>Bachelor's Degree</option>
         <option value="Master" {{ 'selected' if emp and emp.HighestDegree == 'Master' }}>Master's Degree</option>
         <option value="Doctoral" {{ 'selected' if emp and emp.HighestDegree == 'Doctoral' }}>Doctorate</option>
+=======
+      {% for degree in degrees %}
+        <option value="{{ degree.Name }}" {{ 'selected' if emp and emp.HighestDegree == degree.Name }}>{{ degree.Name }}</option>
+      {% endfor %}
+>>>>>>> f6130f2 (Resolved conflicts.)
       </select><br><br>
 
       <label for="experience">Years of Work Experience:</label>
