@@ -229,10 +229,15 @@ def search():
 
         positions_list = search_db('SELECT Name FROM Positions', cursors.DictCursor)
         departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
+        genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
+        degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
         return render_template('employee/search.html',
             employees=results,
             positions=positions_list,
-            departments=departments_list)
+            departments=departments_list,
+            genders=genders_list,
+            degrees=degrees_list
+        )
     except Exception as e:
         print(e)
         flash('An error occurred while fetching the employees')

@@ -84,19 +84,17 @@
       <label for="gender">Gender:</label>
       <select id="gender" name="gender">
         <option value>-- Select --</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-        <option value="Other">Other</option>
+      {% for gender in genders %}
+        <option value="{{ gender.Name }}">{{ gender.Name }}</option>
+      {% endfor %}
       </select><br><br>
 
       <label for="degree">Highest Academic Degree:</label>
       <select id="degree" name="degree">
         <option value>-- Select --</option>
-        <option value="Diploma">High School</option>
-        <option value="Associate">Associate's Degree</option>
-        <option value="Bachelor">Bachelor's Degree</option>
-        <option value="Master">Master's Degree</option>
-        <option value="Doctoral">Doctorate</option>
+      {% for degree in degrees %}
+        <option value="{{ degree.Name }}">{{ degree.Name }}</option>
+      {% endfor %}
       </select><br><br>
 
       <label for="experience">Years of Work Experience:</label>
