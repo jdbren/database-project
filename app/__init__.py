@@ -17,6 +17,10 @@ def create_app():
 
     from . import employee
     app.register_blueprint(employee.bp)
+    from . import project
+    app.register_blueprint(project.bp)
+    from . import query
+    app.register_blueprint(query.bp)
 
     @app.route('/')
     def index():
