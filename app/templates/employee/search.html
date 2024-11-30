@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Employee Search</title>
+{% extends 'employee/index.html' %}
+{% block head %}
+  {{ super() }}
   <style>
     #advanced-fields {
       display: none;
@@ -26,11 +23,12 @@
     }
   </script>
   <script>src="{{ url_for('static', filename='script.js') }}"</script>
-</head>
+{% endblock %}
+{% block content %}
+  {{ super() }}
 
-<body>
-  <h1>Search Employee Database</h1>
-
+  <h3>Search Employee Database</h3>
+  
   <!-- Basic Search Form -->
   <form action="/employee/search" method="GET">
     <div class="toggle-buttons">
@@ -166,7 +164,4 @@
       {% endfor %}
     </tbody>
   </table>
-
-</body>
-
-</html>
+{% endblock %}

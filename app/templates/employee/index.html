@@ -1,13 +1,13 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Employee Manager</title>
-  </head>
-  <body>
-    <h2>Employee Manager</h2>
-    <nav>
-      <a href="/employee/insert">Insert</a> |
-      <a href="/employee/search">Search</a>
-    </nav>
-  </body>
-</html>
+{% extends 'index.html' %}
+{% block head %}
+  {{ super() }}
+  <title>Employee Manager</title>
+{% endblock %}
+{% block content %}
+  {{ super() }}
+  <h2>Employee Manager</h2>
+  <nav>
+    <a href="/employee/insert">Insert</a> |
+    <a href="/employee/search">Search</a>
+  </nav>
+{% endblock %}
