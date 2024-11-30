@@ -132,7 +132,7 @@ def search():
     state = request.args.get('state')
     zip_code = request.args.get('zip')
     employment_type = request.args.get('employment_type')
-    departments = request.args.get('departments')
+    departments = request.args.getlist('departments')
     try:
         # Construct SQL query
         query = """
