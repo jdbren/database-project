@@ -16,9 +16,15 @@ FOR EACH ROW
     );
   END $$
 
+<<<<<<< HEAD
 DROP TRIGGER IF EXISTS BeforePositionsHistoryInsert $$
 CREATE TRIGGER BeforePositionsHistoryInsert
 BEFORE INSERT ON EmployeePositionsHistory
+=======
+DROP TRIGGER IF EXISTS BeforePositionUpdate $$
+CREATE TRIGGER BeforePositionUpdate
+BEFORE UPDATE ON EmployeePositions
+>>>>>>> 6496a80 (add delete selected)
 FOR EACH ROW
   BEGIN
     DECLARE hasConflicts INT;
@@ -38,6 +44,7 @@ FOR EACH ROW
       SET MESSAGE_TEXT = 'StartDate conflicts with previous records.';
     END IF;
   END $$
+<<<<<<< HEAD
 DROP TRIGGER IF EXISTS BeforePositionsHistoryUpdate $$
 CREATE TRIGGER BeforePositionsHistoryUpdate
 BEFORE UPDATE ON EmployeePositionsHistory
@@ -61,6 +68,8 @@ FOR EACH ROW
     END IF;
   END $$
 
+=======
+>>>>>>> 6496a80 (add delete selected)
 DROP TRIGGER IF EXISTS AfterPositionUpdate $$
 CREATE TRIGGER AfterPositionUpdate
 AFTER UPDATE ON EmployeePositions
@@ -114,9 +123,15 @@ FOR EACH ROW
     VALUES ( NEW.ID, NEW.Department, NEW.StartDate, NULL );
   END $$
 
+<<<<<<< HEAD
 DROP TRIGGER IF EXISTS BeforeDepartmentsHistoryInsert $$
 CREATE TRIGGER BeforeDepartmentsHistoryInsert
 BEFORE INSERT ON EmployeeDepartmentsHistory
+=======
+DROP TRIGGER IF EXISTS BeforeDepartmentUpdate $$
+CREATE TRIGGER BeforeDepartmentUpdate
+BEFORE UPDATE ON EmployeeDepartments
+>>>>>>> 6496a80 (add delete selected)
 FOR EACH ROW
   BEGIN
     DECLARE hasConflicts INT;
@@ -137,6 +152,7 @@ FOR EACH ROW
       SET MESSAGE_TEXT = 'StartDate conflicts with previous records.';
     END IF;
   END $$
+<<<<<<< HEAD
 DROP TRIGGER IF EXISTS BeforeDepartmentsHistoryUpdate $$
 CREATE TRIGGER BeforeDepartmentsHistoryUpdate
 BEFORE UPDATE ON EmployeeDepartmentsHistory
@@ -161,6 +177,8 @@ FOR EACH ROW
     END IF;
   END $$
 
+=======
+>>>>>>> 6496a80 (add delete selected)
 DROP TRIGGER IF EXISTS AfterDepartmentUpdate $$
 CREATE TRIGGER AfterDepartmentUpdate
 AFTER UPDATE ON EmployeeDepartments
@@ -277,7 +295,11 @@ BEGIN
   retireAll: LOOP
     FETCH roleCursor INTO employee;
     IF isEmpty THEN LEAVE retireAll; END IF;
+<<<<<<< HEAD
     CALL RetireFromRole(employee, Project, CloseDate);
+=======
+    CALL RetireFromRole(employee, CloseDate);
+>>>>>>> 6496a80 (add delete selected)
   END LOOP;
   CLOSE roleCursor;
 
@@ -294,6 +316,7 @@ CREATE PROCEDURE ReviveProject(
   IN TeamLeader INT
 )
 BEGIN
+<<<<<<< HEAD
   DECLARE hasConflicts INT;
 
   START TRANSACTION;
@@ -311,6 +334,11 @@ BEGIN
     SET MESSAGE_TEXT = 'ReviveDate conflicts with previous records.';
   END IF;
 
+=======
+  START TRANSACTION;
+  SET @disableProjectTrigger = 1;
+
+>>>>>>> 6496a80 (add delete selected)
   UPDATE Projects
   SET Status = 'In Progress'
   WHERE ID = Project;
@@ -346,7 +374,11 @@ BEGIN
 
   IF isSameLeader = 0 THEN
     UPDATE EmployeeRolesHistory
+<<<<<<< HEAD
     SET EndDate = DATE_SUB(ChangeDate, INTERVAL 1 DAY)
+=======
+    SET EndDate = ChangeDate
+>>>>>>> 6496a80 (add delete selected)
     WHERE ProjectID = Project AND
       EndDate IS NULL AND
       Role = 'Leader';
@@ -356,7 +388,11 @@ BEGIN
     );
     UPDATE Projects
     SET Leader = NewTeamLeader
+<<<<<<< HEAD
     WHERE ID = Project;
+=======
+    WHERE ProjectID = Project;
+>>>>>>> 6496a80 (add delete selected)
   END IF;
 
   SET @disableProjectTrigger = NULL;
@@ -364,8 +400,13 @@ BEGIN
 END $$
 
 -- EmployeeRoles --
+<<<<<<< HEAD
 DROP TRIGGER IF EXISTS AfterRoleInsert $$
 CREATE TRIGGER AfterRoleInsert
+=======
+DROP TRIGGER IF EXISTS AfterEmployeeRoleInsert $$
+CREATE TRIGGER AfterEmployeeRoleInsert
+>>>>>>> 6496a80 (add delete selected)
 AFTER INSERT ON EmployeeRoles
 FOR EACH ROW
   BEGIN
@@ -375,9 +416,15 @@ FOR EACH ROW
     );
   END $$
 
+<<<<<<< HEAD
 DROP TRIGGER IF EXISTS BeforeRolesHistoryInsert $$
 CREATE TRIGGER BeforeRolesHistoryInsert
 BEFORE INSERT ON EmployeeRolesHistory
+=======
+DROP TRIGGER IF EXISTS BeforeEmployeeRoleUpdate $$
+CREATE TRIGGER BeforeEmployeeRoleUpdate
+BEFORE UPDATE ON EmployeeRoles
+>>>>>>> 6496a80 (add delete selected)
 FOR EACH ROW
   BEGIN
     DECLARE hasConflicts INT;
@@ -385,8 +432,12 @@ FOR EACH ROW
     SELECT COUNT(*)
     INTO hasConflicts
     FROM EmployeeRolesHistory
+<<<<<<< HEAD
     WHERE Role != 'Leader' AND
       EmployeeID = NEW.EmployeeID AND
+=======
+    WHERE EmployeeID = NEW.EmployeeID AND
+>>>>>>> 6496a80 (add delete selected)
       ProjectID = NEW.ProjectID AND
       StartDate != NEW.StartDate AND
       NEW.StartDate BETWEEN StartDate AND EndDate;
@@ -399,6 +450,7 @@ FOR EACH ROW
       SET MESSAGE_TEXT = 'StartDate conflicts with previous records.';
     END IF;
   END $$
+<<<<<<< HEAD
 DROP TRIGGER IF EXISTS BeforeRolesHistoryUpdate $$
 CREATE TRIGGER BeforeRolesHistoryUpdate
 BEFORE UPDATE ON EmployeeRolesHistory
@@ -426,6 +478,10 @@ FOR EACH ROW
 
 DROP TRIGGER IF EXISTS AfterRoleUpdate $$
 CREATE TRIGGER AfterRoleUpdate
+=======
+DROP TRIGGER IF EXISTS AfterEmployeeRoleUpdate $$
+CREATE TRIGGER AfterEmployeeRoleUpdate
+>>>>>>> 6496a80 (add delete selected)
 AFTER UPDATE ON EmployeeRoles
 FOR EACH ROW
   BEGIN
@@ -439,8 +495,13 @@ FOR EACH ROW
       StartDate = OLD.StartDate;
   END $$
 
+<<<<<<< HEAD
 DROP TRIGGER IF EXISTS AfterRoleDelete $$
 CREATE TRIGGER AfterRoleDelete
+=======
+DROP TRIGGER IF EXISTS AfterEmployeeRoleDelete $$
+CREATE TRIGGER AfterEmployeeRoleDelete
+>>>>>>> 6496a80 (add delete selected)
 AFTER DELETE ON EmployeeRoles
 FOR EACH ROW
   BEGIN
@@ -462,11 +523,22 @@ BEGIN
 
   UPDATE EmployeeRolesHistory
   SET EndDate = EmployeeRoleEndDate
+<<<<<<< HEAD
   WHERE Role != 'Leader' AND
     EmployeeID = Employee AND
     ProjectID = Project AND
     EndDate IS NULL;
+<<<<<<< HEAD
   DELETE FROM EmployeePositions
+=======
+  DELETE FROM EmployeeRoles
+=======
+  WHERE EmployeeID = Employee AND
+    ProjectID = Project AND
+    EndDate IS NULL;
+  DELETE FROM EmployeePositions
+>>>>>>> 6496a80 (add delete selected)
+>>>>>>> 659a47c (add delete selected)
   WHERE EmployeeID = Employee AND
     ProjectID = Project;
 

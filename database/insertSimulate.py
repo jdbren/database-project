@@ -128,8 +128,13 @@ def randPositions(employees):
                         ) # Salary increases by at least 10%.
                     else: # Internal transfer.
                         p = random.choice(positions); title = p['Name']
+<<<<<<< HEAD
                         employment = random.choice([row['Name']
                             for row in types if row['Name'] != 'Intern'
+=======
+                        employment = random.choice([row['Name'] for row in
+                            filter(lambda r: r['Name'] != 'Intern', types)
+>>>>>>> 6496a80 (add delete selected)
                         ]) # Random employment type, excluding internship.
                         salary = random.randint(
                             int(p['MinimumSalary']),
@@ -196,7 +201,11 @@ def randDepartments(positions):
                 choices.append(team[1])
                 active.remove(team)
 
+<<<<<<< HEAD
                 timeSkip = random.randint(1, duration)
+=======
+                timeSkip = random.randint(0, duration)
+>>>>>>> 6496a80 (add delete selected)
                 d += datetime.timedelta(weeks=timeSkip)
                 duration -= timeSkip
             else:
@@ -216,7 +225,13 @@ def randDepartments(positions):
 
         for row in dataForP:
             if len(row) < 4:
+<<<<<<< HEAD
                 row.append(p[2])
+=======
+                row.append(None if not p[2] else \
+                    datetime.datetime.strptime(p[2],'%Y-%m-%d')
+                ) # Or remove departments, randomly?
+>>>>>>> 6496a80 (add delete selected)
         data.extend(dataForP)
     return data
 
@@ -250,6 +265,7 @@ def randBenefits(activeEmployees):
             # See schema: EmployeeBenefits
     return data
 
+<<<<<<< HEAD
 def randProjects(count, positions):
     names = f'{dataRoot}/ProjectNames.csv'
     departments = f'{dataRoot}/Departments.csv'
@@ -385,6 +401,8 @@ def randProjects(count, positions):
         ])
     return data
 
+=======
+>>>>>>> 6496a80 (add delete selected)
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         print('Usage: python insertSimulate.py')
@@ -399,11 +417,19 @@ if __name__ == '__main__':
         cursor.executemany(f'INSERT INTO Employees VALUES({
             ", ".join(["%s" for x in employees[0]])
         })', employees); db.commit()
+<<<<<<< HEAD
     else: [print(row) for row in employees]
 
     print("Compiling EmployeePositions...")
     positions = randPositions(employees)
     print("Inserting EmployeePositions...")
+=======
+    else: print(employees)
+
+    print("Compiling EmployeePositionsHistory...")
+    positions = randPositions(employees)
+    print("Inserting EmployeePositionsHistory...")
+>>>>>>> 6496a80 (add delete selected)
     processing = copy.deepcopy(positions)
     while processing:
         batch = []
@@ -423,6 +449,7 @@ if __name__ == '__main__':
         if not compileOnly:
             cursor.executemany(f'INSERT INTO EmployeePositions VALUES({
                 ", ".join(["%s" for x in batch[0]])
+<<<<<<< HEAD
             })', batch)
         if not compileOnly and endDates:
             cursor.executemany(f'CALL RetireFromPosition({
@@ -432,6 +459,14 @@ if __name__ == '__main__':
         print(row)
     for row in positions]
     else: db.commit()
+=======
+            })', batch); db.commit()
+        if not compileOnly and endDates:
+            cursor.executemany(f'CALL RetireFromPosition({
+                ", ".join(["%s" for x in endDates[0]])
+            })', endDates); db.commit()
+    if compileOnly: print(positions)
+>>>>>>> 6496a80 (add delete selected)
 
     print("Compiling EmployeeDepartments...")
     departments = randDepartments(positions)
@@ -454,6 +489,7 @@ if __name__ == '__main__':
         if not compileOnly:
             cursor.executemany(f'INSERT INTO EmployeeDepartments VALUES({
                 ", ".join(["%s" for x in batch[0]])
+<<<<<<< HEAD
             })', batch)
         if not compileOnly and endDates:
             cursor.executemany(f'CALL LeaveDepartment({
@@ -463,6 +499,14 @@ if __name__ == '__main__':
         print(row)
     for row in departments]
     else: db.commit()
+=======
+            })', batch); db.commit()
+        if not compileOnly and endDates:
+            cursor.executemany(f'CALL LeaveDepartment({
+                ", ".join(["%s" for x in endDates[0]])
+            })', endDates); db.commit()
+    if compileOnly: print(departments)
+>>>>>>> 6496a80 (add delete selected)
 
     print("Compiling EmployeeBenefits...")
     benefits = randBenefits(activeEmployees)
@@ -471,6 +515,7 @@ if __name__ == '__main__':
         cursor.executemany(f'INSERT INTO EmployeeBenefits VALUES({
             ", ".join(["%s" for x in benefits[0]])
         })', benefits); db.commit()
+<<<<<<< HEAD
     if compileOnly: [
         print(row)
     for row in benefits]
@@ -538,3 +583,6 @@ if __name__ == '__main__':
             [print(row) for row in p[1]]
             [print(row) for row in p[2]]
         else: db.commit()
+=======
+    if compileOnly: print(benefits)
+>>>>>>> 6496a80 (add delete selected)

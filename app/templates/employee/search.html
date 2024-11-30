@@ -21,6 +21,16 @@
         advancedFieldset.disabled = false;
       }
     }
+<<<<<<< HEAD
+=======
+    function toggleCheckboxes() {
+      const checkboxes = document.getElementsByName('select');
+      const selectAll = document.getElementById('select-all');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+      });
+    }
+>>>>>>> 6496a80 (add delete selected)
     async function deleteAllEmployees() {
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
       const selectedEmployees = Array.from(checkboxes)
@@ -161,8 +171,12 @@
     <button type="submit"
       style="margin-top: 1rem; margin-bottom: 1rem;"
     >Search</button>
+<<<<<<< HEAD
     <button type="button" onclick="deleteAllEmployees()">Archive Selected</button>
     <div>Found {{ employees | length }} records</div>
+=======
+    <button type="button" onclick="deleteAllEmployees()">Delete Selected</button>
+>>>>>>> 6496a80 (add delete selected)
   </form>
 
   <table border="1">

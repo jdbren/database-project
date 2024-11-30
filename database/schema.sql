@@ -142,9 +142,15 @@ CREATE TABLE IF NOT EXISTS EmployeePositions (
     ON UPDATE CASCADE,
   CONSTRAINT EmployeePositionsFK_EmploymentType
     FOREIGN KEY (EmploymentType)
+<<<<<<< HEAD
     REFERENCES EmploymentTypes (Name)
     -- ON DELETE RESTRICT --
     ON UPDATE CASCADE,
+=======
+    REFERENCES EmploymentTypes (Name),
+    -- ON DELETE RESTRICT --
+    -- ON UPDATE RESTRICT --
+>>>>>>> 6496a80 (add delete selected)
   CONSTRAINT EmployeePositionsFK_HealthInsurance
     FOREIGN KEY (HealthInsurance)
     REFERENCES HealthInsurance (Name)
@@ -256,7 +262,11 @@ CREATE TABLE IF NOT EXISTS Projects (
   CONSTRAINT ProjectsFK_Leader
     FOREIGN KEY (Leader)
     REFERENCES Employees (ID)
+<<<<<<< HEAD
     ON DELETE CASCADE
+=======
+    -- ON DELETE RESTRICT --
+>>>>>>> 6496a80 (add delete selected)
     ON UPDATE CASCADE
 );
 
@@ -279,7 +289,11 @@ CREATE TABLE IF NOT EXISTS EmployeeRoles (
   CONSTRAINT EmployeeRolesFK_Role
     FOREIGN KEY (Role)
     REFERENCES ProjectRoles (Name)
+<<<<<<< HEAD
     ON DELETE CASCADE
+=======
+    -- ON DELETE RESTRICT --
+>>>>>>> 6496a80 (add delete selected)
     ON UPDATE CASCADE
 );
 CREATE TABLE IF NOT EXISTS EmployeeRolesHistory (
@@ -288,7 +302,11 @@ CREATE TABLE IF NOT EXISTS EmployeeRolesHistory (
   StartDate DATE NOT NULL,
   EndDate DATE NULL,
   Role CHAR(36) NOT NULL,
+<<<<<<< HEAD
   PRIMARY KEY (EmployeeID, ProjectID, StartDate, Role),
+=======
+  PRIMARY KEY (EmployeeID, ProjectID, StartDate),
+>>>>>>> 6496a80 (add delete selected)
   CONSTRAINT EmployeeRolesHistoryFK_EmployeeID
     FOREIGN KEY (EmployeeID)
     REFERENCES Employees (ID)
@@ -297,8 +315,13 @@ CREATE TABLE IF NOT EXISTS EmployeeRolesHistory (
   CONSTRAINT EmployeeRolesHistoryFK_ProjectID
     FOREIGN KEY (ProjectID)
     REFERENCES Projects (ID)
+<<<<<<< HEAD
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT EmployeeRolesHistoryCK_ValidDateRange
     CHECK ( EndDate IS NULL OR EndDate >= StartDate )
+=======
+    -- ON DELETE RESTRICT --
+    ON UPDATE CASCADE
+>>>>>>> 6496a80 (add delete selected)
 );

@@ -31,6 +31,10 @@ GRANT INSERT, UPDATE, DELETE
 -- We should have separate privileges, but
 --  this is outside of the scope of the assignment.
 --  I.e. Create a user dedicated to Human Resources.
+<<<<<<< HEAD
+=======
+-- Note: Do NOT expose or modify ID.
+>>>>>>> 6496a80 (add delete selected)
 
 -- Benefits: Raise a ticket!
 -- This should go through an approval process

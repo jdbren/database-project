@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from http import HTTPStatus
 from datetime import datetime
 from MySQLdb import cursors
@@ -8,6 +9,8 @@ from flask import (
 =======
 from datetime import datetime
 =======
+=======
+>>>>>>> 659a47c (add delete selected)
 import datetime
 >>>>>>> 0ce6406 (allow searching including inactive staff)
 from MySQLdb import cursors
@@ -27,7 +30,29 @@ from app.db import (
 =======
 from flask import Blueprint, render_template, redirect, request, url_for
 from app.db import search_db, modify_db, open_db, close_db
+<<<<<<< HEAD
 >>>>>>> 460080d (code cleanup)
+=======
+=======
+<<<<<<< HEAD
+from http import HTTPStatus
+from datetime import datetime
+from MySQLdb import cursors
+from flask import (
+    Blueprint, flash, redirect, render_template, request
+=======
+from datetime import datetime
+from MySQLdb import cursors
+from http import HTTPStatus
+from flask import ( Blueprint, render_template,
+    flash, redirect, request, session, url_for
+>>>>>>> f6130f2 (Resolved conflicts.)
+)
+from app.db import (
+    execute_and_fetchall, execute_and_fetchone, execute_and_commit, get_db, close_db
+)
+>>>>>>> 6496a80 (add delete selected)
+>>>>>>> 659a47c (add delete selected)
 
 bp = Blueprint('employee', __name__, url_prefix='/employee')
 
@@ -95,7 +120,12 @@ def insert():
                     IsExternalHire, HealthInsurance, HealthStartDate
                 ) VALUES (%s, CURDATE(), %s, %s, %s, %s, %s, %s)
             ''', (id, position, employment_type, salary, external_hire,
+<<<<<<< HEAD
                 health_insurance, health_insurance_start))
+=======
+                health_insurance, health_insurance_start_date)
+            )
+>>>>>>> 6496a80 (add delete selected)
 
             for department in selected_departments:
                 cursor.execute('''
@@ -126,6 +156,7 @@ def insert():
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     benefits_list = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
     positions_list = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
     departments_list = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
@@ -147,14 +178,23 @@ def insert():
         genders=gendersList
 >>>>>>> f6130f2 (Resolved conflicts.)
 =======
+=======
+>>>>>>> 659a47c (add delete selected)
     genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
     degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
     benefits_list = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
     positions_list = search_db('SELECT Name FROM Positions', cursors.DictCursor)
     departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
     employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
+=======
+<<<<<<< HEAD
+    benefits_list = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
+    positions_list = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
+    departments_list = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
+>>>>>>> 6496a80 (add delete selected)
     return render_template('employee/form.html',
         departments=departments_list,
+<<<<<<< HEAD
         positions=positions_list,
         benefits=benefits_list,
         degrees=degrees_list,
@@ -164,7 +204,26 @@ def insert():
 =======
         genders=genders_list,
         employment_types=employment_types
+<<<<<<< HEAD
 >>>>>>> 4d2ba1c (fixes to emp)
+=======
+=======
+        benefits=benefits_list
+=======
+    gendersList = search_db('SELECT Name FROM Genders', cursors.DictCursor)
+    degreesList = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
+    benefitsList = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
+    positionsList = search_db('SELECT Name FROM Positions', cursors.DictCursor)
+    departmentsList = search_db('SELECT Name FROM Departments', cursors.DictCursor)
+    return render_template('employee/form.html',
+        departments=departmentsList,
+        positions=positionsList,
+        benefits=benefitsList,
+        degrees=degreesList,
+        genders=gendersList
+>>>>>>> f6130f2 (Resolved conflicts.)
+>>>>>>> 6496a80 (add delete selected)
+>>>>>>> 659a47c (add delete selected)
     )
 
 
@@ -615,6 +674,7 @@ def archive_employee(id):
 >>>>>>> 9d18a2b (updates to work with new schema)
         if not emp:
             return "Employee not found", HTTPStatus.NOT_FOUND
+<<<<<<< HEAD
         db = open_db()
         cursor = db.cursor()
 
@@ -635,6 +695,12 @@ def archive_employee(id):
         db.commit()
         close_db()
         return redirect(url_for('employee.search')), HTTPStatus.OK
+=======
+        execute_and_commit("DELETE FROM Staff WHERE ID = %s", (id,))
+        # Rest of the data is deleted by cascade
+        flash(f"Employee {emp['ID']} deleted successfully")
+        return "Success", HTTPStatus.OK
+>>>>>>> 6496a80 (add delete selected)
     except Exception as e:
         print(e)
         return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
