@@ -142,9 +142,9 @@ CREATE TABLE IF NOT EXISTS EmployeePositions (
     ON UPDATE CASCADE,
   CONSTRAINT EmployeePositionsFK_EmploymentType
     FOREIGN KEY (EmploymentType)
-    REFERENCES EmploymentTypes (Name),
+    REFERENCES EmploymentTypes (Name)
     -- ON DELETE RESTRICT --
-    -- ON UPDATE RESTRICT --
+    ON UPDATE CASCADE,
   CONSTRAINT EmployeePositionsFK_HealthInsurance
     FOREIGN KEY (HealthInsurance)
     REFERENCES HealthInsurance (Name)
@@ -256,7 +256,7 @@ CREATE TABLE IF NOT EXISTS Projects (
   CONSTRAINT ProjectsFK_Leader
     FOREIGN KEY (Leader)
     REFERENCES Employees (ID)
-    -- ON DELETE RESTRICT --
+    ON DELETE CASCADE
     ON UPDATE CASCADE
 );
 
@@ -279,7 +279,7 @@ CREATE TABLE IF NOT EXISTS EmployeeRoles (
   CONSTRAINT EmployeeRolesFK_Role
     FOREIGN KEY (Role)
     REFERENCES ProjectRoles (Name)
-    -- ON DELETE RESTRICT --
+    ON DELETE CASCADE
     ON UPDATE CASCADE
 );
 CREATE TABLE IF NOT EXISTS EmployeeRolesHistory (
@@ -288,7 +288,7 @@ CREATE TABLE IF NOT EXISTS EmployeeRolesHistory (
   StartDate DATE NOT NULL,
   EndDate DATE NULL,
   Role CHAR(36) NOT NULL,
-  PRIMARY KEY (EmployeeID, ProjectID, StartDate),
+  PRIMARY KEY (EmployeeID, ProjectID, StartDate, Role),
   CONSTRAINT EmployeeRolesHistoryFK_EmployeeID
     FOREIGN KEY (EmployeeID)
     REFERENCES Employees (ID)
@@ -297,6 +297,8 @@ CREATE TABLE IF NOT EXISTS EmployeeRolesHistory (
   CONSTRAINT EmployeeRolesHistoryFK_ProjectID
     FOREIGN KEY (ProjectID)
     REFERENCES Projects (ID)
-    -- ON DELETE RESTRICT --
-    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT EmployeeRolesHistoryCK_ValidDateRange
+    CHECK ( EndDate IS NULL OR EndDate >= StartDate )
 );

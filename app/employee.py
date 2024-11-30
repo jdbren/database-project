@@ -264,12 +264,22 @@ def search():
         for row in results:
             row['SocialSecurity'] = f"***-**-{row['SocialSecurity'][-4:]}"
 
+<<<<<<< HEAD
         positions_list = execute_and_fetchall('SELECT Name FROM Positions', cursors.DictCursor)
         departments_list = execute_and_fetchall('SELECT Name FROM Departments', cursors.DictCursor)
+=======
+        positions_list = search_db('SELECT Name FROM Positions', cursors.DictCursor)
+        departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
+        genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
+        degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
+>>>>>>> 4dca8a4 (fix gender and degree search)
         return render_template('employee/search.html',
             employees=results,
             positions=positions_list,
-            departments=departments_list)
+            departments=departments_list,
+            genders=genders_list,
+            degrees=degrees_list
+        )
     except Exception as e:
         print(e)
         flash('An error occurred while fetching the employees')
