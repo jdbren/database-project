@@ -21,6 +21,28 @@
         advancedFieldset.disabled = false;
       }
     }
+    function toggleCheckboxes() {
+      const checkboxes = document.getElementsByName('select');
+      const selectAll = document.getElementById('select-all');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+      });
+    }
+    async function deleteAllEmployees() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      const selectedEmployees = Array.from(checkboxes)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.id);
+      if (selectedEmployees.length === 0) {
+        alert('Please select at least one employee to delete.');
+      } else if (confirm('Are you sure you want to delete the selected employees?')) {
+        selectedEmployees.forEach(employeeID => {
+          fetch(`/employee/${employeeID}`, {
+            method: 'DELETE'
+          });
+        });
+      }
+    }
   </script>
   <script>src="{{ url_for('static', filename='script.js') }}"</script>
 {% endblock %}
@@ -28,7 +50,7 @@
   {{ super() }}
 
   <h3>Search Employee Database</h3>
-  
+
   <!-- Basic Search Form -->
   <form action="/employee/search" method="GET">
     <div class="toggle-buttons">
@@ -125,11 +147,15 @@
     <button type="submit"
       style="margin-top: 1rem; margin-bottom: 1rem;"
     >Search</button>
+    <button type="button" onclick="deleteAllEmployees()">Delete Selected</button>
   </form>
 
   <table border="1">
     <thead>
       <tr>
+        <th>
+          <input type="checkbox" id="select-all" onclick="toggleCheckboxes()">
+        </th>
         <th>ID</th>
         <th>SSN</th>
         <th>First</th>
@@ -146,6 +172,9 @@
     <tbody>
       {% for employee in employees %}
       <tr>
+        <td>
+          <input type="checkbox" id="{{ employee.ID }}" name="select">
+        </td>
         <td>{{ employee.ID }}</td>
         <td>{{ employee.SocialSecurity }}</td>
         <td>{{ employee.FirstName }}</td>

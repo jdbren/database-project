@@ -417,7 +417,7 @@ def delete(id):
         execute_and_commit("DELETE FROM Staff WHERE ID = %s", (id,))
         # Rest of the data is deleted by cascade
         flash(f"Employee {emp['ID']} deleted successfully")
-        return redirect('/employee', HTTPStatus.OK)
+        return "Success", HTTPStatus.OK
     except Exception as e:
         print(e)
         flash('An error occurred while deleting the employee')
