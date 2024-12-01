@@ -1,0 +1,89 @@
+{% extends 'project/index.html' %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+      text-align: left;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    .details-header {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+    .link-button {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #f2f2f2;
+      color: black;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <h3 class="details-header">Project Details</h3>
+  <table>
+    <tr>
+      <th>ID</th>
+      <td>{{ project.ID }}</td>
+    </tr>
+    <tr>
+      <th>Name</th>
+      <td>{{ project.Name }}</td>
+    </tr>
+    <tr>
+      <th>Department</th>
+      <td>{{ project.Department }}</td>
+    </tr>
+    <tr>
+      <th>Status</th>
+      <td>{{ project.Status }}</td>
+    </tr>
+    <tr>
+      <th>Leader</th>
+      <td>{{ project.Leader }}</td>
+    </tr>
+  </table>
+
+  <h3 class="details-header">Employees Assigned</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Employee ID</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Start Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for emp in employees %}
+      <tr>
+        <td>{{ emp.EmployeeID }}</td>
+        <td>{{ emp.Name }}</td>
+        <td>{{ emp.Role }}</td>
+        <td>{{ emp.StartDate }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a class="link-button" href="/project/{{ project.ID }}/edit">Edit Project</a>
+{% endblock %}
