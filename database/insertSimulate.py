@@ -128,8 +128,8 @@ def randPositions(employees):
                         ) # Salary increases by at least 10%.
                     else: # Internal transfer.
                         p = random.choice(positions); title = p['Name']
-                        employment = random.choice([row['Name'] for row in
-                            filter(lambda r: r['Name'] != 'Intern', types)
+                        employment = random.choice([row['Name']
+                            for row in types if row['Name'] != 'Intern'
                         ]) # Random employment type, excluding internship.
                         salary = random.randint(
                             int(p['MinimumSalary']),
@@ -196,7 +196,7 @@ def randDepartments(positions):
                 choices.append(team[1])
                 active.remove(team)
 
-                timeSkip = random.randint(0, duration)
+                timeSkip = random.randint(1, duration)
                 d += datetime.timedelta(weeks=timeSkip)
                 duration -= timeSkip
             else:
@@ -216,9 +216,7 @@ def randDepartments(positions):
 
         for row in dataForP:
             if len(row) < 4:
-                row.append(None if not p[2] else \
-                    datetime.datetime.strptime(p[2],'%Y-%m-%d')
-                ) # Or remove departments, randomly?
+                row.append(p[2])
         data.extend(dataForP)
     return data
 
@@ -252,6 +250,141 @@ def randBenefits(activeEmployees):
             # See schema: EmployeeBenefits
     return data
 
+def randProjects(count, positions):
+    names = f'{dataRoot}/ProjectNames.csv'
+    departments = f'{dataRoot}/Departments.csv'
+    status = f'{dataRoot}/ProjectStatus.csv'
+    roles = f'{dataRoot}/ProjectRoles.csv'
+
+    with open(names, 'r') as file:
+        names = csv.DictReader(file)
+        names = [row for row in names]
+    with open(departments, 'r') as file:
+        departments = csv.DictReader(file)
+        departments = [row for row in departments]
+    with open(status, 'r') as file:
+        status = csv.DictReader(file)
+        status = [row for row in status]
+    with open(roles, 'r') as file:
+        roles = csv.DictReader(file)
+        roles = [row for row in roles]
+
+    today = datetime.datetime.today()
+    employedDates = [[row[0],
+        datetime.datetime.strptime(row[1], '%Y-%m-%d'),
+        datetime.datetime.strptime(row[2], '%Y-%m-%d') \
+            if row[2] else today
+    ] for row in positions]
+
+    data = []
+    for i in range(count):
+        project = [i+1,
+            random.choice(names)['Name'],
+            random.choice(departments)['Name'],
+        ] # See schema: Projects
+
+        timeline = [] # FirstDay, LastDay
+        timeline.append(random.randint(0, max(
+            [row[0] for row in [[
+                (today - row[1]).days,
+                (today - row[2]).days
+            ] for row in employedDates]]
+        ))) # Random upto day of first employee.
+        timeline.append(random.randint(0, timeline[0]))
+        if random.randint(0, 99) > 90: timeline[1] = 0
+        timeline = [ # Converts to actual date.
+            today - datetime.timedelta(days=row)
+        for row in timeline]
+
+        project.append(random.choice([row['Name']
+            for row in status if row['Name'] != 'Closed'
+        ]) if timeline[1] == today else 'Closed')
+
+        leaders = []
+        t = timeline[0]
+        while t < timeline[1]:
+            candidates = [row for row in employedDates
+                if row[1] <= t <= row[2]
+            ] # Candidates for leaders.
+
+            if leaders:
+                extend = [row for row in candidates
+                    if row[0] == leaders[-1][0]
+                ] # Finds if leader can be continued.
+                if extend and random.randint(0, 1):
+                    leadEnd = min(timeline[1], extend[0][2])
+                    t = leaders[-1][2] = leadEnd
+                    t += datetime.timedelta(days=1)
+                    continue
+
+                candidates = [row for row in candidates
+                    if row[0] != leaders[-1][0]
+                ] # Excludes same records.
+
+            if candidates:
+                lead = random.choice(candidates)
+                leadEnd = min(timeline[1], lead[2])
+            else:
+                lead = None
+                futureDates = [row[1]
+                    for row in employedDates if row[1] > t
+                ] # Finds the earliest date with employee.
+                if futureDates:
+                    leadEnd = min(timeline[1],
+                        min(futureDates) - datetime.timedelta(days=1)
+                    ) # EndDate always precede by a day!
+                else: leadEnd = timeline[1]
+            lead = lead[0] if lead else None
+            leaders.append([lead, t, leadEnd])
+            t = leadEnd + datetime.timedelta(days=1)
+
+        while not leaders[0][0]:
+            leaders.pop(0)
+            if not leaders: break
+            timeline[0] = leaders[0][1]
+
+        members = []
+        t = timeline[0]
+        while t < timeline[1]:
+            maxMemberCount = random.randint(1, 10)
+            currentMembers = [row[0] for row in members
+                if row[1] <= t <= row[2]
+            ] + [row[0] for row in leaders
+                if row[1] <= t <= row[2]
+            ]; memberCount = len(currentMembers)
+
+            while memberCount < maxMemberCount:
+                candidates = [row for row in employedDates
+                    if row[1] <= t <= row[2] and
+                       row[0] not in currentMembers
+                ] # Candidates for members.
+
+                if candidates:
+                    member = random.choice(candidates)
+                    memberEnd = min(timeline[1], member[2])
+                    members.append([member[0], t, memberEnd,
+                        random.choice(roles)['Name']
+                    ]) # See schema: EmployeeRoles
+                    currentMembers.append(member[0])
+                    memberCount += 1
+                else: break
+
+            futureDates = [row[2] for row in members if row[2] > t]
+            t = random.choice(futureDates) if futureDates else timeline[1]
+            t += datetime.timedelta(days=1)
+
+        data.append([project,
+            [[row[0],
+              row[1].strftime('%Y-%m-%d'),
+              row[2].strftime('%Y-%m-%d')
+            ] for row in leaders],
+            [[row[0], i+1,
+              row[1].strftime('%Y-%m-%d'),
+              row[2].strftime('%Y-%m-%d'), row[3]
+            ] for row in members]
+        ])
+    return data
+
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         print('Usage: python insertSimulate.py')
@@ -266,11 +399,11 @@ if __name__ == '__main__':
         cursor.executemany(f'INSERT INTO Employees VALUES({
             ", ".join(["%s" for x in employees[0]])
         })', employees); db.commit()
-    else: print(employees)
+    else: [print(row) for row in employees]
 
-    print("Compiling EmployeePositionsHistory...")
+    print("Compiling EmployeePositions...")
     positions = randPositions(employees)
-    print("Inserting EmployeePositionsHistory...")
+    print("Inserting EmployeePositions...")
     processing = copy.deepcopy(positions)
     while processing:
         batch = []
@@ -290,12 +423,15 @@ if __name__ == '__main__':
         if not compileOnly:
             cursor.executemany(f'INSERT INTO EmployeePositions VALUES({
                 ", ".join(["%s" for x in batch[0]])
-            })', batch); db.commit()
+            })', batch)
         if not compileOnly and endDates:
             cursor.executemany(f'CALL RetireFromPosition({
                 ", ".join(["%s" for x in endDates[0]])
-            })', endDates); db.commit()
-    if compileOnly: print(positions)
+            })', endDates)
+    if compileOnly: [
+        print(row)
+    for row in positions]
+    else: db.commit()
 
     print("Compiling EmployeeDepartments...")
     departments = randDepartments(positions)
@@ -318,12 +454,15 @@ if __name__ == '__main__':
         if not compileOnly:
             cursor.executemany(f'INSERT INTO EmployeeDepartments VALUES({
                 ", ".join(["%s" for x in batch[0]])
-            })', batch); db.commit()
+            })', batch)
         if not compileOnly and endDates:
             cursor.executemany(f'CALL LeaveDepartment({
                 ", ".join(["%s" for x in endDates[0]])
-            })', endDates); db.commit()
-    if compileOnly: print(departments)
+            })', endDates)
+    if compileOnly: [
+        print(row)
+    for row in departments]
+    else: db.commit()
 
     print("Compiling EmployeeBenefits...")
     benefits = randBenefits(activeEmployees)
@@ -332,4 +471,70 @@ if __name__ == '__main__':
         cursor.executemany(f'INSERT INTO EmployeeBenefits VALUES({
             ", ".join(["%s" for x in benefits[0]])
         })', benefits); db.commit()
-    if compileOnly: print(benefits)
+    if compileOnly: [
+        print(row)
+    for row in benefits]
+
+    print("Compiling Projects and Teams...")
+    projects = randProjects(projectCount, positions)
+    print("Inserting Projects and Teams...")
+    for p in projects:
+        if not p[1]:
+            continue
+
+        if not compileOnly:
+            cursor.execute('CALL CreateProject(%s, %s, %s, %s)',
+                [p[0][1], p[0][2], p[1][0][0], p[1][0][1]])
+
+        active = True
+        for row in p[1][1:]:
+            match ([compileOnly, active, row[0]]):
+                case [False, True, None]:
+                    cursor.execute('CALL CloseProject(%s, %s)',
+                        [p[0][0], row[1]])
+                    active = False
+                case [False, False, _]:
+                    cursor.execute('CALL ReviveProject(%s, %s, %s)',
+                        [p[0][0], row[1], row[0]])
+                    active = True
+                case [False, True, _]:
+                    cursor.execute('CALL ChangeProjectLeader(%s, %s, %s)',
+                        [p[0][0], row[0], row[1]])
+
+        if not compileOnly and p[0][3] != 'Closed':
+            cursor.execute('''UPDATE Projects
+                SET Status = %s WHERE ID = %s
+            ''', [p[0][3], p[0][0]])
+
+        today = datetime.datetime.today()
+        processing = copy.deepcopy(p[2])
+        while processing:
+            batch = []
+            encountered = set()
+            for row in processing:
+                if row[0] not in encountered:
+                    encountered.add(row[0])
+                    batch.append(row)
+
+            endDates = []
+            for row in batch:
+                processing.remove(row)
+                eDate = row.pop(3)
+                if p[0][3] == 'Closed' \
+                   or eDate != today.strftime('%Y-%m-%d'):
+                    endDates.append([row[0], row[1], eDate])
+
+            if not compileOnly:
+                cursor.executemany(f'INSERT INTO EmployeeRoles VALUES({
+                    ", ".join(["%s" for x in batch[0]])
+                })', batch)
+            if not compileOnly and endDates:
+                cursor.executemany(f'CALL RetireFromRole({
+                    ", ".join(["%s" for x in endDates[0]])
+                })', endDates)
+
+        if compileOnly:
+            print(p[0])
+            [print(row) for row in p[1]]
+            [print(row) for row in p[2]]
+        else: db.commit()

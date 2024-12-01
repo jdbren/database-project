@@ -25,7 +25,7 @@ GRANT SELECT ON GenericCompany.*
 --  before submitting a request to the DBA.
 --  Request by Human Resources.
 
-GRANT INSERT, UPDATE, DELETE
+GRANT INSERT, UPDATE
   ON GenericCompany.Positions
   TO 'GenericApplication'@'localhost';
 -- We should have separate privileges, but
@@ -41,7 +41,7 @@ GRANT INSERT, UPDATE, DELETE
 -- ProjectStatus: Raise a ticket!
 --  Request by Project Management.
 
-GRANT INSERT, UPDATE, DELETE
+GRANT INSERT, UPDATE
   ON GenericCompany.ProjectRoles
   TO 'GenericApplication'@'localhost';
 -- We should have separate privileges, but
