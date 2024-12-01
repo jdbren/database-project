@@ -17,6 +17,7 @@
       align-items: center;
     }
   </style>
+<<<<<<< HEAD
   <script>
     function addEmployeeField() {
       const lastEmployee = document.querySelector('div[class="employee"]:last-of-type');
@@ -35,10 +36,19 @@
         warnings.forEach(warning => {
           warning.style.display = 'none'; // Hide warning messages
         });
+=======
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script>
+    function addEmployeeField() {
+      const lastEmployee = document.querySelector('div[name="employee"]:last-of-type');
+      if (lastEmployee) {
+        const newEmployee = lastEmployee.cloneNode(true);
+>>>>>>> fc12ae4 (basic project insertion and update)
         lastEmployee.after(newEmployee);
       } else {
         // Create a new employee field if there are no existing fields
         const employeeField = document.createElement('div');
+<<<<<<< HEAD
         employeeField.setAttribute('class', 'employee');
         employeeField.innerHTML = `
           <button type="button" onclick="removeEmployeeField(this)">Remove Employee</button><br><br>
@@ -60,6 +70,17 @@
          
           <label>Role:</label>
           <select name="role" required>
+=======
+        employeeField.setAttribute('name', 'employee');
+        employeeField.setAttribute('class', 'employee');
+        employeeField.innerHTML = `
+          <button type="button" id="remove-employee" onclick="removeEmployeeField(this)">Remove Employee</button><br><br>
+          <label for="employee_id">Employee ID:</label>
+          <input type="number" id="employee_id" name="employee_id" required><br><br>
+
+          <label for="role">Role:</label>
+          <select id="role" name="role" required>
+>>>>>>> fc12ae4 (basic project insertion and update)
             <option value>-- Select --</option>
             {% for role in roles %}
             <option value="{{ role.Name }}">{{ role.Name }}</option>
@@ -70,6 +91,7 @@
       }
     }
     function removeEmployeeField(buttonElement) {
+<<<<<<< HEAD
       const div = buttonElement.parentElement;
       div.remove();
     }
@@ -91,6 +113,12 @@
         selectElement => { warnInactive(selectElement); }
       );
     };
+=======
+      const allEmployees = document.querySelectorAll('div[name="employee"]');
+      const div = buttonElement.parentElement;
+      div.remove();
+    }
+>>>>>>> fc12ae4 (basic project insertion and update)
   </script>
 {% endblock %}
 
@@ -122,6 +150,7 @@
       </select><br><br>
       {% endif %}
 
+<<<<<<< HEAD
       <label for="leader">Leader:</label>
       <select id="leader" name="leader" class="selectEmployee"
               onchange="warnInactive(this)" required>
@@ -137,12 +166,17 @@
       <div class="warnInactive" style="color: red; display: none">
         This employee is inactive!
       </div><br><br>
+=======
+      <label for="leader">Leader ID:</label>
+      <input type="number" id="leader" name="leader" value="{{ proj.Leader if proj else '' }}" required><br><br>
+>>>>>>> fc12ae4 (basic project insertion and update)
     </fieldset>
 
     <fieldset id="emp-fields">
       <legend>Add Employees</legend>
 
       {% for emp in emps %}
+<<<<<<< HEAD
       <div class="employee">
         <button type="button" onclick="removeEmployeeField(this)">Remove Employee</button><br><br>
         <label>Employee:</label>
@@ -166,6 +200,18 @@
           <option value>-- Select --</option>
           {% for role in roles %}
           <option value="{{ role.Name }}" {% if emp and emp.Role == role.Name %}selected{% endif %}>{{ role.Name }}</option>
+=======
+      <div name="employee" class="employee">
+        <button type="button" id="remove-employee" onclick="removeEmployeeField(this)">Remove Employee</button><br><br>
+        <label for="employee_id">Employee ID:</label>
+        <input type="number" id="employee_id" name="employee_id" required value="{{ emp.EmployeeID }}"><br><br>
+
+        <label for="role">Role:</label>
+        <select id="role" name="role" required>
+          <option value>-- Select --</option>
+          {% for role in roles %}
+          <option value="{{ emp.Name }}" {% if emp and emp.Role == role.Name %}selected{% endif %}>{{ role.Name }}</option>
+>>>>>>> fc12ae4 (basic project insertion and update)
           {% endfor %}
         </select><br><br>
       </div>

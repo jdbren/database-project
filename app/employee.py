@@ -45,8 +45,12 @@ from datetime import datetime
 from MySQLdb import cursors
 from http import HTTPStatus
 from flask import ( Blueprint, render_template,
+<<<<<<< HEAD
     flash, redirect, request, session, url_for
 >>>>>>> f6130f2 (Resolved conflicts.)
+=======
+    redirect, request, session, url_for
+>>>>>>> 6f9c393 (basic project insertion and update)
 )
 from app.db import (
     execute_and_fetchall, execute_and_fetchone, execute_and_commit, get_db, close_db
@@ -166,7 +170,10 @@ def insert():
 
         except Exception as e:
             print(e)
+<<<<<<< HEAD
             close_db()
+=======
+>>>>>>> fc12ae4 (basic project insertion and update)
             return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
 <<<<<<< HEAD
@@ -767,11 +774,17 @@ def edit(id):
 
     emp['Departments'] = current_departments
     emp['Benefits'] = current_benefits
+<<<<<<< HEAD
     if current_position:
         emp['Salary'] = current_position['Salary']
         emp['Position'] = current_position['Position']
         emp['EmploymentType'] = current_position['EmploymentType']
         emp['HealthInsurance'] = current_position['HealthInsurance']
+=======
+    emp['Salary'] = current_position['Salary']
+    emp['Position'] = current_position['Position']
+    emp['EmploymentType'] = current_position['EmploymentType']
+>>>>>>> fc12ae4 (basic project insertion and update)
     return render_template('employee/form.html',
         emp=emp,
         positions=positions_list,
@@ -842,11 +855,15 @@ def archive_employee(id):
         cursor.close()
         db.commit()
         close_db()
+<<<<<<< HEAD
 >>>>>>> eaadb78 (updates to work with new schema)
         # Rest of the data is deleted by cascade
         flash(f"Employee {emp['ID']} archived successfully")
         return "Success", HTTPStatus.OK
 >>>>>>> 6496a80 (add delete selected)
+=======
+        return "", HTTPStatus.OK
+>>>>>>> fc12ae4 (basic project insertion and update)
     except Exception as e:
         print(e)
         return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
@@ -936,7 +953,7 @@ def get_employee_position(id):
     ''', cursors.DictCursor, (id,))
 =======
     return search_db('''
-        SELECT Salary, Position FROM EmployeePositions WHERE ID = %s
+        SELECT Salary, Position, EmploymentType FROM EmployeePositions WHERE ID = %s
     ''', cursors.DictCursor, False, (id,))
 >>>>>>> 9d18a2b (updates to work with new schema)
 >>>>>>> eaadb78 (updates to work with new schema)
