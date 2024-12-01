@@ -12,17 +12,6 @@
     }
   </style>
   <script>
-    // Function to toggle between basic and advanced search
-    function showSearchForm(formType) {
-      const advancedFieldset = document.getElementById('advanced-fields');
-      if (formType === 'basic') {
-        advancedFieldset.style.display = 'none';
-        advancedFieldset.disabled = true;
-      } else {
-        advancedFieldset.style.display = 'block';
-        advancedFieldset.disabled = false;
-      }
-    }
     function toggleCheckboxes() {
       const checkboxes = document.getElementsByName('select');
       const selectAll = document.getElementById('select-all');
@@ -35,23 +24,44 @@
 
 {% block content %}
   {{ super() }}
-
   <h3>Search Projects Database</h3>
-
   <!-- Basic Search Form -->
   <form action="/project/search" method="GET">
-    <div class="toggle-buttons">
-      <button type="button" onclick="showSearchForm('basic')">Basic Search</button>
-      <button type="button" onclick="showSearchForm('advanced')">Advanced Search</button>
+    <div>
       <button type="submit">Search</button>
     </div>
-
     <fieldset>
-      <legend>Basic Search Criteria</legend>
-    </fieldset>
+      <legend>Search</legend>
 
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" maxlength="255"><br><br>
+
+      <label for="department">Department:</label>
+      <select id="department" name="department">
+        <option value>-- Select --</option>
+        {% for dept in depts %}
+        <option value="{{ dept.Name }}">{{ dept.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      <label for="status">Status:</label>
+      <select id="status" name="status">
+        <option value>-- Select --</option>
+        {% for status in statuses %}
+        <option value="{{ status.Name }}">{{ status.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      <label for="leader">Leader ID:</label>
+      <input type="number" id="leader" name="leader"><br><br>
+
+      <label for="start_date">Start Date:</label>
+      <input type="date" id="start_date" name="start_date"><br><br>
+
+      <label for="end_date">End Date:</label>
+      <input type="date" id="end_date" name="end_date"><br><br>
+    </fieldset>
     <button type="submit" style="margin-top: 1rem; margin-bottom: 1rem;">Search</button>
-    <button type="button">Delete Selected</button>
   </form>
 
   <table border="1">
@@ -61,6 +71,11 @@
           <input type="checkbox" id="select-all" onclick="toggleCheckboxes()">
         </th>
         <th>ID</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Status</th>
+        <th>Leader</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -70,6 +85,10 @@
           <input type="checkbox" id="{{ project.ID }}" name="select">
         </td>
         <td>{{ project.ID }}</td>
+        <td>{{ project.Name }}</td>
+        <td>{{ project.Department }}</td>
+        <td>{{ project.Status }}</td>
+        <td>{{ project.Leader }}</td>
         <td>
           <a href="/project/{{ project.ID }}">Details</a>
           <a href="/project/{{ project.ID }}/edit">Update</a>

@@ -4,15 +4,53 @@
   {{ super() }}
   <title>Project Data Form</title>
   <style>
-    button {
+    .submit-button {
       padding: 10px 20px;
       color: black;
       border-radius: 5px;
       margin-top: 20px;
       margin-right: 10px;
     }
+    .employee {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
   </style>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script>
+    function addEmployeeField() {
+      const lastEmployee = document.querySelector('div[name="employee"]:last-of-type');
+      if (lastEmployee) {
+        const newEmployee = lastEmployee.cloneNode(true);
+        lastEmployee.after(newEmployee);
+      } else {
+        // Create a new employee field if there are no existing fields
+        const employeeField = document.createElement('div');
+        employeeField.setAttribute('name', 'employee');
+        employeeField.setAttribute('class', 'employee');
+        employeeField.innerHTML = `
+          <button type="button" id="remove-employee" onclick="removeEmployeeField(this)">Remove Employee</button><br><br>
+          <label for="employee_id">Employee ID:</label>
+          <input type="number" id="employee_id" name="employee_id" required><br><br>
+
+          <label for="role">Role:</label>
+          <select id="role" name="role" required>
+            <option value>-- Select --</option>
+            {% for role in roles %}
+            <option value="{{ role.Name }}">{{ role.Name }}</option>
+            {% endfor %}
+          </select><br><br>
+        `;
+        document.getElementById('add-employee').before(employeeField);
+      }
+    }
+    function removeEmployeeField(buttonElement) {
+      const allEmployees = document.querySelectorAll('div[name="employee"]');
+      const div = buttonElement.parentElement;
+      div.remove();
+    }
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -22,14 +60,57 @@
     <fieldset>
       <legend>Project Information</legend>
 
-      <label for="name">First Name:</label>
-      <input type="text" id="name" name="name" value="{{ proj.name if proj else '' }}" required><br><br>
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" maxlength="255" value="{{ proj.Name if proj else '' }}" required><br><br>
+
+      <label for="department">Department:</label>
+      <select id="department" name="department" required>
+        <option value>-- Select --</option>
+        {% for dept in depts %}
+        <option value="{{ dept.Name }}" {% if proj and proj.Department == dept.Name %}selected{% endif %}>{{ dept.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      {% if proj is defined %}
+      <label for="status">Status:</label>
+      <select id="status" name="status" required>
+        <option value>-- Select --</option>
+        {% for status in statuses %}
+        <option value="{{ status.Name }}" {% if proj and proj.Status == status.Name %}selected{% endif %}>{{ status.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+      {% endif %}
+
+      <label for="leader">Leader ID:</label>
+      <input type="number" id="leader" name="leader" value="{{ proj.Leader if proj else '' }}" required><br><br>
+    </fieldset>
+
+    <fieldset id="emp-fields">
+      <legend>Add Employees</legend>
+
+      {% for emp in emps %}
+      <div name="employee" class="employee">
+        <button type="button" id="remove-employee" onclick="removeEmployeeField(this)">Remove Employee</button><br><br>
+        <label for="employee_id">Employee ID:</label>
+        <input type="number" id="employee_id" name="employee_id" required value="{{ emp.EmployeeID }}"><br><br>
+
+        <label for="role">Role:</label>
+        <select id="role" name="role" required>
+          <option value>-- Select --</option>
+          {% for role in roles %}
+          <option value="{{ emp.Name }}" {% if emp and emp.Role == role.Name %}selected{% endif %}>{{ role.Name }}</option>
+          {% endfor %}
+        </select><br><br>
+      </div>
+      {% endfor %}
+
+      <button type="button" id="add-employee" onclick="addEmployeeField()">Add Employee</button>
     </fieldset>
 
     {% if proj is not defined %}
-    <button type="submit" id="submit-button" formaction="/project/insert">Submit</button>
+    <button class="submit-button" type="submit" id="submit-button" formaction="/project/insert">Submit</button>
     {% else %}
-    <button type="submit" id="update-button" formaction="/project/{{ proj.ID }}/edit">Update</button>
+    <button class="submit-button" type="submit" id="update-button" formaction="/project/{{ proj.ID }}/edit">Update</button>
     {% endif %}
   </form>
 {% endblock %}
