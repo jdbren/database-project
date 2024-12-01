@@ -1,0 +1,35 @@
+{% extends 'project/index.html' %}
+
+{% block head %}
+  {{ super() }}
+  <title>Project Data Form</title>
+  <style>
+    button {
+      padding: 10px 20px;
+      color: black;
+      border-radius: 5px;
+      margin-top: 20px;
+      margin-right: 10px;
+    }
+  </style>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+  <h3>Project Data Form</h3>
+  <form method="POST">
+    <fieldset>
+      <legend>Project Information</legend>
+
+      <label for="name">First Name:</label>
+      <input type="text" id="name" name="name" value="{{ proj.name if proj else '' }}" required><br><br>
+    </fieldset>
+
+    {% if proj is not defined %}
+    <button type="submit" id="submit-button" formaction="/project/insert">Submit</button>
+    {% else %}
+    <button type="submit" id="update-button" formaction="/project/{{ proj.ID }}/edit">Update</button>
+    {% endif %}
+  </form>
+{% endblock %}

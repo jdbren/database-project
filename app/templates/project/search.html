@@ -1,0 +1,81 @@
+{% extends 'project/index.html' %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    #advanced-fields {
+      display: none;
+    }
+
+    .toggle-buttons {
+      margin-bottom: 20px;
+    }
+  </style>
+  <script>
+    // Function to toggle between basic and advanced search
+    function showSearchForm(formType) {
+      const advancedFieldset = document.getElementById('advanced-fields');
+      if (formType === 'basic') {
+        advancedFieldset.style.display = 'none';
+        advancedFieldset.disabled = true;
+      } else {
+        advancedFieldset.style.display = 'block';
+        advancedFieldset.disabled = false;
+      }
+    }
+    function toggleCheckboxes() {
+      const checkboxes = document.getElementsByName('select');
+      const selectAll = document.getElementById('select-all');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+      });
+    }
+  </script>
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+
+  <h3>Search Projects Database</h3>
+
+  <!-- Basic Search Form -->
+  <form action="/project/search" method="GET">
+    <div class="toggle-buttons">
+      <button type="button" onclick="showSearchForm('basic')">Basic Search</button>
+      <button type="button" onclick="showSearchForm('advanced')">Advanced Search</button>
+      <button type="submit">Search</button>
+    </div>
+
+    <fieldset>
+      <legend>Basic Search Criteria</legend>
+    </fieldset>
+
+    <button type="submit" style="margin-top: 1rem; margin-bottom: 1rem;">Search</button>
+    <button type="button">Delete Selected</button>
+  </form>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>
+          <input type="checkbox" id="select-all" onclick="toggleCheckboxes()">
+        </th>
+        <th>ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for project in projects %}
+      <tr>
+        <td>
+          <input type="checkbox" id="{{ project.ID }}" name="select">
+        </td>
+        <td>{{ project.ID }}</td>
+        <td>
+          <a href="/project/{{ project.ID }}">Details</a>
+          <a href="/project/{{ project.ID }}/edit">Update</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
