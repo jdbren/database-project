@@ -58,7 +58,7 @@ def insert_project():
         roles=roles)
 
 
-@bp.route('/search', methods=('GET',))
+@bp.get('/search')
 def search_project():
     departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
     project_status_list = search_db('SELECT Name FROM ProjectStatus', cursors.DictCursor)
@@ -71,9 +71,12 @@ def search_project():
 
     query = '''
         SELECT p.ID, p.Name, p.Department, p.Status,
-            CONCAT(e.FirstName, ' ', e.LastName) as Leader
+            CONCAT(e.FirstName, ' ', e.LastName) AS Leader,
+            GROUP_CONCAT(CONCAT(emp.FirstName, ' ', emp.LastName, ' (', er.Role, ')') SEPARATOR ', ') AS Employees
         FROM Projects p
         JOIN Employees e ON p.Leader = e.ID
+        LEFT JOIN EmployeeRoles er ON p.ID = er.ProjectID
+        LEFT JOIN Employees emp ON er.EmployeeID = emp.ID
     '''
 
     conditions = []
@@ -94,15 +97,48 @@ def search_project():
     if conditions:
         query += ' WHERE ' + ' AND '.join(conditions)
 
-    projects = search_db(query, cursors.DictCursor, True, params)
+    query += ' GROUP BY p.ID'
+
+    try:
+        projects = search_db(query, cursors.DictCursor, True, params)
+    except Exception as e:
+        print(e)
+        return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
+
+    for project in projects:
+        if project['Employees']:
+            employee_list = project['Employees'].split(', ')
+            if len(employee_list) > 2:
+                project['Employees'] = ', '.join(employee_list[:2]) + ', ...'
 
     return render_template('project/search.html',
         depts=departments_list, statuses=project_status_list,
         projects=projects)
 
-@bp.get('/<int:id>')
-def get_project(id):
-    return ""
+@bp.get('<int:project_id>')
+def view_project(project_id):
+    # Fetch project details
+    query_project = '''
+        SELECT p.ID, p.Name, p.Department, p.Status,
+               CONCAT(e.FirstName, ' ', e.LastName) AS Leader
+        FROM Projects p
+        JOIN Employees e ON p.Leader = e.ID
+        WHERE p.ID = %(project_id)s
+    '''
+    project = search_db(query_project, cursors.DictCursor, False, {'project_id': project_id})
+
+    # Fetch employees working on this project
+    query_employees = '''
+        SELECT er.EmployeeID, CONCAT(emp.FirstName, ' ', emp.LastName) AS Name,
+               er.Role, er.StartDate
+        FROM EmployeeRoles er
+        JOIN Employees emp ON er.EmployeeID = emp.ID
+        WHERE er.ProjectID = %(project_id)s
+    '''
+    employees = search_db(query_employees, cursors.DictCursor, True, {'project_id': project_id})
+
+    return render_template('project/view.html', project=project, employees=employees)
+
 
 @bp.route('<int:id>/edit', methods=('GET', 'POST'))
 def update_project(id):
