@@ -73,8 +73,8 @@
 
       <label for="external_hire">External Hire:</label>
       <select id="external_hire" name="external_hire" required>
-        <option value="1" {{ 'selected' if emp and emp.ExternalHire == '1' }}>Yes</option>
-        <option value="0" {{ 'selected' if emp and emp.ExternalHire == '0' }}>No</option>
+        <option value="1">Yes</option>
+        <option value="0" {{ 'selected' if emp }}>No</option>
       </select><br><br>
 
       <label for="position">Position:</label>

@@ -2,7 +2,7 @@ from datetime import datetime
 from MySQLdb import cursors
 from http import HTTPStatus
 from flask import ( Blueprint, render_template,
-    flash, redirect, request, session, url_for
+    redirect, request, session, url_for
 )
 from app.db import (
     search_db, modify_db, open_db, close_db
@@ -91,13 +91,11 @@ def insert():
             db.commit()
             close_db()
 
-            flash('Employee added successfully')
-            return redirect('/employee', HTTPStatus.CREATED)
+            return redirect(url_for('employee.index'), HTTPStatus.CREATED)
 
         except Exception as e:
             print(e)
-            flash('An error occurred while adding the employee')
-            return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
+            return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
     genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
     degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
@@ -240,8 +238,7 @@ def search():
         )
     except Exception as e:
         print(e)
-        flash('An error occurred while fetching the employees')
-        return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
+        return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
 @bp.get('/<int:id>')
 def view(id):
@@ -390,11 +387,10 @@ def edit(id):
             db.commit()
             close_db()
 
-            return redirect('/employee', HTTPStatus.ACCEPTED)
+            return redirect(url_for('employee.index'), HTTPStatus.ACCEPTED)
         except Exception as e:
             print(e)
-            flash('An error occurred while updating the employee')
-            return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
+            return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
     emp = search_db('SELECT * FROM Employees WHERE ID = %s', cursors.DictCursor, False, (id,))
@@ -408,6 +404,7 @@ def edit(id):
     emp['Benefits'] = current_benefits
     emp['Salary'] = current_position['Salary']
     emp['Position'] = current_position['Position']
+    emp['EmploymentType'] = current_position['EmploymentType']
     return render_template('employee/form.html',
         emp=emp,
         positions=positions_list,
@@ -432,13 +429,10 @@ def archive_employee(id):
         cursor.close()
         db.commit()
         close_db()
-        # Rest of the data is deleted by cascade
-        flash(f"Employee {emp['ID']} archived successfully")
-        return "Success", HTTPStatus.OK
+        return "", HTTPStatus.OK
     except Exception as e:
         print(e)
-        flash('An error occurred while deleting the employee')
-        return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
+        return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 def get_employee_departments(id):
@@ -457,5 +451,5 @@ def get_employee_benefits(id):
 
 def get_employee_position(id):
     return search_db('''
-        SELECT Salary, Position FROM EmployeePositions WHERE ID = %s
+        SELECT Salary, Position, EmploymentType FROM EmployeePositions WHERE ID = %s
     ''', cursors.DictCursor, False, (id,))
