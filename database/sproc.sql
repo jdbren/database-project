@@ -277,7 +277,7 @@ BEGIN
   retireAll: LOOP
     FETCH roleCursor INTO employee;
     IF isEmpty THEN LEAVE retireAll; END IF;
-    CALL RetireFromRole(employee, CloseDate);
+    CALL RetireFromRole(employee, Project, CloseDate);
   END LOOP;
   CLOSE roleCursor;
 
