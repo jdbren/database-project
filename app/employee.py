@@ -64,8 +64,7 @@ def insert():
                     IsExternalHire, HealthInsurance, HealthStartDate
                 ) VALUES (%s, CURDATE(), %s, %s, %s, %s, %s, %s)
             ''', (id, position, employment_type, salary, external_hire,
-                health_insurance, health_insurance_start_date)
-            )
+                health_insurance, health_insurance_start_date))
 
             for department in selected_departments:
                 cursor.execute('''
@@ -331,29 +330,23 @@ def edit(id):
                 phone, degree, experience, id))
 
             if (current_position['Position'] != position
-            or current_position['Salary'] != salary
+            or int(current_position['Salary']) != int(salary)
             or current_position['EmploymentType'] != employment_type):
-                # Remove records from active table
-                cursor.execute('''
-                    DELETE FROM EmployeePositions
-                    WHERE ID = %s
-                ''', (id,))
-                # Insert updated information
+                print(current_position)
+                print(position, salary, employment_type)
+                cursor.callproc('RetireFromPosition', (id, datetime.date(datetime.now())))
                 cursor.execute('''
                     INSERT INTO EmployeePositions (
                         ID, StartDate, Position, EmploymentType, Salary,
-                        IsExternalHire, HealthCoverageStartDate
-                    ) VALUES (%s, CURDATE(), %s, %s, %s, 0, %s)
-                ''', (id, position, employment_type, salary,
-                    health_insurance_start_date))
+                        IsExternalHire, HealthStartDate
+                    ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s)
+                ''', (id, position, employment_type, salary, health_insurance_start_date))
 
             # Update departments no longer associated with the employee
             for department in current_departments:
                 if department not in selected_departments:
-                    cursor.execute('''
-                        DELETE FROM EmployeeDepartments
-                        WHERE ID = %s AND Department = %s
-                    ''', (id, department))
+                    cursor.callproc('LeaveDepartment',
+                        (id, department, datetime.date(datetime.now())))
 
             # Add new departments
             for department in selected_departments:
@@ -398,19 +391,22 @@ def edit(id):
     departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
     genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
     degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
+    employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
 
     emp['Departments'] = current_departments
     emp['Benefits'] = current_benefits
     emp['Salary'] = current_position['Salary']
     emp['Position'] = current_position['Position']
     emp['EmploymentType'] = current_position['EmploymentType']
+    emp['HealthInsurance'] = current_position['HealthInsurance']
     return render_template('employee/form.html',
         emp=emp,
         positions=positions_list,
         departments=departments_list,
         benefits=benefits_list,
         degrees=degrees_list,
-        genders=genders_list
+        genders=genders_list,
+        employment_types=employment_types
     )
 
 @bp.delete('<int:id>')
@@ -429,7 +425,7 @@ def archive_employee(id):
         cursor.close()
         db.commit()
         close_db()
-        return "", HTTPStatus.OK
+        return redirect(url_for('employee.search')), HTTPStatus.OK
     except Exception as e:
         print(e)
         return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
@@ -451,5 +447,7 @@ def get_employee_benefits(id):
 
 def get_employee_position(id):
     return search_db('''
-        SELECT Salary, Position, EmploymentType FROM EmployeePositions WHERE ID = %s
+        SELECT Salary, Position, EmploymentType, HealthInsurance
+        FROM EmployeePositions
+        WHERE ID = %s
     ''', cursors.DictCursor, False, (id,))

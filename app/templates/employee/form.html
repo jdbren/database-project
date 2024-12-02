@@ -86,10 +86,10 @@
 
       <label for="employment_type">Employment Type:</label>
       <select id="employment_type" name="employment_type" required
-        onchange="setCompanyHealthInsuranceEnabled(); setBenefitsEnabled();"
+        onchange="setBenefitsEnabled()"
       >
         {% for emp_type in employment_types %}
-        <option value="{emp_type.Name}" {{ 'selected' if emp and emp.EmploymentType == emp_type.Name }}>{{ emp_type.Name }}</option>
+        <option value="{{ emp_type.Name }}" {{ 'selected' if emp and emp.EmploymentType == emp_type.Name }}>{{ emp_type.Name }}</option>
         {% endfor %}
       </select><br><br>
 
@@ -104,10 +104,8 @@
       </select><br><br>
 
       <label for="health_insurance">Health Insurance Provider:</label>
-      <select type="text" id="health_insurance" name="health_insurance" required
-        onchange="setCompanyInsuranceCheckbox()"
-      >
-        <option value="" {{ 'selected' if not emp or not emp.HealthInsurance }}>-- Select --</option>
+      <select type="text" id="health_insurance" name="health_insurance">
+        <option value>-- Select --</option>
         <option id="company_ins_opt" value="Company" {{ 'selected' if emp and emp.HealthInsurance == 'Company' }}>Company Plan (if full-time)</option>
         <option value="Family" {{ 'selected' if emp and emp.HealthInsurance == 'Family' }}>Family Member</option>
         <option value="Private" {{ 'selected' if emp and emp.HealthInsurance == 'Private' }}>Private Insurance</option>
@@ -120,7 +118,6 @@
       {% for benefit in benefits %}
       <input type="checkbox" id="{{ benefit.Name }}" name="benefits" value="{{ benefit.Name }}"
         {{ 'checked' if emp and benefit.Name in emp.Benefits }}
-        onchange="setCompanyInsuranceOption()"
       >
       <label for="{{ benefit.Name }}">{{ benefit.Name }}</label><br>
       {% endfor %}
