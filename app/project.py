@@ -43,6 +43,7 @@ def insert_project():
 
             return redirect(url_for('project.index'))
         except Exception as e:
+            close_db(db)
             print(e)
             return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
@@ -202,6 +203,7 @@ def update_project(id):
             close_db(db)
             return redirect(url_for('project.search_project'))
         except Exception as e:
+            close_db(db)
             print(e)
             return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
