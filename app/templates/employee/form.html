@@ -88,11 +88,9 @@
       <select id="employment_type" name="employment_type" required
         onchange="setCompanyHealthInsuranceEnabled(); setBenefitsEnabled();"
       >
-        <option value="Full-Time" {{ 'selected' if emp and emp.EmploymentType == 'Full-Time' }}>Full-Time</option>
-        <option value="Part-Time" {{ 'selected' if emp and emp.EmploymentType == 'Part-Time' }}>Part-Time</option>
-        <option value="Temporary" {{ 'selected' if emp and emp.EmploymentType == 'Temporary' }}>Temporary</option>
-        <option value="Contractor" {{ 'selected' if emp and emp.EmploymentType == 'Contractor' }}>Contract</option>
-        <option value="Intern" {{ 'selected' if emp and emp.EmploymentType == 'Intern' }}>Internship</option>
+        {% for emp_type in employment_types %}
+        <option value="{emp_type.Name}" {{ 'selected' if emp and emp.EmploymentType == emp_type.Name }}>{{ emp_type.Name }}</option>
+        {% endfor %}
       </select><br><br>
 
       <label for="salary">Salary:</label>
