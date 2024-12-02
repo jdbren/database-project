@@ -8,6 +8,7 @@ from flask import (
 from datetime import datetime
 from MySQLdb import cursors
 from http import HTTPStatus
+<<<<<<< HEAD
 from flask import ( Blueprint, render_template,
 <<<<<<< HEAD
     flash, redirect, request, session, url_for
@@ -19,6 +20,10 @@ from flask import ( Blueprint, render_template,
 from app.db import (
     execute_and_fetchall, execute_and_fetchone, execute_and_commit, get_db, close_db
 )
+=======
+from flask import Blueprint, render_template, redirect, request, url_for
+from app.db import search_db, modify_db, open_db, close_db
+>>>>>>> 460080d (code cleanup)
 
 bp = Blueprint('employee', __name__, url_prefix='/employee')
 
