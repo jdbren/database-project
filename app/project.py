@@ -63,6 +63,7 @@ def search_project():
     departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
     project_status_list = search_db('SELECT Name FROM ProjectStatus', cursors.DictCursor)
     name = request.args.get('name')
+    id = request.args.get('id')
     department = request.args.get('department')
     status = request.args.get('status')
     leader = request.args.get('leader')
@@ -84,6 +85,9 @@ def search_project():
     if name:
         conditions.append('p.Name = %(name)s')
         params['name'] = name
+    if id:
+        conditions.append('p.ID = %(id)s')
+        params['id'] = id
     if department:
         conditions.append('p.Department = %(department)s')
         params['department'] = department
@@ -191,13 +195,10 @@ def update_project(id):
                     ''', (emp['role'], id, emp['employee_id']))
             for role in current_roles:
                 if role['EmployeeID'] not in [emp['employee_id'] for emp in employees]:
-                    cursor.execute('''
-                        DELETE FROM EmployeeRoles
-                        WHERE ProjectID = %s AND EmployeeID = %s
-                    ''', (id, role['EmployeeID']))
+                    cursor.callproc("RetireFromRole", (role['EmployeeID'], id, datetime.date(datetime.now())))
             if status != project['Status']:
                 if status == 'Closed':
-                    cursor.execute('CALL CloseProject (%s, CURDATE())', (id,))
+                    cursor.callproc("CloseProject", (id, datetime.date(datetime.now())))
                 else:
                     cursor.execute('UPDATE Projects SET Status = %s WHERE ID = %s', (status, id))
             db.commit()
