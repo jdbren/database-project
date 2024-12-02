@@ -209,44 +209,6 @@ BEGIN
   COMMIT;
 END $$
 
--- Delete Employee From Active Tables --
-DROP PROCEDURE IF EXISTS ArchiveEmployee $$
-CREATE PROCEDURE ArchiveEmployee(
-  IN Employee INT, IN ArchiveDate DATE
-)
-BEGIN
-  START TRANSACTION;
-  SET @disablePositionTrigger = 1;
-  SET @disableDepartmentTrigger = 1;
-  SET @disableEmployeeRoleTrigger = 1;
-
-  UPDATE EmployeePositionsHistory
-    SET EndDate = ArchiveDate
-    WHERE ID = Employee AND EndDate IS NULL;
-  DELETE FROM EmployeePositions
-    WHERE ID = Employee;
-
-  UPDATE EmployeeDepartmentsHistory
-    SET EndDate = ArchiveDate
-    WHERE ID = Employee AND EndDate IS NULL;
-  DELETE FROM EmployeeDepartments
-    WHERE ID = Employee;
-
-  UPDATE EmployeeRolesHistory
-    SET EndDate = ArchiveDate
-    WHERE EmployeeID = Employee AND EndDate IS NULL;
-  DELETE FROM EmployeeRoles
-    WHERE EmployeeID = Employee;
-
-  DELETE FROM EmployeeBenefits
-    WHERE ID = Employee;
-
-  SET @disablePositionTrigger = NULL;
-  SET @disableDepartmentTrigger = NULL;
-  SET @disableEmployeeRoleTrigger = NULL;
-  COMMIT;
-END $$
-
 -- Project --
 DROP PROCEDURE IF EXISTS CreateProject $$
 CREATE PROCEDURE CreateProject(
@@ -504,7 +466,7 @@ BEGIN
     EmployeeID = Employee AND
     ProjectID = Project AND
     EndDate IS NULL;
-  DELETE FROM EmployeeRoles
+  DELETE FROM EmployeePositions
   WHERE EmployeeID = Employee AND
     ProjectID = Project;
 
