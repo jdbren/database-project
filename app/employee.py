@@ -1,12 +1,8 @@
 from datetime import datetime
 from MySQLdb import cursors
 from http import HTTPStatus
-from flask import ( Blueprint, render_template,
-    redirect, request, session, url_for
-)
-from app.db import (
-    search_db, modify_db, open_db, close_db
-)
+from flask import Blueprint, render_template, redirect, request, url_for
+from app.db import search_db, modify_db, open_db, close_db
 
 bp = Blueprint('employee', __name__, url_prefix='/employee')
 
