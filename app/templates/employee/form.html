@@ -73,12 +73,13 @@
 
       <label for="external_hire">External Hire:</label>
       <select id="external_hire" name="external_hire" required>
-        <option value="1" {{ 'selected' if emp and emp.ExternalHire == '1' }}>Yes</option>
-        <option value="0" {{ 'selected' if emp and emp.ExternalHire == '0' }}>No</option>
+        <option value="1">Yes</option>
+        <option value="0" {{ 'selected' if emp }}>No</option>
       </select><br><br>
 
       <label for="position">Position:</label>
       <select id="position" name="position" required>
+        <option value>-- Select --</option>
         {% for position in positions %}
         <option value="{{ position.Name }}" {{ 'selected' if emp and emp.Position == position.Name }}>{{ position.Name }}</option>
         {% endfor %}
@@ -86,13 +87,11 @@
 
       <label for="employment_type">Employment Type:</label>
       <select id="employment_type" name="employment_type" required
-        onchange="setCompanyHealthInsuranceEnabled(); setBenefitsEnabled();"
+        onchange="setBenefitsEnabled()"
       >
-        <option value="Full-Time" {{ 'selected' if emp and emp.EmploymentType == 'Full-Time' }}>Full-Time</option>
-        <option value="Part-Time" {{ 'selected' if emp and emp.EmploymentType == 'Part-Time' }}>Part-Time</option>
-        <option value="Temporary" {{ 'selected' if emp and emp.EmploymentType == 'Temporary' }}>Temporary</option>
-        <option value="Contractor" {{ 'selected' if emp and emp.EmploymentType == 'Contractor' }}>Contract</option>
-        <option value="Intern" {{ 'selected' if emp and emp.EmploymentType == 'Intern' }}>Internship</option>
+        {% for emp_type in employment_types %}
+        <option value="{{ emp_type.Name }}" {{ 'selected' if emp and emp.EmploymentType == emp_type.Name }}>{{ emp_type.Name }}</option>
+        {% endfor %}
       </select><br><br>
 
       <label for="salary">Salary:</label>
@@ -106,10 +105,8 @@
       </select><br><br>
 
       <label for="health_insurance">Health Insurance Provider:</label>
-      <select type="text" id="health_insurance" name="health_insurance" required
-        onchange="setCompanyInsuranceCheckbox()"
-      >
-        <option value="" {{ 'selected' if not emp or not emp.HealthInsurance }}>-- Select --</option>
+      <select type="text" id="health_insurance" name="health_insurance">
+        <option value>-- Select --</option>
         <option id="company_ins_opt" value="Company" {{ 'selected' if emp and emp.HealthInsurance == 'Company' }}>Company Plan (if full-time)</option>
         <option value="Family" {{ 'selected' if emp and emp.HealthInsurance == 'Family' }}>Family Member</option>
         <option value="Private" {{ 'selected' if emp and emp.HealthInsurance == 'Private' }}>Private Insurance</option>
@@ -122,7 +119,6 @@
       {% for benefit in benefits %}
       <input type="checkbox" id="{{ benefit.Name }}" name="benefits" value="{{ benefit.Name }}"
         {{ 'checked' if emp and benefit.Name in emp.Benefits }}
-        onchange="setCompanyInsuranceOption()"
       >
       <label for="{{ benefit.Name }}">{{ benefit.Name }}</label><br>
       {% endfor %}

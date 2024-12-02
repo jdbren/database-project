@@ -1,12 +1,8 @@
-from datetime import datetime
+import datetime
 from MySQLdb import cursors
 from http import HTTPStatus
-from flask import ( Blueprint, render_template,
-    flash, redirect, request, session, url_for
-)
-from app.db import (
-    search_db, modify_db, open_db, close_db
-)
+from flask import Blueprint, render_template, redirect, request, url_for
+from app.db import search_db, modify_db, open_db, close_db
 
 bp = Blueprint('employee', __name__, url_prefix='/employee')
 
@@ -68,8 +64,7 @@ def insert():
                     IsExternalHire, HealthInsurance, HealthStartDate
                 ) VALUES (%s, CURDATE(), %s, %s, %s, %s, %s, %s)
             ''', (id, position, employment_type, salary, external_hire,
-                health_insurance, health_insurance_start_date)
-            )
+                health_insurance, health_insurance_start_date))
 
             for department in selected_departments:
                 cursor.execute('''
@@ -91,27 +86,27 @@ def insert():
             db.commit()
             close_db()
 
-            flash('Employee added successfully')
-            return redirect('/employee', HTTPStatus.CREATED)
+            return redirect(url_for('employee.index'), HTTPStatus.CREATED)
 
         except Exception as e:
             print(e)
-            flash('An error occurred while adding the employee')
-            return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
+            close_db()
+            return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
     genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
     degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
     benefits_list = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
     positions_list = search_db('SELECT Name FROM Positions', cursors.DictCursor)
     departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
+    employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
     return render_template('employee/form.html',
         departments=departments_list,
         positions=positions_list,
         benefits=benefits_list,
         degrees=degrees_list,
-        genders=genders_list
+        genders=genders_list,
+        employment_types=employment_types
     )
-
 
 
 @bp.get('/search')
@@ -133,6 +128,8 @@ def search():
     zip_code = request.args.get('zip')
     employment_type = request.args.get('employment_type')
     departments = request.args.getlist('departments')
+    isHistorical = request.args.get('historical')
+    join_type = 'LEFT' if isHistorical else 'INNER'
     try:
         # Construct SQL query
         query = """
@@ -152,10 +149,10 @@ def search():
             LEFT JOIN
                 EmployeeDepartments AS dh
                 ON s.ID = dh.ID
-            INNER JOIN
+            {0} JOIN
                 EmployeePositions AS ph
                 ON s.ID = ph.ID
-        """
+        """.format(join_type)
 
         # Build WHERE conditions
         conditions = []
@@ -231,17 +228,18 @@ def search():
         departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
         genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
         degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
+        employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
         return render_template('employee/search.html',
             employees=results,
             positions=positions_list,
             departments=departments_list,
             genders=genders_list,
-            degrees=degrees_list
+            degrees=degrees_list,
+            employment_types=employment_types
         )
     except Exception as e:
         print(e)
-        flash('An error occurred while fetching the employees')
-        return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
+        return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
 @bp.get('/<int:id>')
 def view(id):
@@ -286,6 +284,9 @@ def view(id):
 
 @bp.route('/<int:id>/edit', methods=['GET', 'POST'])
 def edit(id):
+    emp = search_db('SELECT * FROM Employees WHERE ID = %s', cursors.DictCursor, False, (id,))
+    if not emp:
+        return "Employee not found", HTTPStatus.NOT_FOUND
     current_position = get_employee_position(id)
     current_departments = get_employee_departments(id)
     current_benefits = get_employee_benefits(id)
@@ -335,29 +336,21 @@ def edit(id):
                 phone, degree, experience, id))
 
             if (current_position['Position'] != position
-            or current_position['Salary'] != salary
+            or int(current_position['Salary']) != int(salary)
             or current_position['EmploymentType'] != employment_type):
-                # Remove records from active table
-                cursor.execute('''
-                    DELETE FROM EmployeePositions
-                    WHERE ID = %s
-                ''', (id,))
-                # Insert updated information
+                cursor.callproc('RetireFromPosition', (id, datetime.date.today()))
                 cursor.execute('''
                     INSERT INTO EmployeePositions (
                         ID, StartDate, Position, EmploymentType, Salary,
-                        IsExternalHire, HealthCoverageStartDate
-                    ) VALUES (%s, CURDATE(), %s, %s, %s, 0, %s)
-                ''', (id, position, employment_type, salary,
-                    health_insurance_start_date))
+                        IsExternalHire, HealthStartDate
+                    ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s)
+                ''', (id, position, employment_type, salary, health_insurance_start_date))
 
             # Update departments no longer associated with the employee
             for department in current_departments:
                 if department not in selected_departments:
-                    cursor.execute('''
-                        DELETE FROM EmployeeDepartments
-                        WHERE ID = %s AND Department = %s
-                    ''', (id, department))
+                    cursor.callproc('LeaveDepartment',
+                        (id, department, datetime.date.today()))
 
             # Add new departments
             for department in selected_departments:
@@ -390,31 +383,35 @@ def edit(id):
             db.commit()
             close_db()
 
-            return redirect('/employee', HTTPStatus.ACCEPTED)
+            return redirect(url_for('employee.index'), HTTPStatus.ACCEPTED)
         except Exception as e:
+            close_db()
             print(e)
-            flash('An error occurred while updating the employee')
-            return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
+            return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-    emp = search_db('SELECT * FROM Employees WHERE ID = %s', cursors.DictCursor, False, (id,))
     benefits_list = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
     positions_list = search_db('SELECT Name FROM Positions', cursors.DictCursor)
     departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
     genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
     degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
+    employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
 
     emp['Departments'] = current_departments
     emp['Benefits'] = current_benefits
-    emp['Salary'] = current_position['Salary']
-    emp['Position'] = current_position['Position']
+    if current_position:
+        emp['Salary'] = current_position['Salary']
+        emp['Position'] = current_position['Position']
+        emp['EmploymentType'] = current_position['EmploymentType']
+        emp['HealthInsurance'] = current_position['HealthInsurance']
     return render_template('employee/form.html',
         emp=emp,
         positions=positions_list,
         departments=departments_list,
         benefits=benefits_list,
         degrees=degrees_list,
-        genders=genders_list
+        genders=genders_list,
+        employment_types=employment_types
     )
 
 @bp.delete('<int:id>')
@@ -429,16 +426,14 @@ def archive_employee(id):
         cursor.execute("DELETE FROM EmployeeDepartments WHERE ID = %s", (id,))
         cursor.execute("DELETE FROM EmployeeBenefits WHERE ID = %s", (id,))
         cursor.execute("DELETE FROM EmployeePositions WHERE ID = %s", (id,))
+        cursor.execute("DELETE FROM EmployeeRoles WHERE EmployeeID = %s", (id,))
         cursor.close()
         db.commit()
         close_db()
-        # Rest of the data is deleted by cascade
-        flash(f"Employee {emp['ID']} archived successfully")
-        return "Success", HTTPStatus.OK
+        return redirect(url_for('employee.search')), HTTPStatus.OK
     except Exception as e:
         print(e)
-        flash('An error occurred while deleting the employee')
-        return "Error", HTTPStatus.INTERNAL_SERVER_ERROR
+        return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 def get_employee_departments(id):
@@ -457,5 +452,7 @@ def get_employee_benefits(id):
 
 def get_employee_position(id):
     return search_db('''
-        SELECT Salary, Position FROM EmployeePositions WHERE ID = %s
+        SELECT Salary, Position, EmploymentType, HealthInsurance
+        FROM EmployeePositions
+        WHERE ID = %s
     ''', cursors.DictCursor, False, (id,))

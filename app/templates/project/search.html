@@ -1,0 +1,105 @@
+{% extends 'project/index.html' %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    #advanced-fields {
+      display: none;
+    }
+
+    .toggle-buttons {
+      margin-bottom: 20px;
+    }
+  </style>
+  <script>
+    function toggleCheckboxes() {
+      const checkboxes = document.getElementsByName('select');
+      const selectAll = document.getElementById('select-all');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+      });
+    }
+  </script>
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+  <h3>Search Projects Database</h3>
+  <!-- Basic Search Form -->
+  <form action="/project/search" method="GET">
+    <div>
+      <button type="submit">Search</button>
+    </div>
+    <fieldset>
+      <legend>Search</legend>
+
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" maxlength="255"><br><br>
+
+      <label for="id">ID:</label>
+      <input type="number" id="id" name="id"><br><br>
+
+      <label for="department">Department:</label>
+      <select id="department" name="department">
+        <option value>-- Select --</option>
+        {% for dept in depts %}
+        <option value="{{ dept.Name }}">{{ dept.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      <label for="status">Status:</label>
+      <select id="status" name="status">
+        <option value>-- Select --</option>
+        {% for status in statuses %}
+        <option value="{{ status.Name }}">{{ status.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      <label for="leader">Leader ID:</label>
+      <input type="number" id="leader" name="leader"><br><br>
+
+      <!-- <label for="start_date">Start Date:</label>
+      <input type="date" id="start_date" name="start_date"><br><br>
+
+      <label for="end_date">End Date:</label>
+      <input type="date" id="end_date" name="end_date"><br><br> -->
+    </fieldset>
+    <button type="submit" style="margin-top: 1rem; margin-bottom: 1rem;">Search</button>
+  </form>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>
+          <input type="checkbox" id="select-all" onclick="toggleCheckboxes()">
+        </th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Status</th>
+        <th>Leader</th>
+        <th>Employees</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for project in projects %}
+      <tr>
+        <td>
+          <input type="checkbox" id="{{ project.ID }}" name="select">
+        </td>
+        <td>{{ project.ID }}</td>
+        <td>{{ project.Name }}</td>
+        <td>{{ project.Department }}</td>
+        <td>{{ project.Status }}</td>
+        <td>{{ project.Leader }}</td>
+        <td>{{ project.Employees }}</td>
+        <td>
+          <a href="/project/{{ project.ID }}">Details</a>
+          <a href="/project/{{ project.ID }}/edit">Update</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

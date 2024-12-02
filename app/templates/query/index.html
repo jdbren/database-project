@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+{% block head %}
+  {{ super() }}
+  <title>Company Query Tool</title>
+{% endblock %}
+{% block content %}
+  {{ super() }}
+  <h2>Manual SQL Query</h2>
+  <form action="/query" method="post">
+    <textarea id="query" name="query" rows="10" cols="80">{{ query }}</textarea>
+    <br>
+    <button type="submit">Submit</button>
+  </form>
+  {{ get_flashed_messages() }}
+{% endblock %}
