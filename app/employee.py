@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from http import HTTPStatus
 from datetime import datetime
 from MySQLdb import cursors
@@ -11,6 +12,8 @@ from datetime import datetime
 =======
 =======
 >>>>>>> 659a47c (add delete selected)
+=======
+>>>>>>> f7c878b (allow searching including inactive staff)
 import datetime
 >>>>>>> 0ce6406 (allow searching including inactive staff)
 from MySQLdb import cursors
@@ -34,6 +37,8 @@ from app.db import search_db, modify_db, open_db, close_db
 >>>>>>> 460080d (code cleanup)
 =======
 =======
+=======
+>>>>>>> d6793b7 (allow searching including inactive staff)
 <<<<<<< HEAD
 from http import HTTPStatus
 from datetime import datetime
@@ -42,6 +47,9 @@ from flask import (
     Blueprint, flash, redirect, render_template, request
 =======
 from datetime import datetime
+=======
+import datetime
+>>>>>>> 0ce6406 (allow searching including inactive staff)
 from MySQLdb import cursors
 from http import HTTPStatus
 <<<<<<< HEAD
@@ -186,9 +194,13 @@ def insert():
         except Exception as e:
             print(e)
 <<<<<<< HEAD
+<<<<<<< HEAD
             close_db()
 =======
 >>>>>>> fc12ae4 (basic project insertion and update)
+=======
+            close_db()
+>>>>>>> d6793b7 (allow searching including inactive staff)
             return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
 <<<<<<< HEAD
@@ -320,7 +332,10 @@ def search():
     employment_type = request.args.get('employment_type')
     departments = request.args.getlist('departments')
 <<<<<<< HEAD
+<<<<<<< HEAD
     isHistorical = request.args.get('historical')
+=======
+>>>>>>> f7c878b (allow searching including inactive staff)
     benefits = request.args.getlist('benefits')
     health_insurance = request.args.getlist('health_insurance')
     join_type = 'LEFT' if isHistorical else 'INNER'
@@ -328,7 +343,14 @@ def search():
     insurance = request.args.get('health_insurance')
     is_historical = request.args.get('historical')
     join_type = 'LEFT' if is_historical else 'INNER'
+<<<<<<< HEAD
 >>>>>>> ba36fe5 (bug fixes and health insurance additions)
+=======
+=======
+    isHistorical = request.args.get('historical')
+    join_type = 'LEFT' if isHistorical else 'INNER'
+>>>>>>> d6793b7 (allow searching including inactive staff)
+>>>>>>> f7c878b (allow searching including inactive staff)
     try:
         # Construct SQL query
         query = """
@@ -350,6 +372,7 @@ def search():
                 EmployeeDepartments AS dh
                 ON s.ID = dh.ID
 <<<<<<< HEAD
+<<<<<<< HEAD
             LEFT JOIN
                 EmployeeBenefits AS bh
                 ON s.ID = bh.ID
@@ -363,6 +386,12 @@ def search():
                 ON s.ID = ph.ID
         """
 >>>>>>> eaadb78 (updates to work with new schema)
+=======
+            {0} JOIN
+                EmployeePositions AS ph
+                ON s.ID = ph.ID
+        """.format(join_type)
+>>>>>>> d6793b7 (allow searching including inactive staff)
 
         # Build WHERE conditions
         conditions = []
@@ -686,9 +715,7 @@ def edit(id):
             if (current_position['Position'] != position
             or int(current_position['Salary']) != int(salary)
             or current_position['EmploymentType'] != employment_type):
-                print(current_position)
-                print(position, salary, employment_type)
-                cursor.callproc('RetireFromPosition', (id, datetime.date(datetime.now())))
+                cursor.callproc('RetireFromPosition', (id, datetime.date.today()))
                 cursor.execute('''
 >>>>>>> eaadb78 (updates to work with new schema)
                     INSERT INTO EmployeePositions (
@@ -742,8 +769,12 @@ def edit(id):
 >>>>>>> eaadb78 (updates to work with new schema)
 =======
                     cursor.callproc('LeaveDepartment',
+<<<<<<< HEAD
                         (id, department, datetime.date(datetime.now())))
 >>>>>>> 679bb6a (bug fixes)
+=======
+                        (id, department, datetime.date.today()))
+>>>>>>> d6793b7 (allow searching including inactive staff)
 
             # Add new departments
             for department in selected_departments:
@@ -792,7 +823,11 @@ def edit(id):
 <<<<<<< HEAD
 =======
 =======
+<<<<<<< HEAD
 >>>>>>> eb78738 (updates to work with new schema)
+=======
+>>>>>>> d6793b7 (allow searching including inactive staff)
+>>>>>>> f7c878b (allow searching including inactive staff)
 <<<<<<< HEAD
     emp = execute_and_fetchone('SELECT * FROM Staff WHERE ID = %s', cursors.DictCursor, (id,))
     benefits_list = execute_and_fetchall('SELECT Name FROM Benefits', cursors.DictCursor)
@@ -801,11 +836,19 @@ def edit(id):
 =======
     emp = search_db('SELECT * FROM Employees WHERE ID = %s', cursors.DictCursor, False, (id,))
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0ce6406 (allow searching including inactive staff)
 =======
 >>>>>>> eaadb78 (updates to work with new schema)
 >>>>>>> eb78738 (updates to work with new schema)
+=======
+>>>>>>> eaadb78 (updates to work with new schema)
+=======
+=======
+>>>>>>> 0ce6406 (allow searching including inactive staff)
+>>>>>>> d6793b7 (allow searching including inactive staff)
+>>>>>>> f7c878b (allow searching including inactive staff)
     benefits_list = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
     positions_list = search_db('SELECT Name FROM Positions', cursors.DictCursor)
     departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
@@ -839,11 +882,15 @@ def edit(id):
     emp['Departments'] = current_departments
     emp['Benefits'] = current_benefits
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> d6793b7 (allow searching including inactive staff)
     if current_position:
         emp['Salary'] = current_position['Salary']
         emp['Position'] = current_position['Position']
         emp['EmploymentType'] = current_position['EmploymentType']
         emp['HealthInsurance'] = current_position['HealthInsurance']
+<<<<<<< HEAD
 =======
     emp['Salary'] = current_position['Salary']
     emp['Position'] = current_position['Position']
@@ -853,6 +900,8 @@ def edit(id):
 =======
     emp['HealthInsurance'] = current_position['HealthInsurance']
 >>>>>>> 679bb6a (bug fixes)
+=======
+>>>>>>> d6793b7 (allow searching including inactive staff)
     return render_template('employee/form.html',
         emp=emp,
         positions=positions_list,
