@@ -7,6 +7,7 @@ from app.db import search_db, modify_db, open_db, close_db
 =======
 from datetime import datetime
 from MySQLdb import cursors
+<<<<<<< HEAD
 from flask import ( Blueprint, render_template,
     redirect, request, url_for
 )
@@ -14,6 +15,10 @@ from app.db import (
     search_db, modify_db, open_db, close_db
 )
 >>>>>>> fc12ae4 (basic project insertion and update)
+=======
+from flask import Blueprint, render_template, redirect, request, url_for
+from app.db import search_db, modify_db, open_db, close_db
+>>>>>>> 44fe2d2 (code cleanup)
 
 bp = Blueprint('project', __name__, url_prefix='/project')
 

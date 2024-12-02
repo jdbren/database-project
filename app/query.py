@@ -18,7 +18,11 @@ def index():
         cursor.close()
     except Exception as e:
         flash(f"An error occurred: {e}", 'error')
+<<<<<<< HEAD
         return render_template('query/index.html', query=query)
     finally:
         close_db()
+=======
+        return render_template('query/index.html')
+>>>>>>> 44fe2d2 (code cleanup)
     return render_template('query/results.html', query=query, rows=results, cols=column_names)
