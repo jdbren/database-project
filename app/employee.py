@@ -261,15 +261,27 @@ def insert():
     benefits_list = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
     positions_list = search_db('SELECT Name FROM Positions', cursors.DictCursor)
     departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
+    employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
     return render_template('employee/form.html',
         departments=departments_list,
         positions=positions_list,
         benefits=benefits_list,
         degrees=degrees_list,
+<<<<<<< HEAD
         genders=genders_list
 >>>>>>> 9d18a2b (updates to work with new schema)
+<<<<<<< HEAD
 >>>>>>> eaadb78 (updates to work with new schema)
+<<<<<<< HEAD
 >>>>>>> eb78738 (updates to work with new schema)
+=======
+=======
+=======
+        genders=genders_list,
+        employment_types=employment_types
+>>>>>>> 4d2ba1c (fixes to emp)
+>>>>>>> 6fc2683 (fixes to emp)
+>>>>>>> bd09ba3 (fixes to emp)
     )
 
 
@@ -438,10 +450,13 @@ def search():
         degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 4dca8a4 (fix gender and degree search)
 =======
 =======
 >>>>>>> 919fa41 (fix gender and degree search)
+=======
+>>>>>>> bd09ba3 (fixes to emp)
         employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
 <<<<<<< HEAD
 >>>>>>> 4d2ba1c (fixes to emp)
@@ -454,12 +469,22 @@ def search():
 =======
 >>>>>>> 4dca8a4 (fix gender and degree search)
 >>>>>>> 5dde58d (fix gender and degree search)
+<<<<<<< HEAD
 >>>>>>> 919fa41 (fix gender and degree search)
+=======
+=======
+>>>>>>> 4dca8a4 (fix gender and degree search)
+=======
+        employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
+>>>>>>> 4d2ba1c (fixes to emp)
+>>>>>>> 6fc2683 (fixes to emp)
+>>>>>>> bd09ba3 (fixes to emp)
         return render_template('employee/search.html',
             employees=results,
             positions=positions_list,
             departments=departments_list,
             genders=genders_list,
+<<<<<<< HEAD
 <<<<<<< HEAD
             degrees=degrees_list,
             employment_types=employment_types,
@@ -469,6 +494,10 @@ def search():
 =======
             degrees=degrees_list
 >>>>>>> 5dde58d (fix gender and degree search)
+=======
+            degrees=degrees_list,
+            employment_types=employment_types
+>>>>>>> 6fc2683 (fixes to emp)
         )
     except Exception as e:
         print(e)
@@ -852,6 +881,7 @@ def archive_employee(id):
         cursor.execute("DELETE FROM EmployeeDepartments WHERE ID = %s", (id,))
         cursor.execute("DELETE FROM EmployeeBenefits WHERE ID = %s", (id,))
         cursor.execute("DELETE FROM EmployeePositions WHERE ID = %s", (id,))
+        cursor.execute("DELETE FROM EmployeeRoles WHERE EmployeeID = %s", (id,))
         cursor.close()
         db.commit()
         close_db()

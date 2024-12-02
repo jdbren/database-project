@@ -81,7 +81,11 @@
       <input type="text" id="ssn" name="ssn" maxlength="11" oninput="formatSSN()" value="{{ args.ssn }}"><br><br>
 
       <label for="phone">Phone Number:</label>
+<<<<<<< HEAD
       <input type="tel" id="phone" name="phone" maxlength="12" oninput="formatPhone()" value="{{ args.phone }}"><br><br>
+=======
+      <input type="tel" id="phone" name="phone" maxlength="12" oninput="formatPhone()"><br><br>
+>>>>>>> 6fc2683 (fixes to emp)
     </fieldset>
     <!-- Advanced Search Form -->
     <fieldset id="advanced-fields" disabled>
@@ -127,17 +131,27 @@
       </select><br><br>
 
       <label for="salary_min">Salary (Min):</label>
+<<<<<<< HEAD
       <input type="number" id="salary_min" name="salary_min" min="0" value="{{ args.salary_min }}"><br><br>
       <label for="salary_max">Salary (Max):</label>
       <input type="number" id="salary_max" name="salary_max" min="0" value="{{ args.salary_max }}"><br><br>
+=======
+      <input type="number" id="salary_min" name="salary_min" min="0"><br><br>
+      <label for="salary_max">Salary (Max):</label>
+      <input type="number" id="salary_max" name="salary_max" min="0"><br><br>
+>>>>>>> 6fc2683 (fixes to emp)
 
       <label for="employment_type">Employment Type:</label>
       <select id="employment_type" name="employment_type">
         <option value>-- Select --</option>
         {% for emp_type in employment_types %}
+<<<<<<< HEAD
         <option value="{emp_type.Name}" {% if args.employment_type == emp_type.Name %}selected{% endif %}>
           {{ emp_type.Name }}
         </option>
+=======
+        <option value="{emp_type.Name}">{{ emp_type.Name }}</option>
+>>>>>>> 6fc2683 (fixes to emp)
         {% endfor %}
       </select><br><br>
 
@@ -180,11 +194,15 @@
       style="margin-top: 1rem; margin-bottom: 1rem;"
     >Search</button>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <button type="button" onclick="deleteAllEmployees()">Archive Selected</button>
     <div>Found {{ employees | length }} records</div>
 =======
     <button type="button" onclick="deleteAllEmployees()">Delete Selected</button>
 >>>>>>> 6496a80 (add delete selected)
+=======
+    <button type="button" onclick="deleteAllEmployees()">Archive Selected</button>
+>>>>>>> 6fc2683 (fixes to emp)
   </form>
 
   <table border="1">
