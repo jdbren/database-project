@@ -44,7 +44,7 @@
       }
     }
   </script>
-  <script>src="{{ url_for('static', filename='script.js') }}"</script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 {% endblock %}
 {% block content %}
   {{ super() }}
@@ -75,7 +75,7 @@
       <input type="text" id="ssn" name="ssn" maxlength="11" oninput="formatSSN()"><br><br>
 
       <label for="phone">Phone Number:</label>
-      <input type="tel" id="phone" name="phone" maxlength="10"><br><br>
+      <input type="tel" id="phone" name="phone" maxlength="12" oninput="formatPhone()"><br><br>
     </fieldset>
     <!-- Advanced Search Form -->
     <fieldset id="advanced-fields" disabled="true">
@@ -108,18 +108,17 @@
         {% endfor %}
       </select><br><br>
 
-      <label for="salary_min">Starting Salary (Min):</label>
+      <label for="salary_min">Salary (Min):</label>
       <input type="number" id="salary_min" name="salary_min" min="0"><br><br>
-      <label for="salary_max">Starting Salary (Max):</label>
+      <label for="salary_max">Salary (Max):</label>
       <input type="number" id="salary_max" name="salary_max" min="0"><br><br>
 
       <label for="employment_type">Employment Type:</label>
       <select id="employment_type" name="employment_type">
-        <option value="">-- Select --</option>
-        <option value="Full-Time">Full-Time</option>
-        <option value="Part-Time">Part-Time</option>
-        <option value="Contractor">Contractor</option>
-        <option value="Intern">Intern</option>
+        <option value>-- Select --</option>
+        {% for emp_type in employment_types %}
+        <option value="{emp_type.Name}">{{ emp_type.Name }}</option>
+        {% endfor %}
       </select><br><br>
 
       <label for="departments">Departments:</label>
@@ -145,7 +144,7 @@
     <button type="submit"
       style="margin-top: 1rem; margin-bottom: 1rem;"
     >Search</button>
-    <button type="button" onclick="deleteAllEmployees()">Delete Selected</button>
+    <button type="button" onclick="deleteAllEmployees()">Archive Selected</button>
   </form>
 
   <table border="1">
