@@ -418,12 +418,8 @@ def archive_employee(id):
             return "Employee not found", HTTPStatus.NOT_FOUND
         db = open_db()
         cursor = db.cursor()
-        cursor.execute("DELETE FROM EmployeeDepartments WHERE ID = %s", (id,))
-        cursor.execute("DELETE FROM EmployeeBenefits WHERE ID = %s", (id,))
-        cursor.execute("DELETE FROM EmployeePositions WHERE ID = %s", (id,))
-        cursor.execute("DELETE FROM EmployeeRoles WHERE EmployeeID = %s", (id,))
-        cursor.close()
-        db.commit()
+        cursor.callproc('ArchiveEmployee',
+            (id, datetime.date.today() + datetime.timedelta(days=1)))
         close_db()
         return redirect(url_for('employee.search')), HTTPStatus.OK
     except Exception as e:

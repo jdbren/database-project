@@ -98,6 +98,10 @@ GRANT INSERT, UPDATE, DELETE
 --  this is outside of the scope of the assignment.
 --  I.e. Create a user dedicated to Human Resources.
 
+GRANT EXECUTE
+  ON PROCEDURE GenericCompany.ArchiveEmployee
+  TO 'GenericApplication'@'localhost';
+
 GRANT UPDATE
   ON GenericCompany.Projects
   TO 'GenericApplication'@'localhost';
