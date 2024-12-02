@@ -79,6 +79,7 @@
 
       <label for="position">Position:</label>
       <select id="position" name="position" required>
+        <option value>-- Select --</option>
         {% for position in positions %}
         <option value="{{ position.Name }}" {{ 'selected' if emp and emp.Position == position.Name }}>{{ position.Name }}</option>
         {% endfor %}

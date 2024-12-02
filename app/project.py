@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from datetime import datetime
+import datetime
 from MySQLdb import cursors
 from flask import Blueprint, render_template, redirect, request, url_for
 from app.db import search_db, modify_db, open_db, close_db
@@ -25,7 +25,7 @@ def insert_project():
         try:
             db = open_db()
             cursor = db.cursor()
-            cursor.callproc("CreateProject", (name, department, leader, datetime.date(datetime.now())))
+            cursor.callproc("CreateProject", (name, department, leader, datetime.date.today()))
 
             cursor.execute('SELECT LAST_INSERT_ID()')
             project_id = cursor.fetchone()[0]
@@ -164,7 +164,7 @@ def update_project(id):
             if project['Status'] == 'Closed':
                 if status == 'In Progress':
                     cursor.callproc('ReviveProject',
-                        (id, datetime.date(datetime.now()), leader))
+                        (id, datetime.date.today(), leader))
                 else:
                     return "Cannot modify closed project", HTTPStatus.BAD_REQUEST
             if project['Name'] != name or project['Department'] != department:
@@ -174,7 +174,7 @@ def update_project(id):
                     WHERE ID = %s
                 ''', (name, department, id))
             if leader != project['Leader']:
-                cursor.callproc('ChangeProjectLeader', (id, leader, datetime.date(datetime.now())))
+                cursor.callproc('ChangeProjectLeader', (id, leader, datetime.date.today()))
             for emp in employees:
                 if emp['employee_id'] not in [role['EmployeeID'] for role in current_roles]:
                     cursor.execute('''
@@ -191,10 +191,10 @@ def update_project(id):
                     ''', (emp['role'], id, emp['employee_id']))
             for role in current_roles:
                 if role['EmployeeID'] not in [emp['employee_id'] for emp in employees]:
-                    cursor.callproc("RetireFromRole", (role['EmployeeID'], id, datetime.date(datetime.now())))
+                    cursor.callproc("RetireFromRole", (role['EmployeeID'], id, datetime.date.today()))
             if status != project['Status']:
                 if status == 'Closed':
-                    cursor.callproc("CloseProject", (id, datetime.date(datetime.now())))
+                    cursor.callproc("CloseProject", (id, datetime.date.today()))
                 else:
                     cursor.execute('UPDATE Projects SET Status = %s WHERE ID = %s', (status, id))
             db.commit()

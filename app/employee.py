@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from MySQLdb import cursors
 from http import HTTPStatus
 from flask import Blueprint, render_template, redirect, request, url_for
@@ -90,6 +90,7 @@ def insert():
 
         except Exception as e:
             print(e)
+            close_db()
             return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
     genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
@@ -127,6 +128,8 @@ def search():
     zip_code = request.args.get('zip')
     employment_type = request.args.get('employment_type')
     departments = request.args.getlist('departments')
+    isHistorical = request.args.get('historical')
+    join_type = 'LEFT' if isHistorical else 'INNER'
     try:
         # Construct SQL query
         query = """
@@ -146,10 +149,10 @@ def search():
             LEFT JOIN
                 EmployeeDepartments AS dh
                 ON s.ID = dh.ID
-            INNER JOIN
+            {0} JOIN
                 EmployeePositions AS ph
                 ON s.ID = ph.ID
-        """
+        """.format(join_type)
 
         # Build WHERE conditions
         conditions = []
@@ -281,6 +284,9 @@ def view(id):
 
 @bp.route('/<int:id>/edit', methods=['GET', 'POST'])
 def edit(id):
+    emp = search_db('SELECT * FROM Employees WHERE ID = %s', cursors.DictCursor, False, (id,))
+    if not emp:
+        return "Employee not found", HTTPStatus.NOT_FOUND
     current_position = get_employee_position(id)
     current_departments = get_employee_departments(id)
     current_benefits = get_employee_benefits(id)
@@ -332,9 +338,7 @@ def edit(id):
             if (current_position['Position'] != position
             or int(current_position['Salary']) != int(salary)
             or current_position['EmploymentType'] != employment_type):
-                print(current_position)
-                print(position, salary, employment_type)
-                cursor.callproc('RetireFromPosition', (id, datetime.date(datetime.now())))
+                cursor.callproc('RetireFromPosition', (id, datetime.date.today()))
                 cursor.execute('''
                     INSERT INTO EmployeePositions (
                         ID, StartDate, Position, EmploymentType, Salary,
@@ -346,7 +350,7 @@ def edit(id):
             for department in current_departments:
                 if department not in selected_departments:
                     cursor.callproc('LeaveDepartment',
-                        (id, department, datetime.date(datetime.now())))
+                        (id, department, datetime.date.today()))
 
             # Add new departments
             for department in selected_departments:
@@ -381,11 +385,11 @@ def edit(id):
 
             return redirect(url_for('employee.index'), HTTPStatus.ACCEPTED)
         except Exception as e:
+            close_db()
             print(e)
             return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-    emp = search_db('SELECT * FROM Employees WHERE ID = %s', cursors.DictCursor, False, (id,))
     benefits_list = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
     positions_list = search_db('SELECT Name FROM Positions', cursors.DictCursor)
     departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
@@ -395,10 +399,11 @@ def edit(id):
 
     emp['Departments'] = current_departments
     emp['Benefits'] = current_benefits
-    emp['Salary'] = current_position['Salary']
-    emp['Position'] = current_position['Position']
-    emp['EmploymentType'] = current_position['EmploymentType']
-    emp['HealthInsurance'] = current_position['HealthInsurance']
+    if current_position:
+        emp['Salary'] = current_position['Salary']
+        emp['Position'] = current_position['Position']
+        emp['EmploymentType'] = current_position['EmploymentType']
+        emp['HealthInsurance'] = current_position['HealthInsurance']
     return render_template('employee/form.html',
         emp=emp,
         positions=positions_list,
