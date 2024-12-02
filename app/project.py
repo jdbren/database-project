@@ -156,7 +156,7 @@ def update_project(id):
         employee_ids = request.form.getlist('employee_id')  # List of employee IDs
         new_roles = request.form.getlist('role')               # Corresponding roles
         for emp_id, role in zip(employee_ids, new_roles):
-            employees.append({'employee_id': emp_id, 'role': role})
+            employees.append(dict(employee_id=int(emp_id), role=role))
 
         try:
             db = open_db()
