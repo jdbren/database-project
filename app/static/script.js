@@ -22,6 +22,7 @@ function formatSSN() {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 function setCompanyInsuranceCheckbox() {
     let checkbox = document.getElementById('Health Insurance');
     if (document.getElementById('health_insurance').value === 'company')
@@ -36,6 +37,8 @@ function setCompanyInsuranceOption() {
     else option.selected = false;
 }
 =======
+=======
+>>>>>>> 4f0c339 (bug fixes)
 function formatPhone() {
     let phone = document.getElementById('phone');
     let phoneValue = phone.value;
@@ -43,6 +46,14 @@ function formatPhone() {
         phone.value += ' ';
     if (phoneValue.length === 7)
         phone.value += '-';
+=======
+<<<<<<< HEAD
+function setCompanyInsuranceCheckbox() {
+    let checkbox = document.getElementById('Health Insurance');
+    if (document.getElementById('health_insurance').value === 'company')
+        checkbox.checked = true;
+    else checkbox.checked = false;
+>>>>>>> 679bb6a (bug fixes)
 }
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -62,4 +73,21 @@ function toggleCheckboxes() {
     checkbox.checked = selectAll.checked;
     });
 }
+<<<<<<< HEAD
 >>>>>>> bb7af00 (clean js and css)
+=======
+=======
+function formatPhone() {
+    let phone = document.getElementById('phone');
+    let phoneValue = phone.value;
+    if (phoneValue.length === 3)
+        phone.value += ' ';
+    if (phoneValue.length === 7)
+        phone.value += '-';
+}
+
+window.onload = () => {
+    setBenefitsEnabled();
+};
+>>>>>>> 740a42f (bug fixes)
+>>>>>>> 4f0c339 (bug fixes)

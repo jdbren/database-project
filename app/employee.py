@@ -151,11 +151,15 @@ def insert():
                 ) VALUES (%s, CURDATE(), %s, %s, %s, %s, %s, %s)
             ''', (id, position, employment_type, salary, external_hire,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 health_insurance, health_insurance_start))
 =======
                 health_insurance, health_insurance_start_date)
             )
 >>>>>>> 6496a80 (add delete selected)
+=======
+                health_insurance, health_insurance_start_date))
+>>>>>>> 679bb6a (bug fixes)
 
             for department in selected_departments:
                 cursor.execute('''
@@ -680,18 +684,16 @@ def edit(id):
 >>>>>>> 9d18a2b (updates to work with new schema)
 
             if (current_position['Position'] != position
-            or current_position['Salary'] != salary
+            or int(current_position['Salary']) != int(salary)
             or current_position['EmploymentType'] != employment_type):
-                # Remove records from active table
-                cursor.execute('''
-                    DELETE FROM EmployeePositions
-                    WHERE ID = %s
-                ''', (id,))
-                # Insert updated information
+                print(current_position)
+                print(position, salary, employment_type)
+                cursor.callproc('RetireFromPosition', (id, datetime.date(datetime.now())))
                 cursor.execute('''
 >>>>>>> eaadb78 (updates to work with new schema)
                     INSERT INTO EmployeePositions (
                         ID, StartDate, Position, EmploymentType, Salary,
+<<<<<<< HEAD
                         IsExternalHire, HealthStartDate, HealthInsurance
                     ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s, %s)
                 ''', (id, position, employment_type, salary, health_insurance_start_date, health_insurance))
@@ -719,10 +721,16 @@ def edit(id):
                     SET HealthInsurance = %s, HealthStartDate = %s
                     WHERE ID = %s
                 ''', (health_insurance, health_insurance_start_date, id))
+=======
+                        IsExternalHire, HealthStartDate
+                    ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s)
+                ''', (id, position, employment_type, salary, health_insurance_start_date))
+>>>>>>> 679bb6a (bug fixes)
 
             # Update departments no longer associated with the employee
             for department in current_departments:
                 if department not in selected_departments:
+<<<<<<< HEAD
 <<<<<<< HEAD
                     cursor.callproc('LeaveDepartment',
                         (id, department, datetime.date.today()))
@@ -732,6 +740,10 @@ def edit(id):
                         WHERE ID = %s AND Department = %s
                     ''', (id, department))
 >>>>>>> eaadb78 (updates to work with new schema)
+=======
+                    cursor.callproc('LeaveDepartment',
+                        (id, department, datetime.date(datetime.now())))
+>>>>>>> 679bb6a (bug fixes)
 
             # Add new departments
             for department in selected_departments:
@@ -801,16 +813,28 @@ def edit(id):
     degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 9d18a2b (updates to work with new schema)
 =======
     employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
 >>>>>>> 740a42f (bug fixes)
 =======
+=======
+>>>>>>> 4f0c339 (bug fixes)
     employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
 =======
 >>>>>>> 9d18a2b (updates to work with new schema)
 >>>>>>> eaadb78 (updates to work with new schema)
+<<<<<<< HEAD
 >>>>>>> eb78738 (updates to work with new schema)
+=======
+=======
+>>>>>>> 9d18a2b (updates to work with new schema)
+=======
+    employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
+>>>>>>> 740a42f (bug fixes)
+>>>>>>> 679bb6a (bug fixes)
+>>>>>>> 4f0c339 (bug fixes)
 
     emp['Departments'] = current_departments
     emp['Benefits'] = current_benefits
@@ -824,7 +848,11 @@ def edit(id):
     emp['Salary'] = current_position['Salary']
     emp['Position'] = current_position['Position']
     emp['EmploymentType'] = current_position['EmploymentType']
+<<<<<<< HEAD
 >>>>>>> fc12ae4 (basic project insertion and update)
+=======
+    emp['HealthInsurance'] = current_position['HealthInsurance']
+>>>>>>> 679bb6a (bug fixes)
     return render_template('employee/form.html',
         emp=emp,
         positions=positions_list,
@@ -832,11 +860,16 @@ def edit(id):
         benefits=benefits_list,
         degrees=degrees_list,
 <<<<<<< HEAD
+<<<<<<< HEAD
         genders=genders_list,
         employment_types=employment_types
 =======
         genders=genders_list
 >>>>>>> eaadb78 (updates to work with new schema)
+=======
+        genders=genders_list,
+        employment_types=employment_types
+>>>>>>> 679bb6a (bug fixes)
     )
 
 @bp.delete('<int:id>')
@@ -897,6 +930,7 @@ def archive_employee(id):
         db.commit()
         close_db()
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> eaadb78 (updates to work with new schema)
         # Rest of the data is deleted by cascade
         flash(f"Employee {emp['ID']} archived successfully")
@@ -905,6 +939,9 @@ def archive_employee(id):
 =======
         return "", HTTPStatus.OK
 >>>>>>> fc12ae4 (basic project insertion and update)
+=======
+        return redirect(url_for('employee.search')), HTTPStatus.OK
+>>>>>>> 679bb6a (bug fixes)
     except Exception as e:
         print(e)
         return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
@@ -994,7 +1031,9 @@ def get_employee_position(id):
     ''', cursors.DictCursor, (id,))
 =======
     return search_db('''
-        SELECT Salary, Position, EmploymentType FROM EmployeePositions WHERE ID = %s
+        SELECT Salary, Position, EmploymentType, HealthInsurance
+        FROM EmployeePositions
+        WHERE ID = %s
     ''', cursors.DictCursor, False, (id,))
 >>>>>>> 9d18a2b (updates to work with new schema)
 >>>>>>> eaadb78 (updates to work with new schema)
