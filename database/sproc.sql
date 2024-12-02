@@ -595,8 +595,11 @@ BEGIN
     ProjectID = Project AND
     EndDate IS NULL;
 <<<<<<< HEAD
+<<<<<<< HEAD
   DELETE FROM EmployeePositions
 =======
+=======
+>>>>>>> 54153d6 (update retirement process)
   DELETE FROM EmployeeRoles
 =======
   WHERE EmployeeID = Employee AND
@@ -614,7 +617,13 @@ BEGIN
     EndDate IS NULL;
   DELETE FROM EmployeeRoles
 >>>>>>> 5dde58d (fix gender and degree search)
+<<<<<<< HEAD
 >>>>>>> 919fa41 (fix gender and degree search)
+=======
+=======
+  DELETE FROM EmployeePositions
+>>>>>>> b91574b (update retirement process)
+>>>>>>> 54153d6 (update retirement process)
   WHERE EmployeeID = Employee AND
     ProjectID = Project;
 
