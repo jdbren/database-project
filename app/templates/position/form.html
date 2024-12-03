@@ -1,0 +1,46 @@
+{% extends 'position/index.html' %}
+
+{% block head %}
+  {{ super() }}
+  <title>Position Data Form</title>
+  <style>
+    .submit-button {
+      padding: 10px 20px;
+      color: black;
+      border-radius: 5px;
+      margin-top: 20px;
+      margin-right: 10px;
+    }
+    .employee {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+  </style>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+  <h3>Position Data Form</h3>
+  <form method="POST">
+    <fieldset>
+      <legend>Position Information</legend>
+
+      <label for="name">Title:</label>
+      <input type="text" id="name" name="name" maxlength="255" value="{{ pos.Name if pos else '' }}" required><br><br>
+
+      <label for="salary_min">Salary (Min):</label>
+      <input type="number" id="salary_min" name="salary_min" value="{{ pos.MinimumSalary if pos else '' }}" required><br><br>
+
+      <label for="salary_max">Salary (Max):</label>
+      <input type="number" id="salary_max" name="salary_max" value="{{ pos.MaximumSalary if pos else '' }}" required><br><br>
+    </fieldset>
+
+    {% if pos is not defined %}
+    <button class="submit-button" type="submit" id="submit-button" formaction="/position/insert">Submit</button>
+    {% else %}
+    <button class="submit-button" type="submit" id="update-button" formaction="/position/{{ pos.Name }}/edit">Update</button>
+    {% endif %}
+  </form>
+{% endblock %}

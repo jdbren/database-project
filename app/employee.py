@@ -61,7 +61,7 @@ def insert():
             health_insurance = request.form['health_insurance']
             health_insurance_start_date = None
             if health_insurance == 'company':
-                health_insurance_start_date = datetime.date(datetime.now())
+                health_insurance_start_date = datetime.date.today()
             external_hire = request.form['external_hire']
             # EmployeeDepartments data
             selected_departments = request.form.getlist('departments')
@@ -188,6 +188,8 @@ def search():
     employment_type = request.args.get('employment_type')
     departments = request.args.getlist('departments')
     isHistorical = request.args.get('historical')
+    benefits = request.args.getlist('benefits')
+    health_insurance = request.args.getlist('health_insurance')
     join_type = 'LEFT' if isHistorical else 'INNER'
     try:
         # Construct SQL query
@@ -201,6 +203,7 @@ def search():
                 s.HighestDegree,
                 s.ExternalYearsWorked,
                 GROUP_CONCAT(DISTINCT dh.Department ORDER BY dh.StartDate SEPARATOR ', ') AS Departments,
+                GROUP_CONCAT(DISTINCT bh.Benefit ORDER BY bh.StartDate SEPARATOR ', ') AS Benefits,
                 ph.Position,
                 ph.Salary
             FROM
@@ -208,6 +211,9 @@ def search():
             LEFT JOIN
                 EmployeeDepartments AS dh
                 ON s.ID = dh.ID
+            LEFT JOIN
+                EmployeeBenefits AS bh
+                ON s.ID = bh.ID
             {0} JOIN
                 EmployeePositions AS ph
                 ON s.ID = ph.ID
@@ -268,6 +274,12 @@ def search():
         if zip_code:
             conditions.append("s.ZIPCode = %(zip_code)s")
             params['zip_code'] = zip_code
+        if benefits:
+            conditions.append("bh.Benefit IN %(benefits)s")
+            params['benefits'] = benefits
+        if health_insurance:
+            conditions.append("ph.HealthInsurance = %(health_insurance)s")
+            params['health_insurance'] = health_insurance
 
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
@@ -295,14 +307,21 @@ def search():
 >>>>>>> 4dca8a4 (fix gender and degree search)
 =======
         employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
+<<<<<<< HEAD
 >>>>>>> 4d2ba1c (fixes to emp)
+=======
+        benefits = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
+        health_insurance = search_db('SELECT Name FROM HealthInsurance', cursors.DictCursor)
+>>>>>>> a313a5d (Added position manager.)
         return render_template('employee/search.html',
             employees=results,
             positions=positions_list,
             departments=departments_list,
             genders=genders_list,
             degrees=degrees_list,
-            employment_types=employment_types
+            employment_types=employment_types,
+            benefits=benefits,
+            health_insurance=health_insurance
         )
     except Exception as e:
         print(e)
@@ -327,6 +346,8 @@ def view(id):
             s.HighestDegree,
             s.ExternalYearsWorked,
             GROUP_CONCAT(DISTINCT dh.Department ORDER BY dh.StartDate SEPARATOR ', ') AS Departments,
+            GROUP_CONCAT(DISTINCT bh.Benefit ORDER BY bh.StartDate SEPARATOR ', ') AS Benefits,
+            ph.Position,
             ph.Position,
             ph.Salary
         FROM
@@ -334,9 +355,12 @@ def view(id):
         LEFT JOIN
             EmployeeDepartments AS dh
             ON s.ID = dh.ID
-        INNER JOIN
+        LEFT JOIN
             EmployeePositions AS ph
             ON s.ID = ph.ID
+        LEFT JOIN
+            EmployeeBenefits AS bh
+            ON s.ID = bh.ID
         WHERE
             s.ID = %s
         GROUP BY
@@ -346,7 +370,33 @@ def view(id):
     ''', cursors.DictCursor, (id,))
     if not data:
         return "Employee not found", HTTPStatus.NOT_FOUND
-    return render_template('employee/view.html', employee=data)
+
+    phistory = search_db('''
+        SELECT * FROM EmployeePositionsHistory
+        WHERE ID = %s AND EndDate IS NOT NULL
+        ORDER BY StartDate
+    ''', cursors.DictCursor, True, (id,))
+    dhistory = search_db('''
+        SELECT * FROM EmployeeDepartmentsHistory
+        WHERE ID = %s AND EndDate IS NOT NULL
+        ORDER BY StartDate
+    ''', cursors.DictCursor, True, (id,))
+    rhistory = search_db('''
+        SELECT ProjectID, Name, Role, StartDate, EndDate
+        FROM EmployeeRolesHistory
+        LEFT JOIN
+            Projects ON
+            ID = ProjectID
+        WHERE EmployeeID = %s AND EndDate IS NOT NULL
+        ORDER BY StartDate
+    ''', cursors.DictCursor, True, (id,))
+
+    return render_template('employee/view.html',
+        employee=data,
+        phistory=phistory,
+        dhistory=dhistory,
+        rhistory=rhistory
+    )
 
 
 @bp.route('/<int:id>/edit', methods=['GET', 'POST'])
@@ -381,7 +431,7 @@ def edit(id):
             health_insurance = request.form['health_insurance']
             health_insurance_start_date = None
             if health_insurance == 'company':
-                health_insurance_start_date = datetime.date(datetime.now())
+                health_insurance_start_date = datetime.date.today()
             external_hire = request.form['external_hire']
             # EmployeeDepartments data
             selected_departments = request.form.getlist('departments')
@@ -515,10 +565,20 @@ def archive_employee(id):
             return "Employee not found", HTTPStatus.NOT_FOUND
         db = open_db()
         cursor = db.cursor()
-        cursor.execute("DELETE FROM EmployeeDepartments WHERE ID = %s", (id,))
-        cursor.execute("DELETE FROM EmployeeBenefits WHERE ID = %s", (id,))
-        cursor.execute("DELETE FROM EmployeePositions WHERE ID = %s", (id,))
-        cursor.execute("DELETE FROM EmployeeRoles WHERE EmployeeID = %s", (id,))
+
+        cursor.execute('SELECT Department FROM EmployeeDepartments'
+            + ' WHERE ID = %s', (id,))
+        for x in cursor.fetchall():
+            cursor.callproc('LeaveDepartment',
+                (id, x, datetime.datetime.today()))
+        cursor.execute('SELECT ProjectID FROM EmployeeRoles'
+            + ' WHERE EmployeeID = %s', (id,))
+        for x in cursor.fetchall():
+            cursor.callproc('RetireFromRole',
+                (id, x, datetime.datetime.today()))
+        cursor.callproc('RetireFromPosition',
+                (id, datetime.datetime.today()))
+
         cursor.close()
         db.commit()
         close_db()

@@ -16,8 +16,9 @@ def index():
         results = cursor.fetchall()
         column_names = [i[0] for i in cursor.description]
         cursor.close()
-        close_db()
     except Exception as e:
         flash(f"An error occurred: {e}", 'error')
         return render_template('query/index.html', query=query)
+    finally:
+        close_db()
     return render_template('query/results.html', query=query, rows=results, cols=column_names)

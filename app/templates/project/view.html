@@ -86,4 +86,29 @@
   </table>
 
   <a class="link-button" href="/project/{{ project.ID }}/edit">Edit Project</a>
+
+  <div style="margin-top: 3em;"></div><hr><br>
+  <h3 class="details-header">Past Assigned Employees</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Role</th>
+        <th>Employee ID</th>
+        <th>Employee</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for role in rhistory %}
+      <tr>
+        <td>{{ role.StartDate }}</td>
+        <td>{{ role.EndDate }}</td>
+        <td>{{ role.Role }}</td>
+        <td>{{ role.EmployeeID }}</td>
+        <td>{{ role.Name }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}

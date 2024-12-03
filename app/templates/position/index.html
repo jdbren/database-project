@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+{% block head %}
+  {{ super() }}
+  <title>Position Manager</title>
+{% endblock %}
+{% block content %}
+  {{ super() }}
+  <h2>Position Manager</h2>
+  <nav>
+    <a href="/position/insert">Insert</a> |
+    <a href="/position/search">Search</a>
+  </nav>
+{% endblock %}
