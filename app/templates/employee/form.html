@@ -110,7 +110,7 @@
       </select><br><br>
 
       <label for="health_insurance">Health Insurance Provider:</label>
-      <select type="text" id="health_insurance" name="health_insurance">
+      <select id="health_insurance" name="health_insurance" required>
         <option value>-- Select --</option>
         <option id="company_ins_opt" value="Company" {{ 'selected' if emp and emp.HealthInsurance == 'Company' }}>Company Plan (if full-time)</option>
         <option value="Family" {{ 'selected' if emp and emp.HealthInsurance == 'Family' }}>Family Member</option>
