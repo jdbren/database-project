@@ -79,7 +79,8 @@ def search_project():
     query = '''
         SELECT p.ID, p.Name, p.Department, p.Status,
             CONCAT(e.FirstName, ' ', e.LastName) AS Leader,
-            GROUP_CONCAT(CONCAT(emp.FirstName, ' ', emp.LastName, ' (', er.Role, ')') SEPARATOR ', ') AS Employees
+            GROUP_CONCAT(CONCAT(emp.FirstName, ' ', emp.LastName, ' (', er.Role, ')') SEPARATOR ', ') AS Employees,
+            COUNT(emp.ID) AS NumEmployees
         FROM Projects p
         JOIN Employees e ON p.Leader = e.ID
         LEFT JOIN EmployeeRoles er ON p.ID = er.ProjectID

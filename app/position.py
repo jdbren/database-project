@@ -66,7 +66,8 @@ def update_position(position):
 def search_position():
     pos_list = search_db('''
         SELECT Name, MinimumSalary, MaximumSalary,
-            COUNT(ID) AS EmployeeCount
+            COUNT(ID) AS EmployeeCount,
+            AVG(Salary) AS AverageSalary
         FROM Positions
         LEFT JOIN EmployeePositions
             ON Position = Name
