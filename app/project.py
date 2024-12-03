@@ -68,6 +68,7 @@ def insert_project():
 def search_project():
     departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
     project_status_list = search_db('SELECT Name FROM ProjectStatus', cursors.DictCursor)
+    include_closed = request.args.get('history')
     name = request.args.get('name')
     id = request.args.get('id')
     department = request.args.get('department')
@@ -89,6 +90,8 @@ def search_project():
 
     conditions = []
     params = {}
+    if not include_closed:
+        conditions.append('p.Status != \'Closed\'')
     if name:
         conditions.append('p.Name LIKE %(name)s')
         params['name'] = f'%{name}%'
@@ -181,7 +184,7 @@ def update_project(id):
         employee_ids = request.form.getlist('employee_id')  # List of employee IDs
         new_roles = request.form.getlist('role')               # Corresponding roles
         for emp_id, role in zip(employee_ids, new_roles):
-            employees.append(dict(employee_id=int(emp_id), role=role))
+            employees.append({'employee_id': int(emp_id), 'role': role})
 
         try:
             db = open_db()
@@ -216,7 +219,8 @@ def update_project(id):
                     ''', (emp['role'], id, emp['employee_id']))
             for role in current_roles:
                 if role['EmployeeID'] not in [emp['employee_id'] for emp in employees]:
-                    cursor.callproc("RetireFromRole", (role['EmployeeID'], id, datetime.date.today()))
+                    cursor.callproc("RetireFromRole",
+                                    (role['EmployeeID'], id, datetime.date.today()))
             if status != project['Status']:
                 if status == 'Closed':
                     cursor.callproc("CloseProject", (id, datetime.date.today()))
@@ -251,10 +255,6 @@ def update_project(id):
         roles=roles,
         emps=current_roles
     )
-
-@bp.delete('/<int:id>')
-def delete_project(id):
-    return ""
 
 def get_employees_by_project(project_id):
     return search_db('''

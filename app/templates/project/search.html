@@ -8,6 +8,9 @@
     <fieldset>
       <legend>Search</legend>
 
+      <input type="checkbox" name="history" {% if args.history is defined %}checked{%  endif %}>
+      <label for="history">Include closed projects</label><br><br>
+
       <label for="name">Name:</label>
       <input type="text" id="name" name="name" maxlength="255" value="{{ args.name }}"><br><br>
 

@@ -23,7 +23,7 @@ def insert_position():
             db.commit()
             cursor.close()
             close_db(db)
-            return redirect(url_for('position.search_position'));
+            return redirect(url_for('position.search_position'))
         except Exception as e:
             close_db(db)
             print(e)
@@ -54,7 +54,7 @@ def update_position(position):
             db.commit()
             cursor.close()
             close_db(db)
-            return redirect(url_for('position.search_position'));
+            return redirect(url_for('position.search_position'))
         except Exception as e:
             close_db(db)
             print(e)
