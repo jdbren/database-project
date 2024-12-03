@@ -107,9 +107,15 @@ def insert():
             employment_type = request.form['employment_type']
             salary = request.form['salary']
             health_insurance = request.form['health_insurance']
+<<<<<<< HEAD
             health_insurance_start = None
             if health_insurance:
                 health_insurance_start = datetime.date.today()
+=======
+            health_insurance_start_date = None
+            if health_insurance == 'company':
+                health_insurance_start_date = datetime.date.today()
+>>>>>>> 7442c02 (fix dates)
             external_hire = request.form['external_hire']
             # EmployeeDepartments data
             selected_departments = request.form.getlist('departments')
@@ -348,6 +354,8 @@ def search():
 =======
 =======
     isHistorical = request.args.get('historical')
+    benefits = request.args.getlist('benefits')
+    health_insurance = request.args.getlist('health_insurance')
     join_type = 'LEFT' if isHistorical else 'INNER'
 >>>>>>> d6793b7 (allow searching including inactive staff)
 >>>>>>> f7c878b (allow searching including inactive staff)
@@ -373,6 +381,9 @@ def search():
                 ON s.ID = dh.ID
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 7442c02 (fix dates)
             LEFT JOIN
                 EmployeeBenefits AS bh
                 ON s.ID = bh.ID
@@ -452,6 +463,7 @@ def search():
         if benefits:
             conditions.append("bh.Benefit IN %(benefits)s")
             params['benefits'] = benefits
+<<<<<<< HEAD
         if health_insurance:
             conditions.append("ph.HealthInsurance = %(health_insurance)s")
             params['health_insurance'] = health_insurance
@@ -460,6 +472,17 @@ def search():
             conditions.append("ph.HealthInsurance = %(insurance)s")
             params['insurance'] = insurance
 >>>>>>> ba36fe5 (bug fixes and health insurance additions)
+=======
+<<<<<<< HEAD
+        if insurance:
+            conditions.append("ph.HealthInsurance = %(insurance)s")
+            params['insurance'] = insurance
+=======
+        if health_insurance:
+            conditions.append("ph.HealthInsurance = %(health_insurance)s")
+            params['health_insurance'] = health_insurance
+>>>>>>> 7442c02 (fix dates)
+>>>>>>> 4a91104 (fix dates)
 
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
@@ -520,9 +543,20 @@ def search():
 >>>>>>> 4dca8a4 (fix gender and degree search)
 =======
         employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
+<<<<<<< HEAD
 >>>>>>> 4d2ba1c (fixes to emp)
+<<<<<<< HEAD
 >>>>>>> 6fc2683 (fixes to emp)
+<<<<<<< HEAD
 >>>>>>> bd09ba3 (fixes to emp)
+=======
+=======
+=======
+        benefits = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
+        health_insurance = search_db('SELECT Name FROM HealthInsurance', cursors.DictCursor)
+>>>>>>> a313a5d (Added position manager.)
+>>>>>>> 7442c02 (fix dates)
+>>>>>>> 4a91104 (fix dates)
         return render_template('employee/search.html',
             employees=results,
             positions=positions_list,
@@ -540,8 +574,14 @@ def search():
 >>>>>>> 5dde58d (fix gender and degree search)
 =======
             degrees=degrees_list,
+<<<<<<< HEAD
             employment_types=employment_types
 >>>>>>> 6fc2683 (fixes to emp)
+=======
+            employment_types=employment_types,
+            benefits=benefits,
+            health_insurance=health_insurance
+>>>>>>> 7442c02 (fix dates)
         )
     except Exception as e:
         print(e)
@@ -567,6 +607,10 @@ def view(id):
             s.ExternalYearsWorked,
             GROUP_CONCAT(DISTINCT dh.Department ORDER BY dh.StartDate SEPARATOR ', ') AS Departments,
             GROUP_CONCAT(DISTINCT bh.Benefit ORDER BY bh.StartDate SEPARATOR ', ') AS Benefits,
+<<<<<<< HEAD
+=======
+            ph.Position,
+>>>>>>> 7442c02 (fix dates)
             ph.Position,
             ph.Position,
             ph.Salary,
@@ -577,6 +621,7 @@ def view(id):
         LEFT JOIN
             EmployeeDepartments AS dh
             ON s.ID = dh.ID
+<<<<<<< HEAD
 <<<<<<< HEAD
         LEFT JOIN
             EmployeePositions AS ph
@@ -595,6 +640,14 @@ def view(id):
             EmployeePositions AS ph
             ON s.ID = ph.ID
 >>>>>>> eaadb78 (updates to work with new schema)
+=======
+        LEFT JOIN
+            EmployeePositions AS ph
+            ON s.ID = ph.ID
+        LEFT JOIN
+            EmployeeBenefits AS bh
+            ON s.ID = bh.ID
+>>>>>>> 7442c02 (fix dates)
         WHERE
             s.ID = %s
         GROUP BY
@@ -669,7 +722,11 @@ def edit(id):
             salary = request.form['salary']
             health_insurance = request.form['health_insurance']
             health_insurance_start_date = None
+<<<<<<< HEAD
             if health_insurance:
+=======
+            if health_insurance == 'company':
+>>>>>>> 7442c02 (fix dates)
                 health_insurance_start_date = datetime.date.today()
             external_hire = request.form['external_hire']
             # EmployeeDepartments data
@@ -971,10 +1028,20 @@ def archive_employee(id):
             return "Employee not found", HTTPStatus.NOT_FOUND
         db = open_db()
         cursor = db.cursor()
-        cursor.execute("DELETE FROM EmployeeDepartments WHERE ID = %s", (id,))
-        cursor.execute("DELETE FROM EmployeeBenefits WHERE ID = %s", (id,))
-        cursor.execute("DELETE FROM EmployeePositions WHERE ID = %s", (id,))
-        cursor.execute("DELETE FROM EmployeeRoles WHERE EmployeeID = %s", (id,))
+
+        cursor.execute('SELECT Department FROM EmployeeDepartments'
+            + ' WHERE ID = %s', (id,))
+        for x in cursor.fetchall():
+            cursor.callproc('LeaveDepartment',
+                (id, x, datetime.datetime.today()))
+        cursor.execute('SELECT ProjectID FROM EmployeeRoles'
+            + ' WHERE EmployeeID = %s', (id,))
+        for x in cursor.fetchall():
+            cursor.callproc('RetireFromRole',
+                (id, x, datetime.datetime.today()))
+        cursor.callproc('RetireFromPosition',
+                (id, datetime.datetime.today()))
+
         cursor.close()
         db.commit()
         close_db()

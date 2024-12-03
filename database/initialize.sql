@@ -25,16 +25,19 @@ GRANT SELECT ON GenericCompany.*
 --  before submitting a request to the DBA.
 --  Request by Human Resources.
 
-GRANT INSERT, UPDATE
+GRANT INSERT, UPDATE, DELETE
   ON GenericCompany.Positions
   TO 'GenericApplication'@'localhost';
 -- We should have separate privileges, but
 --  this is outside of the scope of the assignment.
 --  I.e. Create a user dedicated to Human Resources.
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 -- Note: Do NOT expose or modify ID.
 >>>>>>> 6496a80 (add delete selected)
+=======
+>>>>>>> 7442c02 (fix dates)
 
 -- Benefits: Raise a ticket!
 -- This should go through an approval process
@@ -44,7 +47,7 @@ GRANT INSERT, UPDATE
 -- ProjectStatus: Raise a ticket!
 --  Request by Project Management.
 
-GRANT INSERT, UPDATE
+GRANT INSERT, UPDATE, DELETE
   ON GenericCompany.ProjectRoles
   TO 'GenericApplication'@'localhost';
 -- We should have separate privileges, but

@@ -97,6 +97,7 @@
       <td>${{ employee.Salary }}</td>
     </tr>
     <tr>
+<<<<<<< HEAD
       <th>Projects</th>
       <td>{{ employee.ProjectRoles }}</td>
     </tr>
@@ -108,6 +109,11 @@
       <th>Health Insurance</th>
       <td>{{ employee.HealthInsurance }}</td>
     </tr>
+=======
+      <th>Benefits</th>
+      <td>{{ employee.Benefits }}</td>
+    </tr>
+>>>>>>> 7442c02 (fix dates)
     {% endif %}
   </table>
 
@@ -115,6 +121,9 @@
     onclick="window.location.href = '/employee/{{ employee.ID }}/edit'"
   >Edit Employee Data</button>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 7442c02 (fix dates)
   <button class="link-button" onclick="deleteEmployee()">Archive Employee</button>
 
   <div style="margin-top: 3em;"></div><hr><br>
@@ -197,7 +206,10 @@
     </tbody>
   </table>
 
+<<<<<<< HEAD
 =======
   <button class="link-button" onclick="deleteEmployee()">Archive Employee</a>
 >>>>>>> 679bb6a (bug fixes)
+=======
+>>>>>>> 7442c02 (fix dates)
 {% endblock %}

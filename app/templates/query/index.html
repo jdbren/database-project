@@ -17,6 +17,10 @@
     <button type="submit">Submit</button>
   </form>
   {% if get_flashed_messages() %}
+<<<<<<< HEAD
     {{ get_flashed_messages() }}
+=======
+    {{ get_flashed_message() }}
+>>>>>>> 7442c02 (fix dates)
   {% endif %}
 {% endblock %}

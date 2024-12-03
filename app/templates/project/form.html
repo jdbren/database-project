@@ -57,7 +57,11 @@
                   onchange="warnInactive(this)" required>
             <option value>-- Select --</option>
             {% for employee in employees %}
+<<<<<<< HEAD
             <option value="{{ employee.ID }}" data-status="{{ 'active' if employee.Position else 'inactive' }}">
+=======
+            <option value="{{ employee.ID }}" {% if proj and proj.Leader == employee.ID %}selected{% endif %} data-status="{{ 'active' if employee.Position else 'inactive' }}">
+>>>>>>> 7442c02 (fix dates)
               {{ employee.FirstName }}
               {{ employee.LastName }}
               ({{ employee.ID }})
@@ -118,7 +122,30 @@
       const div = buttonElement.parentElement;
       div.remove();
     }
+<<<<<<< HEAD
 >>>>>>> fc12ae4 (basic project insertion and update)
+=======
+    function warnInactive(selectElement) {
+      const selected = selectElement.value;
+      const warning = selectElement.nextElementSibling;
+
+      const selectedOption = selectElement.querySelector(
+        `option[value='${selected}']`
+      );
+
+      if (selectedOption &&
+          selectedOption.getAttribute('data-status') === 'inactive') {
+        warning.style.display = 'inline-block';
+      } else {
+        warning.style.display = 'none';
+      }
+    }
+    window.onload = function() {
+      document.querySelectorAll('.selectEmployee').forEach(
+        selectElement => { warnInactive(selectElement); }
+      );
+    };
+>>>>>>> 7442c02 (fix dates)
   </script>
 {% endblock %}
 
@@ -151,6 +178,9 @@
       {% endif %}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 7442c02 (fix dates)
       <label for="leader">Leader:</label>
       <select id="leader" name="leader" class="selectEmployee"
               onchange="warnInactive(this)" required>
@@ -166,11 +196,14 @@
       <div class="warnInactive" style="color: red; display: none">
         This employee is inactive!
       </div><br><br>
+<<<<<<< HEAD
 =======
       <label for="leader">Leader ID:</label>
       <input type="number" id="leader" name="leader" value="{{ proj.Leader if proj else '' }}" required><br><br>
 >>>>>>> fc12ae4 (basic project insertion and update)
     </fieldset>
+=======
+>>>>>>> 7442c02 (fix dates)
 
     <fieldset id="emp-fields">
       <legend>Add Employees</legend>
@@ -184,7 +217,11 @@
                 onchange="warnInactive(this)" required>
           <option value>-- Select --</option>
           {% for employee in employees %}
+<<<<<<< HEAD
           <option value="{{ employee.ID }}" {% if emp.EmployeeID == employee.ID %}selected{% endif %} data-status="{{ 'active' if employee.Position else 'inactive' }}">
+=======
+          <option value="{{ employee.ID }}" {% if proj and proj.Leader == employee.ID %}selected{% endif %} data-status="{{ 'active' if employee.Position else 'inactive' }}">
+>>>>>>> 7442c02 (fix dates)
             {{ employee.FirstName }}
             {{ employee.LastName }}
             ({{ employee.ID }})

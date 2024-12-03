@@ -23,7 +23,11 @@ def insert_position():
             db.commit()
             cursor.close()
             close_db(db)
+<<<<<<< HEAD
             return redirect(url_for('position.search_position'))
+=======
+            return redirect(url_for('position.search_position'));
+>>>>>>> 7442c02 (fix dates)
         except Exception as e:
             close_db(db)
             print(e)
@@ -54,7 +58,11 @@ def update_position(position):
             db.commit()
             cursor.close()
             close_db(db)
+<<<<<<< HEAD
             return redirect(url_for('position.search_position'))
+=======
+            return redirect(url_for('position.search_position'));
+>>>>>>> 7442c02 (fix dates)
         except Exception as e:
             close_db(db)
             print(e)
@@ -64,6 +72,7 @@ def update_position(position):
 
 @bp.get('search')
 def search_position():
+<<<<<<< HEAD
     order = 'Name'
     if request.args.get('order') == 'avg_salary':
         order = 'AverageSalary DESC'
@@ -79,5 +88,14 @@ def search_position():
         JOIN Employees e ON e.ID = ep.ID
         GROUP BY Name
         ORDER BY {order} 
+=======
+    pos_list = search_db('''
+        SELECT Name, MinimumSalary, MaximumSalary,
+            COUNT(ID) AS EmployeeCount
+        FROM Positions
+        LEFT JOIN EmployeePositions
+            ON Position = Name
+        GROUP BY Name
+>>>>>>> 7442c02 (fix dates)
     ''', cursors.DictCursor)
     return render_template('position/search.html', positions=pos_list)

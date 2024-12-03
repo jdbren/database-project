@@ -64,15 +64,28 @@ def insert_project():
 
             return redirect(url_for('project.index'))
         except Exception as e:
+<<<<<<< HEAD
+=======
+            close_db()
+>>>>>>> 7442c02 (fix dates)
             print(e)
             return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
     departments = search_db('SELECT Name FROM Departments', cursors.DictCursor)
     project_status = search_db('SELECT Name FROM ProjectStatus', cursors.DictCursor)
     roles = search_db('SELECT Name FROM ProjectRoles', cursors.DictCursor)
+
+    employees = search_db('''
+        SELECT FirstName, LastName, s.ID, Position
+        FROM Employees AS s
+        LEFT JOIN
+            EmployeePositions AS ph
+            ON s.ID = ph.ID
+    ''', cursors.DictCursor)
+
     return render_template('project/form.html',
         depts=departments, statuses=project_status,
-        roles=roles)
+        roles=roles, employees=employees)
 
 >>>>>>> fc12ae4 (basic project insertion and update)
 
@@ -237,6 +250,7 @@ def view_project(project_id):
         project=project, employees=employees,
         rhistory=rhistory
     )
+<<<<<<< HEAD
 =======
     projects = search_db(query, cursors.DictCursor, True, params)
 
@@ -244,6 +258,8 @@ def view_project(project_id):
         depts=departments_list, statuses=project_status_list,
         projects=projects)
 >>>>>>> fc12ae4 (basic project insertion and update)
+=======
+>>>>>>> 7442c02 (fix dates)
 
 
 @bp.route('<int:id>/edit', methods=('GET', 'POST'))
@@ -326,6 +342,7 @@ def update_project(id):
             ON s.ID = ph.ID
     ''', cursors.DictCursor)
 
+<<<<<<< HEAD
     return render_template('project/form.html',
         proj=project,
         depts=departments,
@@ -409,10 +426,13 @@ def update_project(id):
     departments = search_db('SELECT Name FROM Departments', cursors.DictCursor)
     status_list = search_db('SELECT Name FROM ProjectStatus', cursors.DictCursor)
     roles = search_db('SELECT Name FROM ProjectRoles', cursors.DictCursor)
+=======
+>>>>>>> 7442c02 (fix dates)
     return render_template('project/form.html',
         proj=project,
         depts=departments,
         statuses=status_list,
+        employees=employees,
         roles=roles,
         emps=current_roles
     )

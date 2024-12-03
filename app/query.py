@@ -23,10 +23,13 @@ def index():
         return render_template('query/index.html', query=query)
     finally:
         close_db()
+<<<<<<< HEAD
 =======
         return render_template('query/index.html')
 >>>>>>> 44fe2d2 (code cleanup)
 =======
         return render_template('query/index.html', query=query)
 >>>>>>> 679bb6a (bug fixes)
+=======
+>>>>>>> 7442c02 (fix dates)
     return render_template('query/results.html', query=query, rows=results, cols=column_names)

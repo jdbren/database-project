@@ -5,6 +5,9 @@ from app.db import search_db
 bp = Blueprint('department', __name__, url_prefix='/department')
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 7442c02 (fix dates)
 @bp.get('<path:department>')
 def department_info(department):
     selected_department = department
