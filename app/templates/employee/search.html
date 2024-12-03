@@ -55,23 +55,23 @@
     <fieldset>
       <legend>Basic Search Criteria</legend>
 
-      <input type="checkbox" id="historical" name="historical">
+      <input type="checkbox" id="historical" name="historical" {% if args.historical %}checked{% endif %}>
       <label for="historical">Include Inactive Employees</label><br><br>
 
       <label for="first_name">First Name:</label>
-      <input type="text" id="first_name" name="first_name"><br><br>
+      <input type="text" id="first_name" name="first_name" value="{{ args.first_name }}"><br><br>
 
       <label for="last_name">Last Name:</label>
-      <input type="text" id="last_name" name="last_name"><br><br>
+      <input type="text" id="last_name" name="last_name" value="{{ args.last_name }}"><br><br>
 
       <label for="employee_number">Employee Number:</label>
-      <input type="text" id="employee_number" name="employee_number"><br><br>
+      <input type="text" id="employee_number" name="employee_number" value="{{ args.employee_number }}"><br><br>
 
       <label for="ssn">Social Security Number:</label>
-      <input type="text" id="ssn" name="ssn" maxlength="11" oninput="formatSSN()"><br><br>
+      <input type="text" id="ssn" name="ssn" maxlength="11" oninput="formatSSN()" value="{{ args.ssn }}"><br><br>
 
       <label for="phone">Phone Number:</label>
-      <input type="tel" id="phone" name="phone" maxlength="12" oninput="formatPhone()"><br><br>
+      <input type="tel" id="phone" name="phone" maxlength="12" oninput="formatPhone()" value="{{ args.phone }}"><br><br>
     </fieldset>
     <!-- Advanced Search Form -->
     <fieldset id="advanced-fields" disabled>
@@ -81,7 +81,9 @@
       <select id="gender" name="gender">
         <option value>-- Select --</option>
       {% for gender in genders %}
-        <option value="{{ gender.Name }}">{{ gender.Name }}</option>
+        <option value="{{ gender.Name }}" {% if args.gender == gender.Name %}selected{% endif %}>
+          {{ gender.Name }}
+        </option>
       {% endfor %}
       </select><br><br>
 
@@ -89,31 +91,35 @@
       <select id="degree" name="degree">
         <option value>-- Select --</option>
       {% for degree in degrees %}
-        <option value="{{ degree.Name }}">{{ degree.Name }}</option>
+        <option value="{{ degree.Name }}" {% if args.degree == degree.Name %}selected{% endif %}>{{ degree.Name }}</option>
       {% endfor %}
       </select><br><br>
 
       <label for="experience">Years of Work Experience:</label>
-      <input type="number" id="experience" name="experience" min="0"><br><br>
+      <input type="number" id="experience" name="experience" min="0" value="{{ args.experience }}"><br><br>
 
       <label for="position">Position:</label>
       <select id="position" name="position">
         <option value>-- Select --</option>
         {% for position in positions %}
-        <option value="{{ position.Name }}">{{ position.Name }}</option>
+        <option value="{{ position.Name }}" {% if args.position == position.Name %}selected{% endif %}>
+          {{ position.Name }}
+        </option>
         {% endfor %}
       </select><br><br>
 
       <label for="salary_min">Salary (Min):</label>
-      <input type="number" id="salary_min" name="salary_min" min="0"><br><br>
+      <input type="number" id="salary_min" name="salary_min" min="0" value="{{ args.salary_min }}"><br><br>
       <label for="salary_max">Salary (Max):</label>
-      <input type="number" id="salary_max" name="salary_max" min="0"><br><br>
+      <input type="number" id="salary_max" name="salary_max" min="0" value="{{ args.salary_max }}"><br><br>
 
       <label for="employment_type">Employment Type:</label>
       <select id="employment_type" name="employment_type">
         <option value>-- Select --</option>
         {% for emp_type in employment_types %}
-        <option value="{emp_type.Name}">{{ emp_type.Name }}</option>
+        <option value="{emp_type.Name}" {% if args.employment_type == emp_type.Name %}selected{% endif %}>
+          {{ emp_type.Name }}
+        </option>
         {% endfor %}
       </select><br><br>
 
@@ -125,16 +131,16 @@
       </select><br><br>
 
       <label for="address">Address:</label>
-      <input type="text" id="address" name="address"><br><br>
+      <input type="text" id="address" name="address" value="{{ args.address }}"><br><br>
 
       <label for="city">City:</label>
-      <input type="text" id="city" name="city"><br><br>
+      <input type="text" id="city" name="city" value="{{ args.city }}"><br><br>
 
       <label for="state">State:</label>
-      <input type="text" id="state" name="state" maxlength="2"><br><br>
+      <input type="text" id="state" name="state" maxlength="2" value="{{ args.state }}"><br><br>
 
       <label for="zip">Zip Code:</label>
-      <input type="number" id="zip" name="zip"><br><br>
+      <input type="number" id="zip" name="zip" value="{{ args.zip }}"><br><br>
 
       <label for="benefits">Benefits:</label>
       <select id="benefits" name="benefits" multiple>
