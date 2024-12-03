@@ -60,9 +60,10 @@
       <thead>
         <tr>
           <th>Position</th>
-          <th># Employees</th>
           <th>Salary (Min)</th>
           <th>Salary (Max)</th>
+          <th># Employees</th>
+          <th>Salary (Avg)</th>
           <th>Link</th>
         </tr>
       </thead>
@@ -70,9 +71,11 @@
         {% for pos in positions %}
         <tr>
           <td>{{ pos.Name }}</td>
-          <td>{{ pos.EmployeeCount }}</td>
           <td>{{ pos.MinimumSalary }}</td>
           <td>{{ pos.MaximumSalary }}</td>
+          <td>{{ pos.EmployeeCount }}</td>
+          <td>{{ pos.AverageSalary | round
+                 if pos.AverageSalary else 'N/A' }}</td>
           <td>
             <a href="/position/{{ pos.Name }}/edit">Update</a>
           </td>
