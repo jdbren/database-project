@@ -18,6 +18,7 @@
     }
   </style>
 <<<<<<< HEAD
+<<<<<<< HEAD
   <script>
     function addEmployeeField() {
       const lastEmployee = document.querySelector('div[class="employee"]:last-of-type');
@@ -38,12 +39,30 @@
         });
 =======
   <script src="{{ url_for('static', filename='script.js') }}"></script>
+=======
+>>>>>>> 51552e3 (clean js and css)
   <script>
     function addEmployeeField() {
       const lastEmployee = document.querySelector('div[class="employee"]:last-of-type');
       if (lastEmployee) {
         const newEmployee = lastEmployee.cloneNode(true);
+<<<<<<< HEAD
 >>>>>>> fc12ae4 (basic project insertion and update)
+=======
+        // Clear the values in the cloned employee field
+        const inputs = newEmployee.querySelectorAll('select, input');
+        inputs.forEach(input => {
+          if (input.tagName === 'SELECT') {
+            input.selectedIndex = 0; // Reset dropdown to the first option
+          } else if (input.tagName === 'INPUT') {
+            input.value = ''; // Clear text inputs
+          }
+        });
+        const warnings = newEmployee.querySelectorAll('.warnInactive');
+        warnings.forEach(warning => {
+          warning.style.display = 'none'; // Hide warning messages
+        });
+>>>>>>> 51552e3 (clean js and css)
         lastEmployee.after(newEmployee);
       } else {
         // Create a new employee field if there are no existing fields
@@ -61,10 +80,14 @@
             <option value>-- Select --</option>
             {% for employee in employees %}
 <<<<<<< HEAD
+<<<<<<< HEAD
             <option value="{{ employee.ID }}" data-status="{{ 'active' if employee.Position else 'inactive' }}">
 =======
             <option value="{{ employee.ID }}" {% if proj and proj.Leader == employee.ID %}selected{% endif %} data-status="{{ 'active' if employee.Position else 'inactive' }}">
 >>>>>>> 7442c02 (fix dates)
+=======
+            <option value="{{ employee.ID }}" data-status="{{ 'active' if employee.Position else 'inactive' }}">
+>>>>>>> 51552e3 (clean js and css)
               {{ employee.FirstName }}
               {{ employee.LastName }}
               ({{ employee.ID }})
@@ -106,6 +129,7 @@
     function warnInactive(selectElement) {
       const selected = selectElement.value;
       const warning = selectElement.nextElementSibling;
+<<<<<<< HEAD
       const selectedOption = selectElement.querySelector(
         `option[value='${selected}']`
       );
@@ -135,10 +159,11 @@
       const selected = selectElement.value;
       const warning = selectElement.nextElementSibling;
 
+=======
+>>>>>>> 51552e3 (clean js and css)
       const selectedOption = selectElement.querySelector(
         `option[value='${selected}']`
       );
-
       if (selectedOption &&
           selectedOption.getAttribute('data-status') === 'inactive') {
         warning.style.display = 'inline-block';

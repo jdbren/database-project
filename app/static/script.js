@@ -86,6 +86,7 @@ function formatPhone() {
         phone.value += '-';
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 window.onload = () => {
     setBenefitsEnabled();
@@ -96,4 +97,17 @@ window.onload = () => {
 =======
 =======
 >>>>>>> 4804616 (implement search for departments history)
+<<<<<<< HEAD
 >>>>>>> 8d8c47f (implement search for departments history)
+=======
+=======
+
+function toggleCheckboxes() {
+    const checkboxes = document.getElementsByName('select');
+    const selectAll = document.getElementById('select-all');
+    checkboxes.forEach(checkbox => {
+    checkbox.checked = selectAll.checked;
+    });
+}
+>>>>>>> bb7af00 (clean js and css)
+>>>>>>> af21ead (clean js and css)
