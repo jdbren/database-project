@@ -29,3 +29,11 @@ function formatPhone() {
     if (phoneValue.length === 7)
         phone.value += '-';
 }
+
+function toggleCheckboxes() {
+    const checkboxes = document.getElementsByName('select');
+    const selectAll = document.getElementById('select-all');
+    checkboxes.forEach(checkbox => {
+    checkbox.checked = selectAll.checked;
+    });
+}
