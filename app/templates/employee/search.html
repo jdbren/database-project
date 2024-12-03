@@ -143,11 +143,27 @@
       <label for="zip">Zip Code:</label>
       <input type="number" id="zip" name="zip"><br><br>
 
+      <label for="benefits">Benefits:</label>
+      <select id="benefits" name="benefits" multiple>
+        {% for benefit in benefits %}
+        <option value="{{ benefit.Name }}">{{ benefit.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      <label for="health_insurance">Health Insurance:</label>
+      <select id="health_insurance" name="health_insurance">
+        <option value>-- Select --</option>
+        {% for health in health_insurance %}
+        <option value="{{ health.Name }}">{{ health.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+
     </fieldset>
     <button type="submit"
       style="margin-top: 1rem; margin-bottom: 1rem;"
     >Search</button>
     <button type="button" onclick="deleteAllEmployees()">Archive Selected</button>
+    <div>Found {{ employees | length }} records</div>
   </form>
 
   <table border="1">

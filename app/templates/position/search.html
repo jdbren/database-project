@@ -1,0 +1,85 @@
+{% extends 'position/index.html' %}
+
+{% block head %}
+  {{ super() }}
+  <title>Position Manager</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+      text-align: left;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    .details-header {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+    .link-button {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #f2f2f2;
+      color: black;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+  <h3>Search Positions Database</h3>
+
+  <!-- Basic Search Form -->
+  <form action="/position/search" method="GET">
+    <fieldset>
+      <br>
+      <label for="salary_min">Salary (Min):</label>
+      <input type="number" id="salary_min" name="salary_min" min="0"><br><br>
+
+      <label for="salary_max">Salary (Min):</label>
+      <input type="number" id="salary_max" name="salary_max" min="0"><br><br>
+
+    </fieldset>
+    <button type="submit" style="margin-top: 1rem; margin-bottom: 1rem;">Search</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Position</th>
+          <th># Employees</th>
+          <th>Salary (Min)</th>
+          <th>Salary (Max)</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pos in positions %}
+        <tr>
+          <td>{{ pos.Name }}</td>
+          <td>{{ pos.EmployeeCount }}</td>
+          <td>{{ pos.MinimumSalary }}</td>
+          <td>{{ pos.MaximumSalary }}</td>
+          <td>
+            <a href="/position/{{ pos.Name }}/edit">Update</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </form>
+
+{% endblock %}

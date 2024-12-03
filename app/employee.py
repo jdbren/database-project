@@ -129,6 +129,8 @@ def search():
     employment_type = request.args.get('employment_type')
     departments = request.args.getlist('departments')
     isHistorical = request.args.get('historical')
+    benefits = request.args.getlist('benefits')
+    health_insurance = request.args.getlist('health_insurance')
     join_type = 'LEFT' if isHistorical else 'INNER'
     try:
         # Construct SQL query
@@ -142,6 +144,7 @@ def search():
                 s.HighestDegree,
                 s.ExternalYearsWorked,
                 GROUP_CONCAT(DISTINCT dh.Department ORDER BY dh.StartDate SEPARATOR ', ') AS Departments,
+                GROUP_CONCAT(DISTINCT bh.Benefit ORDER BY bh.StartDate SEPARATOR ', ') AS Benefits,
                 ph.Position,
                 ph.Salary
             FROM
@@ -149,6 +152,9 @@ def search():
             LEFT JOIN
                 EmployeeDepartments AS dh
                 ON s.ID = dh.ID
+            LEFT JOIN
+                EmployeeBenefits AS bh
+                ON s.ID = bh.ID
             {0} JOIN
                 EmployeePositions AS ph
                 ON s.ID = ph.ID
@@ -209,6 +215,12 @@ def search():
         if zip_code:
             conditions.append("s.ZIPCode = %(zip_code)s")
             params['zip_code'] = zip_code
+        if benefits:
+            conditions.append("bh.Benefit IN %(benefits)s")
+            params['benefits'] = benefits
+        if health_insurance:
+            conditions.append("ph.HealthInsurance = %(health_insurance)s")
+            params['health_insurance'] = health_insurance
 
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
@@ -229,13 +241,17 @@ def search():
         genders_list = search_db('SELECT Name FROM Genders', cursors.DictCursor)
         degrees_list = search_db('SELECT Name FROM Degrees', cursors.DictCursor)
         employment_types = search_db('SELECT Name FROM EmploymentTypes', cursors.DictCursor)
+        benefits = search_db('SELECT Name FROM Benefits', cursors.DictCursor)
+        health_insurance = search_db('SELECT Name FROM HealthInsurance', cursors.DictCursor)
         return render_template('employee/search.html',
             employees=results,
             positions=positions_list,
             departments=departments_list,
             genders=genders_list,
             degrees=degrees_list,
-            employment_types=employment_types
+            employment_types=employment_types,
+            benefits=benefits,
+            health_insurance=health_insurance
         )
     except Exception as e:
         print(e)

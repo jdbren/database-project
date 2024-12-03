@@ -4,7 +4,7 @@ from app.db import search_db
 
 bp = Blueprint('department', __name__, url_prefix='/department')
 
-@bp.get('<string:department>')
+@bp.get('<path:department>')
 def department_info(department):
     selected_department = department
     table = 'EmployeeDepartmentsHistory' if request.args.get('history') else 'EmployeeDepartments'
