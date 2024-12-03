@@ -251,7 +251,8 @@ def search():
             degrees=degrees_list,
             employment_types=employment_types,
             benefits=benefits,
-            health_insurance=health_insurance
+            health_insurance=health_insurance,
+            args=request.args
         )
     except Exception as e:
         print(e)
