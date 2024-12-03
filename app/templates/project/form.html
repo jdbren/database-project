@@ -40,7 +40,7 @@
   <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
     function addEmployeeField() {
-      const lastEmployee = document.querySelector('div[name="employee"]:last-of-type');
+      const lastEmployee = document.querySelector('div[class="employee"]:last-of-type');
       if (lastEmployee) {
         const newEmployee = lastEmployee.cloneNode(true);
 >>>>>>> fc12ae4 (basic project insertion and update)
@@ -49,6 +49,9 @@
         // Create a new employee field if there are no existing fields
         const employeeField = document.createElement('div');
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 841784d (bug fixes and health insurance additions)
         employeeField.setAttribute('class', 'employee');
         employeeField.innerHTML = `
           <button type="button" onclick="removeEmployeeField(this)">Remove Employee</button><br><br>
@@ -96,6 +99,7 @@
     }
     function removeEmployeeField(buttonElement) {
 <<<<<<< HEAD
+<<<<<<< HEAD
       const div = buttonElement.parentElement;
       div.remove();
     }
@@ -119,6 +123,8 @@
     };
 =======
       const allEmployees = document.querySelectorAll('div[name="employee"]');
+=======
+>>>>>>> 841784d (bug fixes and health insurance additions)
       const div = buttonElement.parentElement;
       div.remove();
     }
@@ -197,6 +203,7 @@
         This employee is inactive!
       </div><br><br>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
       <label for="leader">Leader ID:</label>
       <input type="number" id="leader" name="leader" value="{{ proj.Leader if proj else '' }}" required><br><br>
@@ -204,12 +211,18 @@
     </fieldset>
 =======
 >>>>>>> 7442c02 (fix dates)
+=======
+    </fieldset>
+>>>>>>> 841784d (bug fixes and health insurance additions)
 
     <fieldset id="emp-fields">
       <legend>Add Employees</legend>
 
       {% for emp in emps %}
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 841784d (bug fixes and health insurance additions)
       <div class="employee">
         <button type="button" onclick="removeEmployeeField(this)">Remove Employee</button><br><br>
         <label>Employee:</label>
@@ -218,10 +231,14 @@
           <option value>-- Select --</option>
           {% for employee in employees %}
 <<<<<<< HEAD
+<<<<<<< HEAD
           <option value="{{ employee.ID }}" {% if emp.EmployeeID == employee.ID %}selected{% endif %} data-status="{{ 'active' if employee.Position else 'inactive' }}">
 =======
           <option value="{{ employee.ID }}" {% if proj and proj.Leader == employee.ID %}selected{% endif %} data-status="{{ 'active' if employee.Position else 'inactive' }}">
 >>>>>>> 7442c02 (fix dates)
+=======
+          <option value="{{ employee.ID }}" {% if emp.EmployeeID == employee.ID %}selected{% endif %} data-status="{{ 'active' if employee.Position else 'inactive' }}">
+>>>>>>> 841784d (bug fixes and health insurance additions)
             {{ employee.FirstName }}
             {{ employee.LastName }}
             ({{ employee.ID }})

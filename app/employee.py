@@ -108,6 +108,7 @@ def insert():
             salary = request.form['salary']
             health_insurance = request.form['health_insurance']
 <<<<<<< HEAD
+<<<<<<< HEAD
             health_insurance_start = None
             if health_insurance:
                 health_insurance_start = datetime.date.today()
@@ -116,6 +117,11 @@ def insert():
             if health_insurance == 'company':
                 health_insurance_start_date = datetime.date.today()
 >>>>>>> 7442c02 (fix dates)
+=======
+            health_insurance_start = None
+            if health_insurance:
+                health_insurance_start = datetime.date.today()
+>>>>>>> 841784d (bug fixes and health insurance additions)
             external_hire = request.form['external_hire']
             # EmployeeDepartments data
             selected_departments = request.form.getlist('departments')
@@ -166,6 +172,7 @@ def insert():
             ''', (id, position, employment_type, salary, external_hire,
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                 health_insurance, health_insurance_start))
 =======
                 health_insurance, health_insurance_start_date)
@@ -174,6 +181,9 @@ def insert():
 =======
                 health_insurance, health_insurance_start_date))
 >>>>>>> 679bb6a (bug fixes)
+=======
+                health_insurance, health_insurance_start))
+>>>>>>> 841784d (bug fixes and health insurance additions)
 
             for department in selected_departments:
                 cursor.execute('''
@@ -339,9 +349,12 @@ def search():
     departments = request.args.getlist('departments')
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     isHistorical = request.args.get('historical')
 =======
 >>>>>>> f7c878b (allow searching including inactive staff)
+=======
+>>>>>>> b0551ee (bug fixes and health insurance additions)
     benefits = request.args.getlist('benefits')
     health_insurance = request.args.getlist('health_insurance')
     join_type = 'LEFT' if isHistorical else 'INNER'
@@ -353,12 +366,25 @@ def search():
 >>>>>>> ba36fe5 (bug fixes and health insurance additions)
 =======
 =======
+=======
+>>>>>>> 841784d (bug fixes and health insurance additions)
     isHistorical = request.args.get('historical')
     benefits = request.args.getlist('benefits')
     health_insurance = request.args.getlist('health_insurance')
     join_type = 'LEFT' if isHistorical else 'INNER'
+<<<<<<< HEAD
 >>>>>>> d6793b7 (allow searching including inactive staff)
+<<<<<<< HEAD
 >>>>>>> f7c878b (allow searching including inactive staff)
+=======
+=======
+=======
+    insurance = request.args.get('health_insurance')
+    is_historical = request.args.get('historical')
+    join_type = 'LEFT' if is_historical else 'INNER'
+>>>>>>> ba36fe5 (bug fixes and health insurance additions)
+>>>>>>> 841784d (bug fixes and health insurance additions)
+>>>>>>> b0551ee (bug fixes and health insurance additions)
     try:
         # Construct SQL query
         query = """
@@ -481,8 +507,19 @@ def search():
         if health_insurance:
             conditions.append("ph.HealthInsurance = %(health_insurance)s")
             params['health_insurance'] = health_insurance
+<<<<<<< HEAD
 >>>>>>> 7442c02 (fix dates)
+<<<<<<< HEAD
 >>>>>>> 4a91104 (fix dates)
+=======
+=======
+=======
+        if insurance:
+            conditions.append("ph.HealthInsurance = %(insurance)s")
+            params['insurance'] = insurance
+>>>>>>> ba36fe5 (bug fixes and health insurance additions)
+>>>>>>> 841784d (bug fixes and health insurance additions)
+>>>>>>> b0551ee (bug fixes and health insurance additions)
 
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
@@ -614,8 +651,12 @@ def view(id):
             ph.Position,
             ph.Position,
             ph.Salary,
+<<<<<<< HEAD
             ph.HealthInsurance,
             GROUP_CONCAT(DISTINCT CONCAT(p.Name, ' (', er.Role, ')') ORDER BY p.Name SEPARATOR ', ') AS ProjectRoles
+=======
+            ph.HealthInsurance
+>>>>>>> 841784d (bug fixes and health insurance additions)
         FROM
             Employees AS s
         LEFT JOIN
@@ -654,12 +695,26 @@ def view(id):
             s.ID, s.FirstName, s.LastName, s.Gender, s.BirthDate, s.SocialSecurity,
             s.PhoneNumber, s.StreetAddress, s.City, s.State, s.ZIPCode,
 <<<<<<< HEAD
+<<<<<<< HEAD
             s.HighestDegree, s.ExternalYearsWorked, ph.Position, ph.Salary
     ''', cursors.DictCursor, (id,))
 =======
             s.HighestDegree, s.ExternalYearsWorked, ph.Position, ph.Salary, ph.HealthInsurance
     ''', cursors.DictCursor, False, (id,))
 >>>>>>> ba36fe5 (bug fixes and health insurance additions)
+=======
+            s.HighestDegree, s.ExternalYearsWorked, ph.Position, ph.Salary, ph.HealthInsurance
+    ''', cursors.DictCursor, False, (id,))
+=======
+<<<<<<< HEAD
+            s.HighestDegree, s.ExternalYearsWorked, ph.Position, ph.Salary
+    ''', cursors.DictCursor, (id,))
+=======
+            s.HighestDegree, s.ExternalYearsWorked, ph.Position, ph.Salary, ph.HealthInsurance
+    ''', cursors.DictCursor, False, (id,))
+>>>>>>> ba36fe5 (bug fixes and health insurance additions)
+>>>>>>> 841784d (bug fixes and health insurance additions)
+>>>>>>> b0551ee (bug fixes and health insurance additions)
     if not data:
         return "Employee not found", HTTPStatus.NOT_FOUND
 
@@ -723,10 +778,14 @@ def edit(id):
             health_insurance = request.form['health_insurance']
             health_insurance_start_date = None
 <<<<<<< HEAD
+<<<<<<< HEAD
             if health_insurance:
 =======
             if health_insurance == 'company':
 >>>>>>> 7442c02 (fix dates)
+=======
+            if health_insurance:
+>>>>>>> 841784d (bug fixes and health insurance additions)
                 health_insurance_start_date = datetime.date.today()
             external_hire = request.form['external_hire']
             # EmployeeDepartments data

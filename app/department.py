@@ -68,8 +68,11 @@ def search_department():
                            dept_list=dept_list,
                            departments=departments,
                            args=request.args)
+<<<<<<< HEAD
 =======
     return render_template('department/search.html', dept_list=departments_list,
                            args=request.args, dept=selected_department,
                            employees=results)
 >>>>>>> 975bb0e (implement search for departments history)
+=======
+>>>>>>> 841784d (bug fixes and health insurance additions)
