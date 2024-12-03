@@ -17,12 +17,24 @@
       align-items: center;
     }
   </style>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
     function addEmployeeField() {
       const lastEmployee = document.querySelector('div[class="employee"]:last-of-type');
       if (lastEmployee) {
         const newEmployee = lastEmployee.cloneNode(true);
+        // Clear the values in the cloned employee field
+        const inputs = newEmployee.querySelectorAll('select, input');
+        inputs.forEach(input => {
+          if (input.tagName === 'SELECT') {
+            input.selectedIndex = 0; // Reset dropdown to the first option
+          } else if (input.tagName === 'INPUT') {
+            input.value = ''; // Clear text inputs
+          }
+        });
+        const warnings = newEmployee.querySelectorAll('.warnInactive');
+        warnings.forEach(warning => {
+          warning.style.display = 'none'; // Hide warning messages
+        });
         lastEmployee.after(newEmployee);
       } else {
         // Create a new employee field if there are no existing fields
@@ -35,7 +47,7 @@
                   onchange="warnInactive(this)" required>
             <option value>-- Select --</option>
             {% for employee in employees %}
-            <option value="{{ employee.ID }}" {% if proj and proj.Leader == employee.ID %}selected{% endif %} data-status="{{ 'active' if employee.Position else 'inactive' }}">
+            <option value="{{ employee.ID }}" data-status="{{ 'active' if employee.Position else 'inactive' }}">
               {{ employee.FirstName }}
               {{ employee.LastName }}
               ({{ employee.ID }})
@@ -64,11 +76,9 @@
     function warnInactive(selectElement) {
       const selected = selectElement.value;
       const warning = selectElement.nextElementSibling;
-
       const selectedOption = selectElement.querySelector(
         `option[value='${selected}']`
       );
-
       if (selectedOption &&
           selectedOption.getAttribute('data-status') === 'inactive') {
         warning.style.display = 'inline-block';

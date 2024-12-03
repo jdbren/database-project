@@ -2,6 +2,10 @@ html {
     font-size: 14px;
 }
 
+body {
+    margin: 10px;
+}
+
 h1, h2 {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
@@ -10,4 +14,28 @@ h1, h2 {
 h3, h4 {
     margin-top: 0.25rem;
     margin-bottom: 0.25rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 2px;
+}
+
+th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
 }

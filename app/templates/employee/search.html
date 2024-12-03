@@ -21,13 +21,6 @@
         advancedFieldset.disabled = false;
       }
     }
-    function toggleCheckboxes() {
-      const checkboxes = document.getElementsByName('select');
-      const selectAll = document.getElementById('select-all');
-      checkboxes.forEach(checkbox => {
-        checkbox.checked = selectAll.checked;
-      });
-    }
     async function deleteAllEmployees() {
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
       const selectedEmployees = Array.from(checkboxes)

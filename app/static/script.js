@@ -45,6 +45,7 @@ function formatPhone() {
         phone.value += '-';
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 window.onload = () => {
     setBenefitsEnabled();
@@ -52,3 +53,13 @@ window.onload = () => {
 >>>>>>> 740a42f (bug fixes)
 =======
 >>>>>>> 4804616 (implement search for departments history)
+=======
+
+function toggleCheckboxes() {
+    const checkboxes = document.getElementsByName('select');
+    const selectAll = document.getElementById('select-all');
+    checkboxes.forEach(checkbox => {
+    checkbox.checked = selectAll.checked;
+    });
+}
+>>>>>>> bb7af00 (clean js and css)
