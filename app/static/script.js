@@ -29,7 +29,3 @@ function formatPhone() {
     if (phoneValue.length === 7)
         phone.value += '-';
 }
-
-window.onload = () => {
-    setBenefitsEnabled();
-};

@@ -13,6 +13,11 @@
     }
   </style>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script>
+    window.onload = () => {
+      setBenefitsEnabled();
+    };
+  </script>
 {% endblock %}
 
 {% block content %}
