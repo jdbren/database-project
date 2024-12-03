@@ -66,11 +66,15 @@ def update_position(position):
 def search_position():
     pos_list = search_db('''
         SELECT Name, MinimumSalary, MaximumSalary,
-            COUNT(ID) AS EmployeeCount,
-            AVG(Salary) AS AverageSalary
+            COUNT(ep.ID) AS EmployeeCount,
+            ROUND(AVG(Salary)) AS AverageSalary,
+            ROUND(AVG(CASE WHEN e.Gender = 'Male' THEN ep.Salary END)) AS AvgSalaryMale,
+            ROUND(AVG(CASE WHEN e.Gender = 'Female' THEN ep.Salary END)) AS AvgSalaryFemale
         FROM Positions
-        LEFT JOIN EmployeePositions
+        LEFT JOIN EmployeePositions ep
             ON Position = Name
+        JOIN Employees e ON e.ID = ep.ID
         GROUP BY Name
+        ORDER BY Name
     ''', cursors.DictCursor)
     return render_template('position/search.html', positions=pos_list)
