@@ -260,6 +260,8 @@ def view(id):
             s.HighestDegree,
             s.ExternalYearsWorked,
             GROUP_CONCAT(DISTINCT dh.Department ORDER BY dh.StartDate SEPARATOR ', ') AS Departments,
+            GROUP_CONCAT(DISTINCT bh.Benefit ORDER BY bh.StartDate SEPARATOR ', ') AS Benefits,
+            ph.Position,
             ph.Position,
             ph.Salary
         FROM
@@ -267,9 +269,12 @@ def view(id):
         LEFT JOIN
             EmployeeDepartments AS dh
             ON s.ID = dh.ID
-        INNER JOIN
+        LEFT JOIN
             EmployeePositions AS ph
             ON s.ID = ph.ID
+        LEFT JOIN
+            EmployeeBenefits AS bh
+            ON s.ID = bh.ID
         WHERE
             s.ID = %s
         GROUP BY
@@ -279,7 +284,33 @@ def view(id):
     ''', cursors.DictCursor, False, (id,))
     if not data:
         return "Employee not found", HTTPStatus.NOT_FOUND
-    return render_template('employee/view.html', employee=data)
+
+    phistory = search_db('''
+        SELECT * FROM EmployeePositionsHistory
+        WHERE ID = %s
+        ORDER BY StartDate
+    ''', cursors.DictCursor, True, (id,))
+    dhistory = search_db('''
+        SELECT * FROM EmployeeDepartmentsHistory
+        WHERE ID = %s
+        ORDER BY StartDate
+    ''', cursors.DictCursor, True, (id,))
+    rhistory = search_db('''
+        SELECT ProjectID, Name, Role, StartDate, EndDate
+        FROM EmployeeRolesHistory
+        LEFT JOIN
+            Projects ON
+            ID = ProjectID
+        WHERE EmployeeID = %s
+        ORDER BY StartDate
+    ''', cursors.DictCursor, True, (id,))
+
+    return render_template('employee/view.html',
+        employee=data,
+        phistory=phistory,
+        dhistory=dhistory,
+        rhistory=rhistory
+    )
 
 
 @bp.route('/<int:id>/edit', methods=['GET', 'POST'])
@@ -423,10 +454,20 @@ def archive_employee(id):
             return "Employee not found", HTTPStatus.NOT_FOUND
         db = open_db()
         cursor = db.cursor()
-        cursor.execute("DELETE FROM EmployeeDepartments WHERE ID = %s", (id,))
-        cursor.execute("DELETE FROM EmployeeBenefits WHERE ID = %s", (id,))
-        cursor.execute("DELETE FROM EmployeePositions WHERE ID = %s", (id,))
-        cursor.execute("DELETE FROM EmployeeRoles WHERE EmployeeID = %s", (id,))
+
+        cursor.execute('SELECT Department FROM EmployeeDepartments'
+            + ' WHERE ID = %s', (id,))
+        for x in cursor.fetchall():
+            cursor.callproc('LeaveDepartment',
+                (id, x, datetime.datetime.today()))
+        cursor.execute('SELECT ProjectID FROM EmployeeRoles'
+            + ' WHERE EmployeeID = %s', (id,))
+        for x in cursor.fetchall():
+            cursor.callproc('RetireFromRole',
+                (id, x, datetime.datetime.today()))
+        cursor.callproc('RetireFromPosition',
+                (id, datetime.datetime.today()))
+
         cursor.close()
         db.commit()
         close_db()
