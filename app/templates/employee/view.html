@@ -131,86 +131,80 @@
   <!-- Employee Positions History -->
   <h3 class="details-header">Past Positions</h3>
   <table>
-    <tr>
-      <th>Start Date</th>
-      <th>End Date</th>
-      <th>Position</th>
-      <th>Employment Type</th>
-      <th>Salary</th>
-      <th>Hiring Type</th>
-    </tr>
-    {% for position in phistory %}
-    <tr>
-      <td>{{ position.StartDate }}</td>
-      <td>
-        {% if position.EndDate %}
-        {{ position.EndDate }}
-        {% else %}
-        Ongoing
-        {% endif %}
-      </td>
-      <td>{{ position.Position }}</td>
-      <td>{{ position.EmploymentType }}</td>
-      <td>${{ position.Salary }}</td>
-      <td>
-        {% if position.IsExternalHire %}
-        External Hire
-        {% else %}
-        Internal Transfer/Promotion
-        {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
+    <thead>
+      <tr>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Position</th>
+        <th>Employment Type</th>
+        <th>Salary</th>
+        <th>Hiring Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for position in phistory %}
+      <tr>
+        <td>{{ position.StartDate }}</td>
+        <td>{{ position.EndDate }}</td>
+        <td>{{ position.Position }}</td>
+        <td>{{ position.EmploymentType }}</td>
+        <td>${{ position.Salary }}</td>
+        <td>
+          {% if position.IsExternalHire %}
+          External Hire
+          {% else %}
+          Internal Transfer/Promotion
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
   </table>
 
   <!-- Employee Departments History -->
   <h3 class="details-header">Past Departments</h3>
   <table>
-    <tr>
-      <th>Start Date</th>
-      <th>End Date</th>
-      <th>Department</th>
-    </tr>
-    {% for department in dhistory %}
-    <tr>
-      <td>{{ department.StartDate }}</td>
-      <td>
-        {% if department.EndDate %}
-        {{ department.EndDate }}
-        {% else %}
-        Ongoing
-        {% endif %}
-      </td>
-      <td>{{ department.Department }}</td>
-    </tr>
-    {% endfor %}
+    <thead>
+      <tr>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Department</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for department in dhistory %}
+      <tr>
+        <td>{{ department.StartDate }}</td>
+        <td>{{ department.EndDate }}</td>
+        <td>{{ department.Department }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
   </table>
 
   <!-- Employee Roles History -->
   <h3 class="details-header">Past Project Roles</h3>
   <table>
-    <tr>
-      <th>Start Date</th>
-      <th>End Date</th>
-      <th>Project ID</th>
-      <th>Project Name</th>
-      <th>Project Role</th>
-    </tr>
-    {% for role in rhistory %}
-    <tr>
-      <td>{{ role.StartDate }}</td>
-      <td>
-        {% if role.EndDate %}
-        {{ role.EndDate }}
-        {% else %}
-        Ongoing
-        {% endif %}
-      </td>
-      <td>{{ role.ProjectID }}</td>
-      <td>{{ role.Name }}</td>
-      <td>{{ role.Role }}</td>
-    </tr>
-    {% endfor %}
+    <thead>
+      <tr>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Project ID</th>
+        <th>Project Name</th>
+        <th>Project Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for role in rhistory %}
+      <tr>
+        <td>{{ role.StartDate }}</td>
+        <td>{{ role.EndDate }}</td>
+        <td>{{ role.ProjectID }}</td>
+        <td>{{ role.Name }}</td>
+        <td>{{ role.Role }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
   </table>
 
 {% endblock %}

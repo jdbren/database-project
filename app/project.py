@@ -50,9 +50,18 @@ def insert_project():
     departments = search_db('SELECT Name FROM Departments', cursors.DictCursor)
     project_status = search_db('SELECT Name FROM ProjectStatus', cursors.DictCursor)
     roles = search_db('SELECT Name FROM ProjectRoles', cursors.DictCursor)
+
+    employees = search_db('''
+        SELECT FirstName, LastName, s.ID, Position
+        FROM Employees AS s
+        LEFT JOIN
+            EmployeePositions AS ph
+            ON s.ID = ph.ID
+    ''', cursors.DictCursor)
+
     return render_template('project/form.html',
         depts=departments, statuses=project_status,
-        roles=roles)
+        roles=roles, employees=employees)
 
 
 @bp.get('/search')
@@ -140,7 +149,19 @@ def view_project(project_id):
     '''
     employees = search_db(query_employees, cursors.DictCursor, True, {'project_id': project_id})
 
-    return render_template('project/view.html', project=project, employees=employees)
+    rhistory = search_db('''
+        SELECT StartDate, EndDate, Role,
+            EmployeeID, CONCAT(FirstName, ' ', LastName) AS Name
+        FROM EmployeeRolesHistory
+        JOIN Employees ON ID = EmployeeID
+        WHERE ProjectID = %s AND EndDate IS NOT NULL
+        ORDER BY StartDate
+    ''', cursors.DictCursor, True, (project_id,))
+
+    return render_template('project/view.html',
+        project=project, employees=employees,
+        rhistory=rhistory
+    )
 
 
 @bp.route('<int:id>/edit', methods=('GET', 'POST'))
@@ -212,10 +233,20 @@ def update_project(id):
     departments = search_db('SELECT Name FROM Departments', cursors.DictCursor)
     status_list = search_db('SELECT Name FROM ProjectStatus', cursors.DictCursor)
     roles = search_db('SELECT Name FROM ProjectRoles', cursors.DictCursor)
+
+    employees = search_db('''
+        SELECT FirstName, LastName, s.ID, Position
+        FROM Employees AS s
+        LEFT JOIN
+            EmployeePositions AS ph
+            ON s.ID = ph.ID
+    ''', cursors.DictCursor)
+
     return render_template('project/form.html',
         proj=project,
         depts=departments,
         statuses=status_list,
+        employees=employees,
         roles=roles,
         emps=current_roles
     )

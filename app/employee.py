@@ -287,12 +287,12 @@ def view(id):
 
     phistory = search_db('''
         SELECT * FROM EmployeePositionsHistory
-        WHERE ID = %s
+        WHERE ID = %s AND EndDate IS NOT NULL
         ORDER BY StartDate
     ''', cursors.DictCursor, True, (id,))
     dhistory = search_db('''
         SELECT * FROM EmployeeDepartmentsHistory
-        WHERE ID = %s
+        WHERE ID = %s AND EndDate IS NOT NULL
         ORDER BY StartDate
     ''', cursors.DictCursor, True, (id,))
     rhistory = search_db('''
@@ -301,7 +301,7 @@ def view(id):
         LEFT JOIN
             Projects ON
             ID = ProjectID
-        WHERE EmployeeID = %s
+        WHERE EmployeeID = %s AND EndDate IS NOT NULL
         ORDER BY StartDate
     ''', cursors.DictCursor, True, (id,))
 
