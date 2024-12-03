@@ -15,11 +15,18 @@ def create_app():
     from . import db
     db.init_db(app)
 
+<<<<<<< HEAD
     from . import employee, project, department, position, query
     app.register_blueprint(employee.bp)
     app.register_blueprint(project.bp)
     app.register_blueprint(department.bp)
     app.register_blueprint(position.bp)
+=======
+    from . import employee, project, department, query
+    app.register_blueprint(employee.bp)
+    app.register_blueprint(project.bp)
+    app.register_blueprint(department.bp)
+>>>>>>> 975bb0e (implement search for departments history)
     app.register_blueprint(query.bp)
 
     @app.route('/')

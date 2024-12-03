@@ -4,22 +4,72 @@
   {{ super() }}
   <title>Department Search</title>
   <style>
+<<<<<<< HEAD
+=======
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+>>>>>>> 975bb0e (implement search for departments history)
     th, td {
       border: 1px solid #ddd;
       padding: 8px;
     }
+<<<<<<< HEAD
+=======
+    th {
+      background-color: #f2f2f2;
+      text-align: left;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    .details-header {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+    .link-button {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #f2f2f2;
+      color: black;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+>>>>>>> 975bb0e (implement search for departments history)
   </style>
 {% endblock %}
 
 {% block content %}
   {{ super() }}
+<<<<<<< HEAD
   <h2>Department Info</h2>
 
+=======
+  <h3>Department Info</h3>
+>>>>>>> 975bb0e (implement search for departments history)
   <!-- Basic Search Form -->
   <form action="/department/search" method="GET">
     <fieldset>
       <input type="checkbox" id="history" name="history" {% if args.history %}checked{% endif %}>
+<<<<<<< HEAD
       <label for="history">Include History</label><br><br>
+=======
+      <label for="history">Show History</label><br><br>
+
+      <label for="department">Department:</label>
+      <select id="department" name="department">
+        <option value>-- Select --</option>
+        {% for dept in dept_list %}
+        <option value="{{ dept.Name }}" {% if args.department == dept.Name %}selected{% endif %}>{{ dept.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+>>>>>>> 975bb0e (implement search for departments history)
 
       <label for="start_date">Start Date:</label>
       <input type="date" id="start_date" name="start_date" value="{{ args.start_date }}"><br><br>
@@ -27,6 +77,7 @@
       <label for="end_date">End Date:</label>
       <input type="date" id="end_date" name="end_date" value="{{ args.end_date }}"><br><br>
 
+<<<<<<< HEAD
       <label for="order_by">Order By:</label>
       <select id="order_by" name="order_by">
         <option value="Department" {% if args.order_by == 'Department' %}selected{% endif %}>Department</option>
@@ -70,4 +121,31 @@
     </table>
   </form>
 
+=======
+    </fieldset>
+    <button type="submit" style="margin-top: 1rem; margin-bottom: 1rem;">Search</button>
+  </form>
+
+  <h3 class="details-header">Employees Assigned to {{ dept }}</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Employee ID</th>
+        <th>Name</th>
+        <th>Start Date</th>
+        {% if args.history is defined %}<th>End Date</th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for emp in employees %}
+      <tr>
+        <td>{{ emp.ID }}</td>
+        <td>{{ emp.Name }}</td>
+        <td>{{ emp.StartDate }}</td>
+        {% if args.history is defined %}<td>{{ emp.EndDate }}</td>{% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+>>>>>>> 975bb0e (implement search for departments history)
 {% endblock %}

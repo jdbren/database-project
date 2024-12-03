@@ -4,9 +4,19 @@ from app.db import search_db
 
 bp = Blueprint('department', __name__, url_prefix='/department')
 
+<<<<<<< HEAD
 @bp.get('<path:department>')
 def department_info(department):
     selected_department = department
+=======
+@bp.get('/search')
+def search_department():
+    departments_list = search_db('SELECT Name FROM Departments', cursors.DictCursor)
+    selected_department = request.args.get('department')
+    if not selected_department:
+        return render_template('department/search.html', dept_list=departments_list, args=request.args)
+
+>>>>>>> 975bb0e (implement search for departments history)
     table = 'EmployeeDepartmentsHistory' if request.args.get('history') else 'EmployeeDepartments'
 
     query = "SELECT e.ID, CONCAT(e.FirstName, ' ', e.LastName) AS Name, ed.StartDate "
@@ -25,6 +35,7 @@ def department_info(department):
     print(query)
 
     results = search_db(query, cursors.DictCursor)
+<<<<<<< HEAD
     return render_template('department/view.html',
                            dept=selected_department,
                            employees=results,
@@ -54,3 +65,8 @@ def search_department():
                            dept_list=dept_list,
                            departments=departments,
                            args=request.args)
+=======
+    return render_template('department/search.html', dept_list=departments_list,
+                           args=request.args, dept=selected_department,
+                           employees=results)
+>>>>>>> 975bb0e (implement search for departments history)

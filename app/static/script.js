@@ -85,9 +85,15 @@ function formatPhone() {
     if (phoneValue.length === 7)
         phone.value += '-';
 }
+<<<<<<< HEAD
 
 window.onload = () => {
     setBenefitsEnabled();
 };
 >>>>>>> 740a42f (bug fixes)
+<<<<<<< HEAD
 >>>>>>> 4f0c339 (bug fixes)
+=======
+=======
+>>>>>>> 4804616 (implement search for departments history)
+>>>>>>> 8d8c47f (implement search for departments history)
