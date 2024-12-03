@@ -44,8 +44,11 @@ function formatPhone() {
     if (phoneValue.length === 7)
         phone.value += '-';
 }
+<<<<<<< HEAD
 
 window.onload = () => {
     setBenefitsEnabled();
 };
 >>>>>>> 740a42f (bug fixes)
+=======
+>>>>>>> 4804616 (implement search for departments history)

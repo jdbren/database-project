@@ -1,0 +1,90 @@
+{% extends 'index.html' %}
+
+{% block head %}
+  {{ super() }}
+  <title>Department Search</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+      text-align: left;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    .details-header {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+    .link-button {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #f2f2f2;
+      color: black;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+  <h3>Department Info</h3>
+  <!-- Basic Search Form -->
+  <form action="/department/search" method="GET">
+    <fieldset>
+      <input type="checkbox" id="history" name="history" {% if args.history %}checked{% endif %}>
+      <label for="history">Show History</label><br><br>
+
+      <label for="department">Department:</label>
+      <select id="department" name="department">
+        <option value>-- Select --</option>
+        {% for dept in dept_list %}
+        <option value="{{ dept.Name }}" {% if args.department == dept.Name %}selected{% endif %}>{{ dept.Name }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      <label for="start_date">Start Date:</label>
+      <input type="date" id="start_date" name="start_date" value="{{ args.start_date }}"><br><br>
+
+      <label for="end_date">End Date:</label>
+      <input type="date" id="end_date" name="end_date" value="{{ args.end_date }}"><br><br>
+
+    </fieldset>
+    <button type="submit" style="margin-top: 1rem; margin-bottom: 1rem;">Search</button>
+  </form>
+
+  <h3 class="details-header">Employees Assigned to {{ dept }}</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Employee ID</th>
+        <th>Name</th>
+        <th>Start Date</th>
+        {% if args.history is defined %}<th>End Date</th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for emp in employees %}
+      <tr>
+        <td>{{ emp.ID }}</td>
+        <td>{{ emp.Name }}</td>
+        <td>{{ emp.StartDate }}</td>
+        {% if args.history is defined %}<td>{{ emp.EndDate }}</td>{% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

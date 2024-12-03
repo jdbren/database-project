@@ -80,8 +80,8 @@ def search_project():
     conditions = []
     params = {}
     if name:
-        conditions.append('p.Name = %(name)s')
-        params['name'] = name
+        conditions.append('p.Name LIKE %(name)s')
+        params['name'] = f'%{name}%'
     if id:
         conditions.append('p.ID = %(id)s')
         params['id'] = id
@@ -100,6 +100,8 @@ def search_project():
 
     query += ' GROUP BY p.ID'
 
+    print(query)
+
     try:
         projects = search_db(query, cursors.DictCursor, True, params)
     except Exception as e:
@@ -114,7 +116,7 @@ def search_project():
 
     return render_template('project/search.html',
         depts=departments_list, statuses=project_status_list,
-        projects=projects)
+        projects=projects, args=request.args)
 
 @bp.get('<int:project_id>')
 def view_project(project_id):

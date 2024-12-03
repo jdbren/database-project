@@ -15,11 +15,10 @@ def create_app():
     from . import db
     db.init_db(app)
 
-    from . import employee
+    from . import employee, project, department, query
     app.register_blueprint(employee.bp)
-    from . import project
     app.register_blueprint(project.bp)
-    from . import query
+    app.register_blueprint(department.bp)
     app.register_blueprint(query.bp)
 
     @app.route('/')
