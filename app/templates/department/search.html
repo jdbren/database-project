@@ -41,20 +41,13 @@
 
 {% block content %}
   {{ super() }}
-  <h3>Department Info</h3>
+  <h2>Department Info</h3>
+
   <!-- Basic Search Form -->
   <form action="/department/search" method="GET">
     <fieldset>
       <input type="checkbox" id="history" name="history" {% if args.history %}checked{% endif %}>
-      <label for="history">Show History</label><br><br>
-
-      <label for="department">Department:</label>
-      <select id="department" name="department">
-        <option value>-- Select --</option>
-        {% for dept in dept_list %}
-        <option value="{{ dept.Name }}" {% if args.department == dept.Name %}selected{% endif %}>{{ dept.Name }}</option>
-        {% endfor %}
-      </select><br><br>
+      <label for="history">Include History</label><br><br>
 
       <label for="start_date">Start Date:</label>
       <input type="date" id="start_date" name="start_date" value="{{ args.start_date }}"><br><br>
@@ -62,29 +55,47 @@
       <label for="end_date">End Date:</label>
       <input type="date" id="end_date" name="end_date" value="{{ args.end_date }}"><br><br>
 
+      <label for="order_by">Order By:</label>
+      <select id="order_by" name="order_by">
+        <option value="Department" {% if args.order_by == 'Department' %}selected{% endif %}>Department</option>
+        <option value="NumEmployees" {% if args.order_by == 'NumEmployees' %}selected{% endif %}>Number of Employees</option>
+        <option value="AvgSalary" {% if args.order_by == 'AvgSalary' %}selected{% endif %}>Average Salary</option>
+        <option value="EarliestStartDate" {% if args.order_by == 'EarliestStartDate' %}selected{% endif %}>Earliest Start Date</option>
+      </select><br><br>
+
+      <label for="order">Order:</label>
+      <select id="order" name="order">
+        <option value="asc" {% if args.order == 'asc' %}selected{% endif %}>Ascending</option>
+        <option value="desc" {% if args.order == 'desc' %}selected{% endif %}>Descending</option>
+      </select>
+
     </fieldset>
     <button type="submit" style="margin-top: 1rem; margin-bottom: 1rem;">Search</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Department</th>
+          <th># Employees</th>
+          <th>Avg. Salary</th>
+          <th>Earliest Start Date</th>
+          <th>Links</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for dept in departments %}
+        <tr>
+          <td>{{ dept.Department }}</td>
+          <td>{{ dept.NumEmployees }}</td>
+          <td>{{ dept.AvgSalary }}</td>
+          <td>{{ dept.EarliestStartDate }}</td>
+          <td>
+            <a href="/department/{{ dept.Department }}?history={{ args.history }}">View Employees</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </form>
 
-  <h3 class="details-header">Employees Assigned to {{ dept }}</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Employee ID</th>
-        <th>Name</th>
-        <th>Start Date</th>
-        {% if args.history is defined %}<th>End Date</th>{% endif %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for emp in employees %}
-      <tr>
-        <td>{{ emp.ID }}</td>
-        <td>{{ emp.Name }}</td>
-        <td>{{ emp.StartDate }}</td>
-        {% if args.history is defined %}<td>{{ emp.EndDate }}</td>{% endif %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
 {% endblock %}
