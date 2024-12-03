@@ -36,7 +36,7 @@ def insert():
             health_insurance = request.form['health_insurance']
             health_insurance_start_date = None
             if health_insurance == 'company':
-                health_insurance_start_date = datetime.date(datetime.now())
+                health_insurance_start_date = datetime.date.today()
             external_hire = request.form['external_hire']
             # EmployeeDepartments data
             selected_departments = request.form.getlist('departments')
@@ -314,7 +314,7 @@ def edit(id):
             health_insurance = request.form['health_insurance']
             health_insurance_start_date = None
             if health_insurance == 'company':
-                health_insurance_start_date = datetime.date(datetime.now())
+                health_insurance_start_date = datetime.date.today()
             external_hire = request.form['external_hire']
             # EmployeeDepartments data
             selected_departments = request.form.getlist('departments')
