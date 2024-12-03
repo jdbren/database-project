@@ -20,14 +20,13 @@
   <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
     function addEmployeeField() {
-      const lastEmployee = document.querySelector('div[name="employee"]:last-of-type');
+      const lastEmployee = document.querySelector('div[class="employee"]:last-of-type');
       if (lastEmployee) {
         const newEmployee = lastEmployee.cloneNode(true);
         lastEmployee.after(newEmployee);
       } else {
         // Create a new employee field if there are no existing fields
         const employeeField = document.createElement('div');
-        employeeField.setAttribute('name', 'employee');
         employeeField.setAttribute('class', 'employee');
         employeeField.innerHTML = `
           <button type="button" onclick="removeEmployeeField(this)">Remove Employee</button><br><br>
@@ -59,7 +58,6 @@
       }
     }
     function removeEmployeeField(buttonElement) {
-      const allEmployees = document.querySelectorAll('div[name="employee"]');
       const div = buttonElement.parentElement;
       div.remove();
     }
@@ -129,19 +127,20 @@
       <div class="warnInactive" style="color: red; display: none">
         This employee is inactive!
       </div><br><br>
+    </fieldset>
 
     <fieldset id="emp-fields">
       <legend>Add Employees</legend>
 
       {% for emp in emps %}
-      <div name="employee" class="employee">
+      <div class="employee">
         <button type="button" onclick="removeEmployeeField(this)">Remove Employee</button><br><br>
         <label>Employee:</label>
         <select name="employee_id" class="selectEmployee"
                 onchange="warnInactive(this)" required>
           <option value>-- Select --</option>
           {% for employee in employees %}
-          <option value="{{ employee.ID }}" {% if proj and proj.Leader == employee.ID %}selected{% endif %} data-status="{{ 'active' if employee.Position else 'inactive' }}">
+          <option value="{{ employee.ID }}" {% if emp.EmployeeID == employee.ID %}selected{% endif %} data-status="{{ 'active' if employee.Position else 'inactive' }}">
             {{ employee.FirstName }}
             {{ employee.LastName }}
             ({{ employee.ID }})

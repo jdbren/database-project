@@ -81,7 +81,7 @@
       <input type="tel" id="phone" name="phone" maxlength="12" oninput="formatPhone()"><br><br>
     </fieldset>
     <!-- Advanced Search Form -->
-    <fieldset id="advanced-fields" disabled="true">
+    <fieldset id="advanced-fields" disabled>
       <legend>Advanced Search Criteria</legend>
 
       <label for="gender">Gender:</label>
@@ -129,6 +129,15 @@
         {% for department in departments %}
         <option value="{{ department.Name }}">{{ department.Name }}</option>
         {% endfor %}
+      </select><br><br>
+
+      <label for="health_insurance">Health Insurance:</label>
+      <select id="health_insurance" name="health_insurance">
+        <option value>-- Select --</option>
+        <option value="Company">Company Plan</option>
+        <option value="Family">Family Member</option>
+        <option value="Private">Private Insurance</option>
+        <option value="Medicare">Medicare</option>
       </select><br><br>
 
       <label for="address">Address:</label>

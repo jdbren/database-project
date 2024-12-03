@@ -50,4 +50,7 @@ def search_department():
     '''
 
     departments = search_db(query, cursors.DictCursor)
-    return render_template('department/search.html', dept_list=dept_list, departments=departments, args=request.args)
+    return render_template('department/search.html',
+                           dept_list=dept_list,
+                           departments=departments,
+                           args=request.args)

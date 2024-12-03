@@ -59,9 +59,9 @@ def insert():
             employment_type = request.form['employment_type']
             salary = request.form['salary']
             health_insurance = request.form['health_insurance']
-            health_insurance_start_date = None
-            if health_insurance == 'company':
-                health_insurance_start_date = datetime.date.today()
+            health_insurance_start = None
+            if health_insurance:
+                health_insurance_start = datetime.date.today()
             external_hire = request.form['external_hire']
             # EmployeeDepartments data
             selected_departments = request.form.getlist('departments')
@@ -95,7 +95,7 @@ def insert():
                     IsExternalHire, HealthInsurance, HealthStartDate
                 ) VALUES (%s, CURDATE(), %s, %s, %s, %s, %s, %s)
             ''', (id, position, employment_type, salary, external_hire,
-                health_insurance, health_insurance_start_date))
+                health_insurance, health_insurance_start))
 
             for department in selected_departments:
                 cursor.execute('''
@@ -187,10 +187,16 @@ def search():
     zip_code = request.args.get('zip')
     employment_type = request.args.get('employment_type')
     departments = request.args.getlist('departments')
+<<<<<<< HEAD
     isHistorical = request.args.get('historical')
     benefits = request.args.getlist('benefits')
     health_insurance = request.args.getlist('health_insurance')
     join_type = 'LEFT' if isHistorical else 'INNER'
+=======
+    insurance = request.args.get('health_insurance')
+    is_historical = request.args.get('historical')
+    join_type = 'LEFT' if is_historical else 'INNER'
+>>>>>>> ba36fe5 (bug fixes and health insurance additions)
     try:
         # Construct SQL query
         query = """
@@ -274,12 +280,18 @@ def search():
         if zip_code:
             conditions.append("s.ZIPCode = %(zip_code)s")
             params['zip_code'] = zip_code
+<<<<<<< HEAD
         if benefits:
             conditions.append("bh.Benefit IN %(benefits)s")
             params['benefits'] = benefits
         if health_insurance:
             conditions.append("ph.HealthInsurance = %(health_insurance)s")
             params['health_insurance'] = health_insurance
+=======
+        if insurance:
+            conditions.append("ph.HealthInsurance = %(insurance)s")
+            params['insurance'] = insurance
+>>>>>>> ba36fe5 (bug fixes and health insurance additions)
 
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
@@ -349,7 +361,8 @@ def view(id):
             GROUP_CONCAT(DISTINCT bh.Benefit ORDER BY bh.StartDate SEPARATOR ', ') AS Benefits,
             ph.Position,
             ph.Position,
-            ph.Salary
+            ph.Salary,
+            ph.HealthInsurance
         FROM
             Employees AS s
         LEFT JOIN
@@ -366,8 +379,13 @@ def view(id):
         GROUP BY
             s.ID, s.FirstName, s.LastName, s.Gender, s.BirthDate, s.SocialSecurity,
             s.PhoneNumber, s.StreetAddress, s.City, s.State, s.ZIPCode,
+<<<<<<< HEAD
             s.HighestDegree, s.ExternalYearsWorked, ph.Position, ph.Salary
     ''', cursors.DictCursor, (id,))
+=======
+            s.HighestDegree, s.ExternalYearsWorked, ph.Position, ph.Salary, ph.HealthInsurance
+    ''', cursors.DictCursor, False, (id,))
+>>>>>>> ba36fe5 (bug fixes and health insurance additions)
     if not data:
         return "Employee not found", HTTPStatus.NOT_FOUND
 
@@ -430,7 +448,7 @@ def edit(id):
             salary = request.form['salary']
             health_insurance = request.form['health_insurance']
             health_insurance_start_date = None
-            if health_insurance == 'company':
+            if health_insurance:
                 health_insurance_start_date = datetime.date.today()
             external_hire = request.form['external_hire']
             # EmployeeDepartments data
