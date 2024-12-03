@@ -75,6 +75,7 @@
         <tr>
           <th>Position</th>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <th>Salary (Min)</th>
           <th>Salary (Max)</th>
           <th># Employees</th>
@@ -86,6 +87,12 @@
           <th>Salary (Min)</th>
           <th>Salary (Max)</th>
 >>>>>>> 7442c02 (fix dates)
+=======
+          <th>Salary (Min)</th>
+          <th>Salary (Max)</th>
+          <th># Employees</th>
+          <th>Salary (Avg)</th>
+>>>>>>> efaa708 (add num employees to projects)
           <th>Link</th>
         </tr>
       </thead>
@@ -93,6 +100,7 @@
         {% for pos in positions %}
         <tr>
           <td>{{ pos.Name }}</td>
+<<<<<<< HEAD
 <<<<<<< HEAD
           <td>{{ pos.MinimumSalary }}</td>
           <td>{{ pos.MaximumSalary }}</td>
@@ -107,6 +115,13 @@
           <td>{{ pos.MinimumSalary }}</td>
           <td>{{ pos.MaximumSalary }}</td>
 >>>>>>> 7442c02 (fix dates)
+=======
+          <td>{{ pos.MinimumSalary }}</td>
+          <td>{{ pos.MaximumSalary }}</td>
+          <td>{{ pos.EmployeeCount }}</td>
+          <td>{{ pos.AverageSalary | round
+                 if pos.AverageSalary else 'N/A' }}</td>
+>>>>>>> efaa708 (add num employees to projects)
           <td>
             <a href="/position/{{ pos.Name }}/edit">Update</a>
           </td>
