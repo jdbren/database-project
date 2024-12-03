@@ -1,0 +1,54 @@
+{% extends 'index.html' %}
+
+{% block head %}
+  {{ super() }}
+  <title>Department Search</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+      text-align: left;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+  <h2>Department Info</h3>
+
+  <h3>Employees Assigned to {{ dept }}</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Employee ID</th>
+        <th>Name</th>
+        <th>Start Date</th>
+        {% if history %}<th>End Date</th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for emp in employees %}
+      <tr>
+        <td>{{ emp.ID }}</td>
+        <td>{{ emp.Name }}</td>
+        <td>{{ emp.StartDate }}</td>
+        {% if history %}<td>{{ emp.EndDate }}</td>{% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
