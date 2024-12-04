@@ -394,13 +394,20 @@ def edit(id):
             if (current_position['Position'] != position
             or int(current_position['Salary']) != int(salary)
             or current_position['EmploymentType'] != employment_type):
-                cursor.callproc('RetireFromPosition', (id, datetime.date.today()))
-                cursor.execute('''
-                    INSERT INTO EmployeePositions (
-                        ID, StartDate, Position, EmploymentType, Salary,
-                        IsExternalHire, HealthStartDate
-                    ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s)
-                ''', (id, position, employment_type, salary, health_insurance_start_date))
+                if request.form['action'] == 'update':
+                    cursor.callproc('RetireFromPosition', (id, datetime.date.today()))
+                    cursor.execute('''
+                        INSERT INTO EmployeePositions (
+                            ID, StartDate, Position, EmploymentType, Salary,
+                            IsExternalHire, HealthStartDate
+                        ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s)
+                    ''', (id, position, employment_type, salary, health_insurance_start_date))
+                else:
+                    cursor.execute('''
+                        UPDATE EmployeePositions
+                        SET Position = %s, EmploymentType = %s, Salary = %s
+                        WHERE ID = %s
+                    ''', (position, employment_type, salary, id))
 
             # Update departments no longer associated with the employee
             for department in current_departments:

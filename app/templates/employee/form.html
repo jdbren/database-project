@@ -132,7 +132,8 @@
     {% if emp is not defined %}
     <button type="submit" id="submit-button" formaction="/employee/insert">Submit</button>
     {% else %}
-    <button type="submit" id="update-button" formaction="/employee/{{ emp.ID }}/edit">Update</button>
+    <button type="submit" id="update-button" name="action" value="update" formaction="/employee/{{ emp.ID }}/edit">Update</button>
+    <button type="submit" id="update-button" name="action" value="amend" formaction="/employee/{{ emp.ID }}/edit">Amend</button>
     {% endif %}
   </form>
 {% endblock %}
