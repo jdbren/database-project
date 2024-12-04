@@ -64,7 +64,10 @@ def update_position(position):
 
 @bp.get('search')
 def search_position():
-    pos_list = search_db('''
+    order = 'Name'
+    if request.args.get('order') == 'avg_salary':
+        order = 'AverageSalary DESC'
+    pos_list = search_db(f'''
         SELECT Name, MinimumSalary, MaximumSalary,
             COUNT(ep.ID) AS EmployeeCount,
             ROUND(AVG(Salary)) AS AverageSalary,
@@ -75,6 +78,6 @@ def search_position():
             ON Position = Name
         JOIN Employees e ON e.ID = ep.ID
         GROUP BY Name
-        ORDER BY Name
+        ORDER BY {order} 
     ''', cursors.DictCursor)
     return render_template('position/search.html', positions=pos_list)

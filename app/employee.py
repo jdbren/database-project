@@ -484,16 +484,37 @@ def edit(id):
                 phone, degree, experience, id))
 >>>>>>> 9d18a2b (updates to work with new schema)
 
-            if (current_position['Position'] != position
-            or int(current_position['Salary']) != int(salary)
-            or current_position['EmploymentType'] != employment_type):
-                cursor.callproc('RetireFromPosition', (id, datetime.date.today()))
+            if not current_position:
                 cursor.execute('''
                     INSERT INTO EmployeePositions (
                         ID, StartDate, Position, EmploymentType, Salary,
-                        IsExternalHire, HealthStartDate
-                    ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s)
-                ''', (id, position, employment_type, salary, health_insurance_start_date))
+                        IsExternalHire, HealthStartDate, HealthInsurance
+                    ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s, %s)
+                ''', (id, position, employment_type, salary, health_insurance_start_date, health_insurance))
+            elif (current_position['Position'] != position
+            or int(current_position['Salary']) != int(salary)
+            or current_position['EmploymentType'] != employment_type):
+                if request.form['action'] == 'update':
+                    cursor.callproc('RetireFromPosition', (id, datetime.date.today()))
+                    cursor.execute('''
+                        INSERT INTO EmployeePositions (
+                            ID, StartDate, Position, EmploymentType, Salary,
+                            IsExternalHire, HealthStartDate, HealthInsurance
+                        ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s, %s)
+                    ''', (id, position, employment_type, salary, health_insurance_start_date, health_insurance))
+                else:
+                    cursor.execute('''
+                        UPDATE EmployeePositions
+                        SET Position = %s, EmploymentType = %s, Salary = %s, 
+                        HealthInsurance = %s, HealthStartDate = %s
+                        WHERE ID = %s
+                    ''', (position, employment_type, salary, health_insurance, health_insurance_start_date, id))
+            elif current_position['HealthInsurance'] != health_insurance:
+                cursor.execute('''
+                    UPDATE EmployeePositions
+                    SET HealthInsurance = %s, HealthStartDate = %s
+                    WHERE ID = %s
+                ''', (health_insurance, health_insurance_start_date, id))
 
             # Update departments no longer associated with the employee
             for department in current_departments:
@@ -514,9 +535,14 @@ def edit(id):
             for benefit in current_benefits:
                 if benefit not in selected_benefits:
                     cursor.execute('''
+<<<<<<< HEAD
                         UPDATE StaffBenefits
                         SET EndDate = CURDATE()
                         WHERE ID = %s AND Benefit = %s AND EndDate IS NULL
+=======
+                        DELETE FROM EmployeeBenefits
+                        WHERE ID = %s AND Benefit = %s
+>>>>>>> d71e326 (Fixed bug with benefits removal)
                     ''', (id, benefit))
 
             # Add new benefits
@@ -634,7 +660,7 @@ def get_employee_benefits(id):
     ''', cursors.Cursor, (id,))
 =======
     current_benefits = search_db('''
-        SELECT Benefit FROM EmployeeBenefits WHERE ID = %s AND EndDate IS NULL
+        SELECT Benefit FROM EmployeeBenefits WHERE ID = %s
     ''', cursors.Cursor, True, (id,))
 >>>>>>> 9d18a2b (updates to work with new schema)
     current_benefits = [benefit[0] for benefit in current_benefits]
