@@ -391,7 +391,14 @@ def edit(id):
             ''', (ssn, fname, lname, gender, dob, address, city, state, postcode,
                 phone, degree, experience, id))
 
-            if (current_position['Position'] != position
+            if not current_position:
+                cursor.execute('''
+                    INSERT INTO EmployeePositions (
+                        ID, StartDate, Position, EmploymentType, Salary,
+                        IsExternalHire, HealthStartDate, HealthInsurance
+                    ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s, %s)
+                ''', (id, position, employment_type, salary, health_insurance_start_date, health_insurance))
+            elif (current_position['Position'] != position
             or int(current_position['Salary']) != int(salary)
             or current_position['EmploymentType'] != employment_type):
                 if request.form['action'] == 'update':
@@ -399,15 +406,22 @@ def edit(id):
                     cursor.execute('''
                         INSERT INTO EmployeePositions (
                             ID, StartDate, Position, EmploymentType, Salary,
-                            IsExternalHire, HealthStartDate
-                        ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s)
-                    ''', (id, position, employment_type, salary, health_insurance_start_date))
+                            IsExternalHire, HealthStartDate, HealthInsurance
+                        ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s, %s)
+                    ''', (id, position, employment_type, salary, health_insurance_start_date, health_insurance))
                 else:
                     cursor.execute('''
                         UPDATE EmployeePositions
-                        SET Position = %s, EmploymentType = %s, Salary = %s
+                        SET Position = %s, EmploymentType = %s, Salary = %s, 
+                        HealthInsurance = %s, HealthStartDate = %s
                         WHERE ID = %s
-                    ''', (position, employment_type, salary, id))
+                    ''', (position, employment_type, salary, health_insurance, health_insurance_start_date, id))
+            elif current_position['HealthInsurance'] != health_insurance:
+                cursor.execute('''
+                    UPDATE EmployeePositions
+                    SET HealthInsurance = %s, HealthStartDate = %s
+                    WHERE ID = %s
+                ''', (health_insurance, health_insurance_start_date, id))
 
             # Update departments no longer associated with the employee
             for department in current_departments:
