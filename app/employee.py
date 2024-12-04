@@ -428,9 +428,8 @@ def edit(id):
             for benefit in current_benefits:
                 if benefit not in selected_benefits:
                     cursor.execute('''
-                        UPDATE EmployeeBenefits
-                        SET EndDate = CURDATE()
-                        WHERE ID = %s AND Benefit = %s AND EndDate IS NULL
+                        DELETE FROM EmployeeBenefits
+                        WHERE ID = %s AND Benefit = %s
                     ''', (id, benefit))
 
             # Add new benefits
@@ -518,7 +517,7 @@ def get_employee_departments(id):
 
 def get_employee_benefits(id):
     current_benefits = search_db('''
-        SELECT Benefit FROM EmployeeBenefits WHERE ID = %s AND EndDate IS NULL
+        SELECT Benefit FROM EmployeeBenefits WHERE ID = %s
     ''', cursors.Cursor, True, (id,))
     current_benefits = [benefit[0] for benefit in current_benefits]
     return current_benefits
