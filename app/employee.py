@@ -828,15 +828,15 @@ def edit(id):
                 phone, degree, experience, id))
 >>>>>>> 9d18a2b (updates to work with new schema)
 
-            if (current_position['Position'] != position
-            or int(current_position['Salary']) != int(salary)
-            or current_position['EmploymentType'] != employment_type):
-                cursor.callproc('RetireFromPosition', (id, datetime.date.today()))
+            if not current_position:
                 cursor.execute('''
 >>>>>>> eaadb78 (updates to work with new schema)
                     INSERT INTO EmployeePositions (
                         ID, StartDate, Position, EmploymentType, Salary,
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2f32404 (add salary order to positions)
                         IsExternalHire, HealthStartDate, HealthInsurance
                     ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s, %s)
                 ''', (id, position, employment_type, salary, health_insurance_start_date, health_insurance))
@@ -864,11 +864,14 @@ def edit(id):
                     SET HealthInsurance = %s, HealthStartDate = %s
                     WHERE ID = %s
                 ''', (health_insurance, health_insurance_start_date, id))
+<<<<<<< HEAD
 =======
                         IsExternalHire, HealthStartDate
                     ) VALUES (%s, CURDATE()+1, %s, %s, %s, 0, %s)
                 ''', (id, position, employment_type, salary, health_insurance_start_date))
 >>>>>>> 679bb6a (bug fixes)
+=======
+>>>>>>> 2f32404 (add salary order to positions)
 
             # Update departments no longer associated with the employee
             for department in current_departments:
@@ -906,6 +909,7 @@ def edit(id):
                 if benefit not in selected_benefits:
                     cursor.execute('''
 <<<<<<< HEAD
+<<<<<<< HEAD
                         UPDATE StaffBenefits
                         SET EndDate = CURDATE()
                         WHERE ID = %s AND Benefit = %s AND EndDate IS NULL
@@ -913,6 +917,20 @@ def edit(id):
                         DELETE FROM EmployeeBenefits
                         WHERE ID = %s AND Benefit = %s
 >>>>>>> d71e326 (Fixed bug with benefits removal)
+=======
+                        DELETE FROM EmployeeBenefits
+                        WHERE ID = %s AND Benefit = %s
+=======
+<<<<<<< HEAD
+                        UPDATE StaffBenefits
+                        SET EndDate = CURDATE()
+                        WHERE ID = %s AND Benefit = %s AND EndDate IS NULL
+=======
+                        DELETE FROM EmployeeBenefits
+                        WHERE ID = %s AND Benefit = %s
+>>>>>>> d71e326 (Fixed bug with benefits removal)
+>>>>>>> 2f32404 (add salary order to positions)
+>>>>>>> d6c4b25 (add salary order to positions)
                     ''', (id, benefit))
 
             # Add new benefits
@@ -1174,7 +1192,7 @@ def get_employee_benefits(id):
     ''', cursors.Cursor, (id,))
 =======
     current_benefits = search_db('''
-        SELECT Benefit FROM EmployeeBenefits WHERE ID = %s AND EndDate IS NULL
+        SELECT Benefit FROM EmployeeBenefits WHERE ID = %s
     ''', cursors.Cursor, True, (id,))
 >>>>>>> 9d18a2b (updates to work with new schema)
 >>>>>>> eaadb78 (updates to work with new schema)

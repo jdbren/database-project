@@ -73,6 +73,9 @@ def update_position(position):
 @bp.get('search')
 def search_position():
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2f32404 (add salary order to positions)
     order = 'Name'
     if request.args.get('order') == 'avg_salary':
         order = 'AverageSalary DESC'
@@ -88,6 +91,7 @@ def search_position():
         JOIN Employees e ON e.ID = ep.ID
         GROUP BY Name
         ORDER BY {order} 
+<<<<<<< HEAD
 =======
     pos_list = search_db('''
         SELECT Name, MinimumSalary, MaximumSalary,
@@ -98,5 +102,7 @@ def search_position():
             ON Position = Name
         GROUP BY Name
 >>>>>>> 7442c02 (fix dates)
+=======
+>>>>>>> 2f32404 (add salary order to positions)
     ''', cursors.DictCursor)
     return render_template('position/search.html', positions=pos_list)
