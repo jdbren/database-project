@@ -281,7 +281,8 @@ def view(id):
             ph.Position,
             ph.Position,
             ph.Salary,
-            ph.HealthInsurance
+            ph.HealthInsurance,
+            GROUP_CONCAT(DISTINCT CONCAT(p.Name, ' (', er.Role, ')') ORDER BY p.Name SEPARATOR ', ') AS ProjectRoles
         FROM
             Employees AS s
         LEFT JOIN
@@ -293,6 +294,12 @@ def view(id):
         LEFT JOIN
             EmployeeBenefits AS bh
             ON s.ID = bh.ID
+        LEFT JOIN
+            EmployeeRoles AS er
+            ON s.ID = er.EmployeeID
+        LEFT JOIN
+            Projects AS p
+            ON er.ProjectID = p.ID
         WHERE
             s.ID = %s
         GROUP BY
